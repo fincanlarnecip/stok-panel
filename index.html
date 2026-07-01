@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_18.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_19.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -234,33 +234,42 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   .stbl th[data-cid="FIYAT"],
   .stbl td[data-cid="FIYAT"] { order:0; }
 
-  /* Tablo: sadece STOK_ADI ve satılabilir/depo kolonları göster */
+  /* Tablo: sadece önemli kolonlar görünsün */
   .stbl th[data-cid="STOK_KODU"],
-  .stbl td[data-cid="STOK_KODU"] { display:none; }
+  .stbl td[data-cid="STOK_KODU"] { display:none !important; }
   .stbl th[data-cid="MARKA"],
-  .stbl td[data-cid="MARKA"] { display:none; }
+  .stbl td[data-cid="MARKA"] { display:none !important; }
   .stbl th[data-cid="ETIKET"],
-  .stbl td[data-cid="ETIKET"] { display:none; }
+  .stbl td[data-cid="ETIKET"] { display:none !important; }
   .stbl th[data-cid="AYRILMIS"],
-  .stbl td[data-cid="AYRILMIS"] { display:none; }
+  .stbl td[data-cid="AYRILMIS"] { display:none !important; }
   .stbl th[data-cid="NOT"],
-  .stbl td[data-cid="NOT"] { display:none; }
+  .stbl td[data-cid="NOT"] { display:none !important; }
 
-  /* Stok adı daha geniş */
+  /* Stok adı geniş ve sarmalansın */
   .stbl th[data-cid="STOK_ADI"],
-  .stbl td[data-cid="STOK_ADI"] { width:auto !important; min-width:140px !important; white-space:normal !important; }
+  .stbl td[data-cid="STOK_ADI"] { 
+    width:180px !important; 
+    min-width:150px !important; 
+    max-width:180px !important;
+    white-space:normal !important; 
+    word-break:break-word !important;
+  }
 
-  /* Fiyat, depo, satılabilir dar ama görünür */
+  /* Sayısal kolonlar */
   .stbl th[data-cid="MERKEZ_DEPO"],
-  .stbl td[data-cid="MERKEZ_DEPO"] { width:70px !important; min-width:60px !important; }
+  .stbl td[data-cid="MERKEZ_DEPO"] { width:65px !important; min-width:55px !important; }
   .stbl th[data-cid="SATILABILIR"],
-  .stbl td[data-cid="SATILABILIR"] { width:70px !important; min-width:60px !important; }
+  .stbl td[data-cid="SATILABILIR"] { width:65px !important; min-width:55px !important; }
   .stbl th[data-cid="FIYAT"],
-  .stbl td[data-cid="FIYAT"] { width:80px !important; min-width:70px !important; }
+  .stbl td[data-cid="FIYAT"] { width:75px !important; min-width:65px !important; }
 
-  /* Tablo font küçük */
-  .stbl { font-size:11px; }
-  .stbl td, .stbl th { padding:5px 6px !important; }
+  /* Tablo genel */
+  .stbl { font-size:11px; table-layout:auto !important; }
+  .stbl td, .stbl th { padding:5px 4px !important; }
+  
+  /* Sayılar tam görünsün */
+  .stbl td.num { white-space:nowrap !important; }
 
   /* Modal tam ekran */
   .modal { width:95vw !important; max-width:95vw !important; max-height:90vh; overflow-y:auto; }
