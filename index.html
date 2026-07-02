@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_24.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_26.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1878,15 +1878,13 @@ const API = "https://script.google.com/macros/s/AKfycbxp5-9Fqx6b5rrORiSFKZj18u-F
 async function apiCall(action, data={}) {
   try {
     if(action === "getAll" || Object.keys(data).length === 0) {
-      // GET isteği
       let url = API + "?action=" + encodeURIComponent(action);
       Object.entries(data).forEach(([k,v]) => {
-        url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(v);
+        url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(String(v));
       });
       const res = await fetch(url, {method:"GET"});
       return await res.json();
     } else {
-      // POST isteği
       const payload = JSON.stringify({action, ...data});
       const res = await fetch(API, {
         method:"POST",
