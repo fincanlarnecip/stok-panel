@@ -1877,26 +1877,25 @@ const API = "https://script.google.com/macros/s/AKfycbxp5-9Fqx6b5rrORiSFKZj18u-F
 
 async function apiCall(action, data={}) {
   try {
-    // GET ile çağır — Apps Script CORS için daha güvenilir
-    const params = new URLSearchParams({action});
-    const payload = JSON.stringify({action, ...data});
-    
-    // Önce POST dene
-    try {
+    if(action === "getAll" || Object.keys(data).length === 0) {
+      // GET isteği
+      let url = API + "?action=" + encodeURIComponent(action);
+      Object.entries(data).forEach(([k,v]) => {
+        url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(v);
+      });
+      const res = await fetch(url, {method:"GET"});
+      return await res.json();
+    } else {
+      // POST isteği
+      const payload = JSON.stringify({action, ...data});
       const res = await fetch(API, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {"Content-Type":"text/plain"},
+        method:"POST",
+        mode:"cors",
+        headers:{"Content-Type":"text/plain"},
         body: payload
       });
-      // no-cors modunda response body okunamaz, GET ile tekrar dene
-    } catch(e) {}
-    
-    // GET ile dene (okuma işlemleri için)
-    const url = API + "?action=" + encodeURIComponent(action) + 
-                "&payload=" + encodeURIComponent(payload);
-    const res2 = await fetch(url, {method:"GET"});
-    return await res2.json();
+      return await res.json();
+    }
   } catch(e) {
     console.error("API hatası:", e);
     return {error: e.message};
