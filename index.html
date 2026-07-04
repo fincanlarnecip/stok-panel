@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_31.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_32.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2078,25 +2078,18 @@ document.addEventListener("keydown",e=>{
 // ── API ──
 const API = "https://script.google.com/macros/s/AKfycbxHEjTuSVDVCL1EcoaPWdxHGxjPTOfUrf0mrIRZfjkoiMl7VC-Bcr6gIMqbTzH0vmr4Yw/exec";
 
-function apiCall(action, data={}) {
-  return new Promise((resolve) => {
-    const cbName = "_cb_" + Date.now();
-    let url = API + "?action=" + encodeURIComponent(action) + "&callback=" + cbName;
+async function apiCall(action, data={}) {
+  try {
+    let url = API + "?action=" + encodeURIComponent(action);
     Object.entries(data).forEach(([k,v]) => {
       url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(String(v));
     });
-    window[cbName] = function(result) {
-      resolve(result);
-      delete window[cbName];
-      document.getElementById(cbName)?.remove();
-    };
-    const script = document.createElement("script");
-    script.id = cbName;
-    script.src = url;
-    script.onerror = () => { resolve({error:"Script yükleme hatası"}); delete window[cbName]; script.remove(); };
-    document.head.appendChild(script);
-    setTimeout(() => { if(window[cbName]) { resolve({error:"Zaman aşımı"}); delete window[cbName]; script.remove(); } }, 15000);
-  });
+    const res = await fetch(url, { method:"GET", redirect:"follow" });
+    return await res.json();
+  } catch(e) {
+    console.error("API hatası:", e);
+    return { error: e.message };
+  }
 }
 
 // Yazma işlemleri için ayrı fonksiyon (no-cors - yanıt beklenmez)
