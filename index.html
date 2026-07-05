@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_38.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_39.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2241,6 +2241,17 @@ function yeniSeramikUrunleriGetir(){
   return S.stoklar.filter(r => isNew(r.STOK_KODU) && seramikMarkaMi(r.STOK_KODU) && ebatTespitEt(r.STOK_ADI));
 }
 
+// Elle yazılan bir ETİKET metni tamamen bir ebat kalıbıyla eşleşiyorsa (ör. "60,5X60,5"),
+// nominal karşılığına ("60X60") normalize eder. Ebat kalıbına uymayan etiketlere (ör. "YAPIŞTIRICI")
+// dokunmaz, olduğu gibi döner.
+function etiketNormalizeEt(etiketMetni){
+  const temiz = String(etiketMetni||"").toUpperCase().replace(/\s+/g,"");
+  const m = temiz.match(/^(\d+(?:[.,]\d+)?)X(\d+(?:[.,]\d+)?)$/);
+  if(!m) return etiketMetni;
+  const bulunan = `${m[1]}X${m[2]}`;
+  return EBAT_VARYANT_TERS[bulunan] || bulunan;
+}
+
 function openYeniSeramikListesi(){
   const ov=$("ysov"); if(!ov) return;
   renderYeniSeramikListesi();
@@ -2827,8 +2838,10 @@ function setTagColor(i,c){
   syncEtiketler();
 }
 function addTagDef(){
-  const v=$("nti").value.trim().toUpperCase();
-  if(!v||S.etiketler.find(e=>(e.t||e)===v))return;
+  const ham=$("nti").value.trim().toUpperCase();
+  if(!ham)return;
+  const v=etiketNormalizeEt(ham); // ör. "60,5X60,5" yazılsa bile "60X60" olarak tanımlanır
+  if(S.etiketler.find(e=>(e.t||e)===v))return;
   S.etiketler.push({t:v,c:"#d97706"});
   $("nti").value="";rndTPanel();rndSidebar();
   syncEtiketler();
@@ -3362,8 +3375,9 @@ function togTE(t,el){
   el.classList.toggle("on");
 }
 function addTagTE(){
-  const v=$("te-ni").value.trim().toUpperCase();
-  if(!v)return;
+  const ham=$("te-ni").value.trim().toUpperCase();
+  if(!ham)return;
+  const v=etiketNormalizeEt(ham); // ör. "60,5X60,5" yazılsa bile "60X60" olarak kaydedilir
   let yeniEtiket=false;
   if(!S.etiketler.find(e=>(e.t||e)===v)){ S.etiketler.push({t:v,c:"#d97706"}); yeniEtiket=true; }
   if(!S.urunEt[teKod])S.urunEt[teKod]=[];
