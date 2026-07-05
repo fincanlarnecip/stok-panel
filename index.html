@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_40.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_41.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2735,16 +2735,22 @@ function rndSidebar(){
   }).join("");
   updClrBtns();
 }
+function syncMarkaSirasi(){
+  try { localStorage.setItem("stok_markalar", JSON.stringify(S.markalar)); } catch(e) {}
+  apiWrite("markaSiraDegistir", { kodSirasi: S.markalar.map(m=>m.k) });
+}
 function sortBrands(dir){
   if(dir==='asc') S.markalar.sort((a,b)=>parseInt(a.k)-parseInt(b.k));
   else S.markalar.sort((a,b)=>parseInt(b.k)-parseInt(a.k));
   rndSidebar();rndBPanel();
+  syncMarkaSirasi();
 }
 function sbMovBrand(i,dir){
   const ni=i+dir;
   if(ni<0||ni>=S.markalar.length)return;
   [S.markalar[i],S.markalar[ni]]=[S.markalar[ni],S.markalar[i]];
   rndSidebar();
+  syncMarkaSirasi();
 }
 function togM(el){if(el.checked)S.aktM.push(el.value);else S.aktM=S.aktM.filter(m=>m!==el.value);applyF();}
 function togE(t,el){
@@ -2781,7 +2787,8 @@ function rndBPanel(){
 function setBrandColor(i,c){
   S.markalar[i].c=c;rndBPanel();rndSidebar();renderTbl();
   showSyncStatus("💾 Marka rengi kaydediliyor...","saving");
-  syncMarkalar();
+  try { localStorage.setItem("stok_markalar", JSON.stringify(S.markalar)); } catch(e) {}
+  apiWrite("markaGuncelleTek", { k: S.markalar[i].k, c });
 }
 function editBName(i,el){
   const cur=S.markalar[i].a;
@@ -2790,7 +2797,11 @@ function editBName(i,el){
 }
 function saveBName(i,inp){
   const v=inp.value.trim();
-  if(v) S.markalar[i].a=v;
+  if(v){
+    S.markalar[i].a=v;
+    try { localStorage.setItem("stok_markalar", JSON.stringify(S.markalar)); } catch(e) {}
+    apiWrite("markaGuncelleTek", { k: S.markalar[i].k, a: v });
+  }
   rndBPanel();rndSidebar();
 }
 function movBrand(i,dir){
@@ -2798,6 +2809,7 @@ function movBrand(i,dir){
   if(ni<0||ni>=S.markalar.length)return;
   [S.markalar[i],S.markalar[ni]]=[S.markalar[ni],S.markalar[i]];
   rndBPanel();rndSidebar();
+  syncMarkaSirasi();
 }
 function bDrop(e,ti){
   e.preventDefault();
@@ -2806,18 +2818,28 @@ function bDrop(e,ti){
   const tmp=S.markalar.splice(fi,1)[0];
   S.markalar.splice(ti,0,tmp);
   bDrag=null;rndBPanel();rndSidebar();
+  syncMarkaSirasi();
 }
 function addBrand(){
   const k=$("nb-c").value.trim().replace(/\D/g,"").substring(0,2);
   const a=$("nb-n").value.trim();
   if(!k||!a){alert("Kod ve ad gerekli");return;}
   if(S.markalar.find(m=>m.k===k)){alert("Bu kod zaten var");return;}
-  S.markalar.push({k,a,c:"#2563eb"});
+  const c="#2563eb";
+  S.markalar.push({k,a,c});
   $("nb-c").value="";$("nb-n").value="";
   rndBPanel();rndSidebar();applyF(true);
-  syncMarkalar();
+  try { localStorage.setItem("stok_markalar", JSON.stringify(S.markalar)); } catch(e) {}
+  apiWrite("markaEkleTek", {k,a,c});
 }
-function delBrand(i){S.aktM=S.aktM.filter(k=>k!==S.markalar[i].k);S.markalar.splice(i,1);rndBPanel();rndSidebar();applyF(true);}
+function delBrand(i){
+  const kod=S.markalar[i].k;
+  S.aktM=S.aktM.filter(k=>k!==kod);
+  S.markalar.splice(i,1);
+  rndBPanel();rndSidebar();applyF(true);
+  try { localStorage.setItem("stok_markalar", JSON.stringify(S.markalar)); } catch(e) {}
+  apiWrite("markaSilTek", {k: kod}); // silme artık gerçekten sunucuya kaydediliyor
+}
 
 // ── TAG PANEL ──
 function rndTPanel(){
