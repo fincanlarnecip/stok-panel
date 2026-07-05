@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_39.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_40.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4009,19 +4009,30 @@ function toggleMagaza(grupId, stokKodu) {
   const n = S.numuneler.find(x => x.grupId === grupId && String(x.stokKodu) === String(stokKodu));
   if (n) {
     n.magazaVar = !n.magazaVar;
-    syncNumuneler();
+    try { localStorage.setItem("stok_numuneler", JSON.stringify(S.numuneler)); } catch(e) {}
+    apiWrite("numuneGuncelleTek", { grupId, stokKodu: String(stokKodu), magazaVar: n.magazaVar });
     renderNumuneler();
   }
 }
 
+let _konumSyncT = {};
 function updateKonum(grupId, stokKodu, val) {
   const n = S.numuneler.find(x => x.grupId === grupId && String(x.stokKodu) === String(stokKodu));
-  if (n) { n.konum = val; syncNumuneler(); }
+  if (n) {
+    n.konum = val;
+    try { localStorage.setItem("stok_numuneler", JSON.stringify(S.numuneler)); } catch(e) {}
+    const key = grupId + "|" + stokKodu;
+    clearTimeout(_konumSyncT[key]);
+    _konumSyncT[key] = setTimeout(() => {
+      apiWrite("numuneGuncelleTek", { grupId, stokKodu: String(stokKodu), konum: val });
+    }, 500);
+  }
 }
 
 function silNumuneUrun(grupId, stokKodu) {
   S.numuneler = S.numuneler.filter(x => !(x.grupId === grupId && String(x.stokKodu) === String(stokKodu)));
-  syncNumuneler();
+  try { localStorage.setItem("stok_numuneler", JSON.stringify(S.numuneler)); } catch(e) {}
+  apiWrite("numuneSilTek", { grupId, stokKodu: String(stokKodu) });
   renderNumuneler();
 }
 
@@ -4034,7 +4045,8 @@ function numuneUrunTasi(grupId, stokKodu, yon) {
   const gi = S.numuneler.indexOf(grup[idx]);
   const gj = S.numuneler.indexOf(grup[yeniIdx]);
   [S.numuneler[gi], S.numuneler[gj]] = [S.numuneler[gj], S.numuneler[gi]];
-  syncNumuneler();
+  try { localStorage.setItem("stok_numuneler", JSON.stringify(S.numuneler)); } catch(e) {}
+  apiWrite("numuneSiraDegistir", { grupId, stokKodu: String(stokKodu), yon });
   renderNumuneler();
 }
 
@@ -4042,8 +4054,9 @@ function silGrup(id) {
   if (!confirm("Bu grubu ve tüm ürünlerini sil?")) return;
   S.numuneGruplari = S.numuneGruplari.filter(g => g.id !== id);
   S.numuneler = S.numuneler.filter(n => n.grupId !== id);
-  syncNumuneGruplari();
-  syncNumuneler();
+  try { localStorage.setItem("stok_numune_gruplari", JSON.stringify(S.numuneGruplari)); } catch(e) {}
+  try { localStorage.setItem("stok_numuneler", JSON.stringify(S.numuneler)); } catch(e) {}
+  apiWrite("numuneGrupSilTek", { grupId: id });
   renderNumuneler();
 }
 
@@ -4065,14 +4078,19 @@ function saveNumuneGrup() {
   const ad = $("ng-ad").value.trim();
   if (!ad) { alert("Grup adı gerekli"); return; }
   const editId = $("ng-ad").dataset.editId;
+  let id, sira;
   if (editId) {
     const g = S.numuneGruplari.find(x => x.id === editId);
     if (g) g.ad = ad;
+    id = editId;
+    sira = g ? g.sira : 0;
   } else {
-    const id = "g" + Date.now();
-    S.numuneGruplari.push({ id, ad, sira: S.numuneGruplari.length });
+    id = "g" + Date.now();
+    sira = S.numuneGruplari.length;
+    S.numuneGruplari.push({ id, ad, sira });
   }
-  syncNumuneGruplari();
+  try { localStorage.setItem("stok_numune_gruplari", JSON.stringify(S.numuneGruplari)); } catch(e) {}
+  apiWrite("numuneGrupEkleTek", { id, ad, sira });
   $("ngov").classList.add("hide");
   renderNumuneler();
 }
@@ -4150,7 +4168,8 @@ function numuneEkle(stokKodu) {
   }
   S.numuneler.push({ grupId, stokKodu: String(stokKodu), magazaVar: false, konum: "", notlar: "", sira: S.numuneler.filter(n=>n.grupId===grupId).length });
   try { localStorage.setItem("son_numune_grup", grupId); } catch(e) {}
-  syncNumuneler();
+  try { localStorage.setItem("stok_numuneler", JSON.stringify(S.numuneler)); } catch(e) {}
+  apiWrite("numuneEkleTek", { grupId, stokKodu: String(stokKodu) }); // tek satır ekler, diğer oturumların verisini ezmez
   renderNumuneler();
   // Modal açık kalsın — arka arkaya birden fazla ürün eklenebilsin
   $("nu-ara").value = "";
