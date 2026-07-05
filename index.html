@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_41.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_42.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,7 +131,8 @@ th.dov{border-left:2px solid var(--blue)!important}
 .panel h2{font-size:13px;font-weight:600}
 .pnote{font-size:11px;color:var(--text2);background:var(--blue-l);border-radius:4px;padding:6px 10px;border-left:3px solid var(--blue)}
 /* brand rows */
-.brand-row{display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);margin-bottom:3px;cursor:grab}
+.brand-row{display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);margin-bottom:3px;cursor:grab;transition:background-color .12s}
+.brand-row:hover{background:var(--hover-row, #eef2ff)}
 .brand-row:active{cursor:grabbing;opacity:.8}
 .bcode{font-family:var(--mono);font-size:11px;color:var(--text3);font-weight:700;min-width:26px}
 .bname{flex:1;font-size:12px}
@@ -2227,6 +2228,15 @@ function seramikMarkaMi(stokKodu){
   return SERAMIK_MARKA_KODLARI.includes(p);
 }
 
+// Etiketle filtrelerken de ebat tolerans grubunu genişletir: "60X60" etiketi seçiliyse
+// ürün adında "58X58", "60,5X60,5" vb. geçen ürünler de eşleşsin (60x60/45x45 aramasındakiyle aynı mantık).
+function etiketGenisEslesenler(t){
+  const temiz = String(t||"").toUpperCase().replace(/\s+/g,"");
+  if(EBAT_NOMINAL_VARYANT[temiz]) return EBAT_NOMINAL_VARYANT[temiz];
+  if(EBAT_VARYANT_TERS[temiz]) return EBAT_NOMINAL_VARYANT[EBAT_VARYANT_TERS[temiz]];
+  return [t];
+}
+
 // Ürün adında geçen ebatı yakalar, biliniyorsa nominal karşılığına çevirir.
 // Örn: "QUA BIANCO RIVER 60,5X60,5 LAP." -> "60X60"
 function ebatTespitEt(stokAdi){
@@ -2530,7 +2540,13 @@ function applyF(skipH){
     S._searchQ="";
   }
   if(S.aktM.length>0) rows=rows.filter(r=>S.aktM.includes(String(r.STOK_KODU).replace(/\D/g,"").substring(0,2)));
-  if(S.aktE.length>0) rows=rows.filter(r=>{const a=trNorm(r.STOK_ADI);return S.aktE.every(t=>a.includes(trNorm(t)));});
+  if(S.aktE.length>0) rows=rows.filter(r=>{
+    const a=trNorm(r.STOK_ADI);
+    return S.aktE.every(t=>{
+      const varyantlar=etiketGenisEslesenler(t);
+      return varyantlar.some(v=>a.includes(trNorm(v)));
+    });
+  });
 
   // durum filtre grid
   const dn_d=$("dn-d")?.checked,dn_a=$("dn-a")?.checked,dn_s=$("dn-s")?.checked;
@@ -2873,8 +2889,8 @@ function rmTagDef(t){
   S.aktE=S.aktE.filter(x=>x!==t);
   Object.keys(S.urunEt).forEach(k=>{S.urunEt[k]=S.urunEt[k].filter(x=>x!==t);});
   rndTPanel();rndSidebar();applyF(true);
-  syncEtiketler();
-  syncUrunEt();
+  try { localStorage.setItem("stok_etiketler", JSON.stringify(S.etiketler)); } catch(e) {}
+  apiWrite("etiketTamSil", {etiket: t});
 }
 function prevTag(){
   const t=$("psel").value;const d=$("pout");
@@ -3395,6 +3411,7 @@ function togTE(t,el){
   if(S.urunEt[teKod].includes(t))S.urunEt[teKod]=S.urunEt[teKod].filter(x=>x!==t);
   else S.urunEt[teKod].push(t);
   el.classList.toggle("on");
+  syncUrunEtTek(teKod);
 }
 function addTagTE(){
   const ham=$("te-ni").value.trim().toUpperCase();
@@ -3407,12 +3424,21 @@ function addTagTE(){
   $("te-ni").value="";
   rndTEList();rndSidebar();
   if(yeniEtiket) syncEtiketler(); // yeni etiket tanımı hemen kaydedilsin, "Kaydet"e basılmasa bile kaybolmasın
+  syncUrunEtTek(teKod); // ürüne atanan etiket de hemen kaydedilsin
 }
 function closeTE(){$("teov").classList.add("hide");teKod=null;}
 function saveTE(){
   closeTE();renderTbl();
-  showSyncStatus("💾 Etiketler kaydediliyor...","saving");
-  syncUrunEt();
+  // NOT: Etiket değişiklikleri artık her işaretlemede (togTE/addTagTE) anında kaydediliyor,
+  // "Tamam" butonu sadece pencereyi kapatır. Boşluğa tıklanarak kapatılsa bile veri kaybolmaz.
+}
+let _urunEtSyncT={};
+function syncUrunEtTek(kod){
+  if(!kod)return;
+  clearTimeout(_urunEtSyncT[kod]);
+  _urunEtSyncT[kod]=setTimeout(()=>{
+    apiWrite("urunEtGuncelleTek", {kod, etiketler: S.urunEt[kod]||[]});
+  }, 400);
 }
 
 // ── FILE ──
@@ -3559,8 +3585,8 @@ async function syncMarkalar() {
   try { localStorage.setItem("stok_markalar", JSON.stringify(S.markalar)); } catch(e) {}
   await apiWrite("saveMarka", {markalar: S.markalar});
 }
-async function syncAyarlar() {
-  const ayarlar = {
+function toplaAyarlar() {
+  return {
     staleDays: C.staleDays,
     newDays: C.newDays,
     hoverColor: document.getElementById("s-hover")?.value || "#eef2ff",
@@ -3584,8 +3610,38 @@ async function syncAyarlar() {
     colsJson: JSON.stringify(S.cols.map(c=>({id:c.id,vis:c.vis,w:c.w}))),
     colOrderJson: JSON.stringify(S.colOrder),
   };
+}
+async function syncAyarlar() {
+  const ayarlar = toplaAyarlar();
   await apiWrite("saveAyar", {ayarlar});
 }
+function apiBeacon(action, data={}) {
+  // fetch yerine sendBeacon: sayfa kapanırken/yenilenirken bile tarayıcı isteği göndermeyi garanti eder.
+  // Debounce'lı kayıtlar (kolon sırası, konum vb.) süresi dolmadan sayfa kapanırsa veri kaybolmasın diye.
+  try {
+    const payload = JSON.stringify({action, ...data});
+    navigator.sendBeacon(API, new Blob([payload], {type: "text/plain"}));
+  } catch(e) {}
+}
+window.addEventListener("beforeunload", () => {
+  try {
+    if (_colPrefsSyncT) { clearTimeout(_colPrefsSyncT); apiBeacon("saveAyar", {ayarlar: toplaAyarlar()}); }
+  } catch(e) {}
+  try {
+    Object.keys(_urunEtSyncT).forEach(kod => {
+      clearTimeout(_urunEtSyncT[kod]);
+      apiBeacon("urunEtGuncelleTek", {kod, etiketler: S.urunEt[kod]||[]});
+    });
+  } catch(e) {}
+  try {
+    Object.keys(_konumSyncT).forEach(key => {
+      clearTimeout(_konumSyncT[key]);
+      const [grupId, stokKodu] = key.split("|");
+      const n = S.numuneler.find(x=>x.grupId===grupId && String(x.stokKodu)===String(stokKodu));
+      if (n) apiBeacon("numuneGuncelleTek", {grupId, stokKodu, konum: n.konum});
+    });
+  } catch(e) {}
+});
 
 // ── LOAD: Sheets'ten yükle ──
 async function loadFromSheets() {
@@ -4408,6 +4464,8 @@ loadFromSheets().then(ok=>{
     rndSidebar();
     applyF(true);
     updBadge();
+    const saat = new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
+    showSyncStatus(`✅ Veriler güncel — ${saat} itibarıyla senkronize edildi`, "ok");
   }
 });
 
@@ -4428,6 +4486,6 @@ function closeMobSidebar() {
 // Filtre uygulandığında mobilden sidebar'ı kapat
 const _origApplyF = typeof applyF === "function" ? applyF : null;
 
-</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(254, 243, 199); color: rgb(180, 83, 9); opacity: 0;">⚠️ Bağlantı hatası — yerel veri kullanılıyor</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(240, 249, 255); color: rgb(2, 132, 199); opacity: 1;">💾 Marka rengi kaydediliyor...</div>
+</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(254, 243, 199); color: rgb(180, 83, 9); opacity: 1;">⚠️ Bağlantı hatası — yerel veri kullanılıyor</div>
 
 </body></html>
