@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_36.html -->
+<!-- saved from url=(0064)file:///C:/Users/furka/Downloads/Stok_Yonetim_Sistemi_v2_38.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -307,7 +307,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     </div>
   </div>
   <button class="tab-btn" onclick="ST(&#39;ayarlar&#39;)" id="tab-ayarlar">⚙️ Ayarlar</button>
-  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 02.07.2026 (2g)</div>
+  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 02.07.2026 (3g)</div>
 </div>
 
 <div class="search-bar" id="sbwrap" style="display: flex;">
@@ -326,6 +326,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div class="pill p-tot">Toplam <strong id="s-tot">1.007</strong></div>
     <div class="pill p-neg">Negatif <strong id="s-neg">16</strong></div>
     <div class="pill p-new">Yeni <strong id="s-new">0</strong></div>
+    <div class="pill p-new" id="p-yeniseramik" style="display:none;cursor:pointer;background:#ede9fe;color:#6d28d9" onclick="openYeniSeramikListesi()">🧱 Yeni Seramik <strong id="s-yeniseramik">0</strong></div>
   </div>
 </div>
 
@@ -900,6 +901,16 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <div class="mbtns">
           <button class="mbtn" onclick="$(&#39;nuov&#39;).classList.add(&#39;hide&#39;)">Kapat</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Yeni seramik ürünleri modalı -->
+    <div class="ov hide" id="ysov">
+      <div class="modal wide">
+        <h3>🧱 Yeni Seramik Ürünleri</h3>
+        <div class="msub">Son yüklemede eklenen ve ebadı tespit edilen seramik ürünleri. Numune eklemeyi unutma!</div>
+        <div id="ys-body" style="max-height:55vh;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r)"></div>
+        <div class="mbtns"><button class="mbtn" onclick="$(&#39;ysov&#39;).classList.add(&#39;hide&#39;)">Kapat</button></div>
       </div>
     </div>
 
@@ -1959,7 +1970,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <h2>🎨 Görünüm Ayarları</h2>
         <div class="setrow"><span class="setlbl">Üzerinde gezilen satır rengi</span><span class="setval"><input type="color" id="s-hover" value="#eef2ff" oninput="applyColors()"></span></div>
         <div class="setrow"><span class="setlbl">Aktif (seçili) satır rengi</span><span class="setval"><input type="color" id="s-active" value="#fffdf0" oninput="applyColors()"></span></div>
-        <div class="setrow"><span class="setlbl">Yeni ürün satır rengi</span><span class="setval"><input type="color" id="s-new" value="#fef9c3" oninput="applyColors()"></span></div>
+        <div class="setrow"><span class="setlbl">Yeni ürün satır rengi</span><span class="setval"><input type="color" id="clr-new-row" value="#fef9c3" oninput="applyColors()"></span></div>
         <div class="setrow"><span class="setlbl">Pasif ürün satır rengi</span><span class="setval"><input type="color" id="s-pasif" value="#f1f1f1" oninput="applyColors()"></span></div>
         <div class="setrow"><span class="setlbl">Stok tarihi — güncel rengi</span><span class="setval"><input type="color" id="s-ok" value="#16a34a" oninput="updBadge()"></span></div>
         <div class="setrow"><span class="setlbl">Stok tarihi — eski rengi</span><span class="setval"><input type="color" id="s-stale" value="#dc2626" oninput="updBadge()"></span></div>
@@ -2188,6 +2199,84 @@ function getBrand(k){
   const m=S.markalar.find(m=>m.k===p);
   return m?m.a:"—";
 }
+
+// ── SERAMİK YENİ ÜRÜN TESPİTİ ──
+// Bu marka kodlarına ait ürünlerde geçen ebat (ör. 60X120) yakalanırsa "yeni seramik" sayılır.
+const SERAMIK_MARKA_KODLARI = ["33","46","66","50","81"]; // Termal Seramik, Qua Seramik, Seramiksan, Etili, Rino
+
+// Üretim toleransı yüzünden birden fazla gerçek ölçünün tek "nominal" ebat altında
+// gruplanması (ör. 58x58 / 59,5x59,5 / 60,5x60,5 / 61x61 hepsi "60x60" sayılır).
+const EBAT_NOMINAL_VARYANT = {
+  "45X45":  ["42,5X42,5","45X45"],
+  "60X60":  ["58X58","59,5X59,5","60X60","60,5X60,5","61X61"],
+  "50X50":  ["50X50"],
+  "60X120": ["60X120"],
+  "30X60":  ["30X60"],
+  "30X75":  ["30X75"],
+  "30X90":  ["30X90"],
+  "20X90":  ["20X90"],
+  "20X120": ["20X120"],
+};
+const EBAT_VARYANT_TERS = {};
+Object.entries(EBAT_NOMINAL_VARYANT).forEach(([nominal, varyantlar]) => {
+  varyantlar.forEach(v => { EBAT_VARYANT_TERS[v] = nominal; });
+});
+
+function seramikMarkaMi(stokKodu){
+  const p = String(stokKodu).replace(/\D/g,"").substring(0,2);
+  return SERAMIK_MARKA_KODLARI.includes(p);
+}
+
+// Ürün adında geçen ebatı yakalar, biliniyorsa nominal karşılığına çevirir.
+// Örn: "QUA BIANCO RIVER 60,5X60,5 LAP." -> "60X60"
+function ebatTespitEt(stokAdi){
+  const ad = String(stokAdi||"").toUpperCase().replace(/\s+/g,"");
+  const m = ad.match(/(\d+(?:[.,]\d+)?)X(\d+(?:[.,]\d+)?)/);
+  if(!m) return null;
+  const bulunan = `${m[1]}X${m[2]}`;
+  return EBAT_VARYANT_TERS[bulunan] || bulunan;
+}
+
+function yeniSeramikUrunleriGetir(){
+  return S.stoklar.filter(r => isNew(r.STOK_KODU) && seramikMarkaMi(r.STOK_KODU) && ebatTespitEt(r.STOK_ADI));
+}
+
+function openYeniSeramikListesi(){
+  const ov=$("ysov"); if(!ov) return;
+  renderYeniSeramikListesi();
+  ov.classList.remove("hide");
+}
+
+function renderYeniSeramikListesi(){
+  const wrap=$("ys-body");
+  const urunler = yeniSeramikUrunleriGetir();
+  if (urunler.length===0){
+    wrap.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text3);font-size:12px">Şu an yeni seramik ürünü yok</div>`;
+    return;
+  }
+  wrap.innerHTML = urunler.map(r=>{
+    const marka = getBrand(r.STOK_KODU);
+    const ebat = ebatTespitEt(r.STOK_ADI);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border)">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px">${r.STOK_ADI}</div>
+        <div style="font-size:11px;color:var(--text3)">${r.STOK_KODU} · ${marka} · <span style="color:#7c3aed;font-weight:600">${ebat}</span></div>
+      </div>
+      <button onclick="closeYeniSeramikVeNumuneAc('${r.STOK_KODU}')"
+        style="padding:5px 10px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;white-space:nowrap">🪴 Numune Ekle</button>
+    </div>`;
+  }).join("");
+}
+
+function closeYeniSeramikVeNumuneAc(stokKodu){
+  $("ysov").classList.add("hide");
+  openNumuneUrunEkle();
+  const stok = S.stoklar.find(s=>String(s.STOK_KODU)===String(stokKodu));
+  if (stok){
+    $("nu-ara").value = stok.STOK_ADI;
+    nuAra();
+  }
+}
 function fmt(n){const v=parseFloat(n);return isNaN(v)?"—":v.toLocaleString("tr-TR",{minimumFractionDigits:0,maximumFractionDigits:2});}
 function isNew(k){return S.newItems[k]&&(Date.now()-S.newItems[k])<C.newDays*864e5;}
 function visCols(){return S.colOrder.map(id=>S.cols.find(c=>c.id===id)).filter(c=>c&&c.vis);}
@@ -2212,7 +2301,7 @@ function ST(t){
 function applyColors(){
   document.documentElement.style.setProperty("--hover-row",$("s-hover").value);
   document.documentElement.style.setProperty("--active-row",$("s-active").value);
-  document.documentElement.style.setProperty("--new-row",$("s-new").value||"#fef9c3");
+  document.documentElement.style.setProperty("--new-row",$("clr-new-row").value||"#fef9c3");
   document.documentElement.style.setProperty("--pasif-row",$("s-pasif")?.value||"#f1f1f1");
   clearTimeout(window._ayarTimer);
   window._ayarTimer=setTimeout(()=>syncAyarlar(),2000);
@@ -2473,6 +2562,12 @@ function updStats(){
   $("s-tot").textContent=r.length.toLocaleString("tr-TR");
   $("s-neg").textContent=r.filter(x=>parseFloat(x.SATILABILIR)<0).length.toLocaleString("tr-TR");
   $("s-new").textContent=r.filter(x=>isNew(x.STOK_KODU)).length.toLocaleString("tr-TR");
+  const yeniSeramik = yeniSeramikUrunleriGetir();
+  const pill = $("p-yeniseramik");
+  if (pill) {
+    $("s-yeniseramik").textContent = yeniSeramik.length.toLocaleString("tr-TR");
+    pill.style.display = yeniSeramik.length > 0 ? "inline-flex" : "none";
+  }
 }
 function clrF(t){
   if(t==="m"){S.aktM=[];document.querySelectorAll("#mlist input").forEach(c=>c.checked=false);}
@@ -3434,7 +3529,7 @@ async function syncAyarlar() {
     newDays: C.newDays,
     hoverColor: document.getElementById("s-hover")?.value || "#eef2ff",
     activeColor: document.getElementById("s-active")?.value || "#fffdf0",
-    newColor: document.getElementById("s-new")?.value || "#fef9c3",
+    newColor: document.getElementById("clr-new-row")?.value || "#fef9c3",
     pasifColor: document.getElementById("s-pasif")?.value || "#f1f1f1",
     okColor: document.getElementById("s-ok")?.value || "#16a34a",
     staleColor: document.getElementById("s-stale")?.value || "#dc2626",
@@ -3561,7 +3656,7 @@ function uygulaSheetsVerisi(data) {
     if (a.newDays)   { C.newDays   = +a.newDays;   const el=$("s-newdays");   if(el) el.value=a.newDays; }
     if (a.hoverColor)  { document.documentElement.style.setProperty("--hover-row", a.hoverColor); const el=$("s-hover"); if(el) el.value=a.hoverColor; }
     if (a.activeColor) { document.documentElement.style.setProperty("--active-row",a.activeColor); const el=$("s-active"); if(el) el.value=a.activeColor; }
-    if (a.newColor)    { document.documentElement.style.setProperty("--new-row",   a.newColor);    const el=$("s-new"); if(el) el.value=a.newColor; }
+    if (a.newColor)    { document.documentElement.style.setProperty("--new-row",   a.newColor);    const el=$("clr-new-row"); if(el) el.value=a.newColor; }
     if (a.pasifColor)  { document.documentElement.style.setProperty("--pasif-row", a.pasifColor); const el=$("s-pasif"); if(el) el.value=a.pasifColor; }
     if (a.themeBlue)   { setTC("--blue",   a.themeBlue);   const el=$("t-blue"); if(el) el.value=a.themeBlue; }
     if (a.themeBg)     { setTC("--bg",     a.themeBg);     const el=$("t-bg");   if(el) el.value=a.themeBg; }
@@ -4050,14 +4145,18 @@ function numuneEkle(stokKodu) {
   $("nu-ara").focus();
 }
 
+let _numuneSyncT=null;
 async function syncNumuneler() {
   try { localStorage.setItem("stok_numuneler", JSON.stringify(S.numuneler)); } catch(e) {}
-  await apiWrite("saveNumuneler", { numuneler: S.numuneler });
+  clearTimeout(_numuneSyncT);
+  _numuneSyncT = setTimeout(() => { apiWrite("saveNumuneler", { numuneler: S.numuneler }); }, 600);
 }
 
+let _numuneGrupSyncT=null;
 async function syncNumuneGruplari() {
   try { localStorage.setItem("stok_numune_gruplari", JSON.stringify(S.numuneGruplari)); } catch(e) {}
-  await apiWrite("saveNumuneGruplari", { gruplar: S.numuneGruplari });
+  clearTimeout(_numuneGrupSyncT);
+  _numuneGrupSyncT = setTimeout(() => { apiWrite("saveNumuneGruplari", { gruplar: S.numuneGruplari }); }, 600);
 }
 
 // ── SAĞ ÜST UYARI IKONU ──
@@ -4274,6 +4373,6 @@ function closeMobSidebar() {
 // Filtre uygulandığında mobilden sidebar'ı kapat
 const _origApplyF = typeof applyF === "function" ? applyF : null;
 
-</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(240, 249, 255); color: rgb(2, 132, 199); opacity: 1;">💾 Marka rengi kaydediliyor...</div>
+</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(254, 243, 199); color: rgb(180, 83, 9); opacity: 0;">⚠️ Bağlantı hatası — yerel veri kullanılıyor</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(240, 249, 255); color: rgb(2, 132, 199); opacity: 1;">💾 Marka rengi kaydediliyor...</div>
 
 </body></html>
