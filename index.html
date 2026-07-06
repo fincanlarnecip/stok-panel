@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_10.html -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_11.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -313,7 +313,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     </div>
   </div>
   <button class="tab-btn" onclick="ST(&#39;ayarlar&#39;)" id="tab-ayarlar">⚙️ Ayarlar</button>
-  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 02.07.2026 (3g)</div>
+  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 02.07.2026 (4g)</div>
 </div>
 
 <div class="search-bar" id="sbwrap" style="display: flex;">
@@ -4486,6 +4486,7 @@ function renderGecmis(kod) {
 ST("stok");
 
 // Sonra Sheets'ten güncel veri çek (arka planda), başarılıysa ekranı ve önbelleği tazele
+let _sonBilinenGuncelleme = null;
 loadFromSheets().then(ok=>{
   if(ok){
     rndSidebar();
@@ -4494,7 +4495,34 @@ loadFromSheets().then(ok=>{
     const saat = new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
     showSyncStatus(`✅ Veriler güncel — ${saat} itibarıyla senkronize edildi`, "ok");
   }
+  // Sayfa ilk açıldığındaki "son güncelleme" zamanını referans olarak kaydet.
+  apiCall("sonGuncelleme", {}).then(r => {
+    if (r && r.sonGuncelleme) _sonBilinenGuncelleme = r.sonGuncelleme;
+  });
 });
+
+// ── ARKA PLANDA YENİ STOK KONTROLÜ ──
+// Her 2 dakikada bir, TÜM veriyi değil sadece hafif bir zaman damgasını sorgular.
+// Yeni bir stok yüklemesi tespit edilirse veriyi sessizce tazeler ve küçük bir bildirim gösterir.
+setInterval(async () => {
+  try {
+    const r = await apiCall("sonGuncelleme", {});
+    if (!r || !r.sonGuncelleme) return;
+    if (_sonBilinenGuncelleme && r.sonGuncelleme === _sonBilinenGuncelleme) return; // değişiklik yok
+
+    const ilkKontrolMuydu = _sonBilinenGuncelleme === null;
+    _sonBilinenGuncelleme = r.sonGuncelleme;
+    if (ilkKontrolMuydu) return; // sayfa yeni açıldı, henüz kıyaslayacak bir şey yok
+
+    const ok = await loadFromSheets();
+    if (ok) {
+      rndSidebar();
+      applyF(true);
+      updBadge();
+      showSyncStatus("🆕 Yeni stok verisi geldi — otomatik güncellendi", "ok");
+    }
+  } catch(e) { /* sessizce yut, bir sonraki kontrolde tekrar denenecek */ }
+}, 2*60*1000);
 
 // ── MOBİL SİDEBAR ──
 function toggleMobSidebar() {
