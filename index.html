@@ -3820,7 +3820,7 @@ function showSyncStatus(msg, type) {
   else bar.style.opacity = "1";
 }
 
-// Sağ altta hep görünen kalıcı "sistem aktif / bağlantı sorunu" göstergesi.
+// Sağ altta hep görünen kalıcı "sistem aktif / güncel veri bekleniyor" göstergesi.
 // showSyncStatus'un aksine bu 3 saniyede kaybolmaz, son senkronizasyon durumunu sürekli gösterir.
 function sistemDurumGuncelle(basarili, saat) {
   const nokta = $("sistem-durum-nokta"), metin = $("sistem-durum-metin"), kutu = $("sistem-durum");
