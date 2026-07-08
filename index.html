@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_13.html -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_14.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1749,6 +1749,14 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         </div>
         <input type="file" id="fi" accept=".csv,.xlsx,.xls" style="display:none" onchange="hFile(event)">
         <div id="umsg" style="font-size:12px;color:var(--text2);margin-top:4px"></div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <h2>📧 Mail Üzerinden Otomatik Gelen Stok</h2>
+        <p style="font-size:11px;color:var(--text2)">Sistem gelen stok maillerini arka planda düzenli olarak kontrol eder. Acil bir durumda beklemeden hemen kontrol ettirmek için:</p>
+        <button id="btn-mail-kontrol" onclick="mailimdiKontrolEt()" style="padding:9px 18px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);cursor:pointer;font-size:13px;font-weight:500">
+          📬 Maili Şimdi Kontrol Et
+        </button>
+        <div id="mail-kontrol-sonuc" style="font-size:12px;color:var(--text2);margin-top:8px"></div>
       </div>
     </div>
 
@@ -3574,6 +3582,34 @@ function logoSil() {
   syncAyarlar();
 }
 
+async function mailimdiKontrolEt() {
+  const btn = $("btn-mail-kontrol"), sonuc = $("mail-kontrol-sonuc");
+  btn.disabled = true;
+  btn.textContent = "⏳ Kontrol ediliyor...";
+  sonuc.textContent = "";
+  try {
+    const r = await apiCall("checkMailNow", {});
+    if (r && r.error) {
+      sonuc.textContent = "⚠️ Hata: " + r.error;
+      sonuc.style.color = "#dc2626";
+    } else if (r && r.islenen > 0) {
+      sonuc.textContent = `✅ ${r.islenen} yeni mail işlendi, ${r.urunSayisi || 0} ürün güncellendi.`;
+      sonuc.style.color = "#15803d";
+      const ok = await loadFromSheets();
+      if (ok) { rndSidebar(); applyF(true); updBadge(); }
+    } else {
+      sonuc.textContent = "ℹ️ Yeni/işlenmemiş mail bulunamadı.";
+      sonuc.style.color = "var(--text2)";
+    }
+  } catch(e) {
+    sonuc.textContent = "⚠️ Bağlantı hatası, tekrar deneyin.";
+    sonuc.style.color = "#dc2626";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "📬 Maili Şimdi Kontrol Et";
+  }
+}
+
 function toplaAyarlar() {
   return {
     staleDays: C.staleDays,
@@ -4498,7 +4534,7 @@ loadFromSheets().then(ok=>{
 });
 
 // ── ARKA PLANDA YENİ STOK KONTROLÜ ──
-// Her 2 dakikada bir, TÜM veriyi değil sadece hafif bir zaman damgasını sorgular.
+// Her 5 dakikada bir, TÜM veriyi değil sadece hafif bir zaman damgasını sorgular.
 // Yeni bir stok yüklemesi tespit edilirse veriyi sessizce tazeler ve küçük bir bildirim gösterir.
 setInterval(async () => {
   try {
@@ -4518,7 +4554,7 @@ setInterval(async () => {
       showSyncStatus("🆕 Yeni stok verisi geldi — otomatik güncellendi", "ok");
     }
   } catch(e) { /* sessizce yut, bir sonraki kontrolde tekrar denenecek */ }
-}, 2*60*1000);
+}, 5*60*1000);
 
 // ── MOBİL SİDEBAR ──
 function toggleMobSidebar() {
