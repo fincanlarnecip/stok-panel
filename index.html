@@ -3483,6 +3483,7 @@ document.addEventListener("keydown",e=>{
 
 // ── API ──
 const API = "https://script.google.com/macros/s/AKfycbxHEjTuSVDVCL1EcoaPWdxHGxjPTOfUrf0mrIRZfjkoiMl7VC-Bcr6gIMqbTzH0vmr4Yw/exec";
+  let _loadRequestId = 0;
 
 async function apiCall(action, data={}) {
   try {
@@ -3671,8 +3672,12 @@ window.addEventListener("beforeunload", () => {
 // ── LOAD: Sheets'ten yükle ──
 let _yenidenDenemeSayaci = 0;
 async function loadFromSheets() {
+  const myRequestId = ++_loadRequestId;
   showSyncStatus("⏳ Veriler yükleniyor...", "loading");
   const data = await apiCall("getAll", {});
+
+  if (myRequestId !== _loadRequestId) return false;
+
   if (data.error) {
     showSyncStatus("⚠️ Bağlantı hatası — yerel veri kullanılıyor", "warn");
     sistemDurumGuncelle(false);
@@ -3687,6 +3692,9 @@ async function loadFromSheets() {
   }
   _yenidenDenemeSayaci = 0;
   const ok = uygulaSheetsVerisi(data);
+
+  if (myRequestId !== _loadRequestId) return ok;
+
   if (ok) {
     try { localStorage.setItem("stok_full_cache", JSON.stringify(data)); } catch(e) {}
     sistemDurumGuncelle(true, new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}));
