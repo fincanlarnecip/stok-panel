@@ -3674,8 +3674,10 @@ let _yenidenDenemeSayaci = 0;
 async function loadFromSheets() {
   const myRequestId = ++_loadRequestId;
   showSyncStatus("⏳ Veriler yükleniyor...", "loading");
-  const data = await apiCall("getAll", {});
+const data = await apiCall("getAll", {});
+console.log("TEST: data.error =", data.error, "| tam veri:", data);
 
+if (myRequestId !== _loadRequestId) return false;
   if (myRequestId !== _loadRequestId) return false;
 
   if (data.error) {
