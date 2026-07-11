@@ -3853,6 +3853,9 @@ function uygulaSheetsVerisi(data) {
 
 // ── SYNC STATUS BAR ──
 function showSyncStatus(msg, type) {
+  console.log("SYNC ÇAĞRILDI:", type, "-", msg);
+  let bar = $("sync-bar");
+  ...
   let bar = $("sync-bar");
   if (!bar) {
     bar = document.createElement("div");
