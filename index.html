@@ -3483,7 +3483,6 @@ document.addEventListener("keydown",e=>{
 
 // ── API ──
 const API = "https://script.google.com/macros/s/AKfycbxHEjTuSVDVCL1EcoaPWdxHGxjPTOfUrf0mrIRZfjkoiMl7VC-Bcr6gIMqbTzH0vmr4Yw/exec";
-  let _loadRequestId = 0;
 
 async function apiCall(action, data={}) {
   try {
@@ -3672,14 +3671,8 @@ window.addEventListener("beforeunload", () => {
 // ── LOAD: Sheets'ten yükle ──
 let _yenidenDenemeSayaci = 0;
 async function loadFromSheets() {
-  const myRequestId = ++_loadRequestId;
   showSyncStatus("⏳ Veriler yükleniyor...", "loading");
-const data = await apiCall("getAll", {});
-console.log("TEST: data.error =", data.error, "| tam veri:", data);
-
-if (myRequestId !== _loadRequestId) return false;
-  if (myRequestId !== _loadRequestId) return false;
-
+  const data = await apiCall("getAll", {});
   if (data.error) {
     showSyncStatus("⚠️ Bağlantı hatası — yerel veri kullanılıyor", "warn");
     sistemDurumGuncelle(false);
@@ -3694,9 +3687,6 @@ if (myRequestId !== _loadRequestId) return false;
   }
   _yenidenDenemeSayaci = 0;
   const ok = uygulaSheetsVerisi(data);
-
-  if (myRequestId !== _loadRequestId) return ok;
-
   if (ok) {
     try { localStorage.setItem("stok_full_cache", JSON.stringify(data)); } catch(e) {}
     sistemDurumGuncelle(true, new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}));
@@ -3853,9 +3843,6 @@ function uygulaSheetsVerisi(data) {
 
 // ── SYNC STATUS BAR ──
 function showSyncStatus(msg, type) {
-  console.log("SYNC ÇAĞRILDI:", type, "-", msg);
-  let bar = $("sync-bar");
-  ...
   let bar = $("sync-bar");
   if (!bar) {
     bar = document.createElement("div");
