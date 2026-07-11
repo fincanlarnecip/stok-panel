@@ -3669,14 +3669,23 @@ window.addEventListener("beforeunload", () => {
 });
 
 // ── LOAD: Sheets'ten yükle ──
+let _yenidenDenemeSayaci = 0;
 async function loadFromSheets() {
   showSyncStatus("⏳ Veriler yükleniyor...", "loading");
   const data = await apiCall("getAll", {});
   if (data.error) {
     showSyncStatus("⚠️ Bağlantı hatası — yerel veri kullanılıyor", "warn");
     sistemDurumGuncelle(false);
+    if (_yenidenDenemeSayaci < 5) {
+      _yenidenDenemeSayaci++;
+      setTimeout(async () => {
+        const tekrarOk = await loadFromSheets();
+        if (tekrarOk) { rndSidebar(); applyF(true); updBadge(); }
+      }, 45*1000);
+    }
     return false;
   }
+  _yenidenDenemeSayaci = 0;
   const ok = uygulaSheetsVerisi(data);
   if (ok) {
     try { localStorage.setItem("stok_full_cache", JSON.stringify(data)); } catch(e) {}
