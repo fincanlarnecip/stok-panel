@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_20.html -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_21.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -289,7 +289,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
 <div id="sistem-durum" title="Son senkronizasyon durumu" style="position: fixed; bottom: 34px; right: 12px; z-index: 1000; font-size: 11px; padding: 4px 10px; border-radius: 12px; background: rgb(220, 252, 231); color: rgb(21, 128, 61); display: flex; align-items: center; gap: 5px; box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 4px; transition: 0.3s;">
   <span id="sistem-durum-nokta" style="width: 7px; height: 7px; border-radius: 50%; background: rgb(22, 163, 74); display: inline-block;"></span>
-  <span id="sistem-durum-metin">Sistem aktif — 20:46</span>
+  <span id="sistem-durum-metin">Sistem aktif — 02:54</span>
 </div>
 
 <div class="topbar">
@@ -1990,17 +1990,17 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
 
 
-    <div id="page-hesaplama" style="display: none;" class="pb">
+    <div id="page-hesaplama" style="display:none" class="pb">
       <div class="panel" style="max-width:980px">
         <h2 style="margin-bottom:10px">🧮 Hesaplama</h2>
         <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:10px">
-          <button class="tab-btn hesap-subtab active" id="hesap-tab-seramik" onclick="hesapSubTab(&#39;seramik&#39;)">🧱 Seramik Hesaplama</button>
+          <button class="tab-btn hesap-subtab" id="hesap-tab-seramik" onclick="hesapSubTab(&#39;seramik&#39;)">🧱 Seramik Hesaplama</button>
           <button class="tab-btn hesap-subtab" id="hesap-tab-parke" onclick="hesapSubTab(&#39;parke&#39;)">🪵 Parke Hesaplama</button>
         </div>
 
         <!-- SERAMİK HESAPLAMA -->
-        <div id="hesap-seramik-body" style="display: block;">
-          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+        <div id="hesap-seramik-body">
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
             <div style="flex:1;min-width:220px">
               <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">MÜŞTERİ ADI</label>
               <input id="hs-musteri" placeholder="Müşteri ismi" onchange="hesapSave()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
@@ -2012,108 +2012,52 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
             <button class="mbtn pri" onclick="hesapMekanEkle()">+ Mekan Ekle</button>
           </div>
 
-          <div id="hs-mekanlar">
-    <div class="step" style="margin-bottom:12px">
-      <div class="step-hd" style="display:flex;align-items:center;gap:8px">
-        <input value="Mekan 1" onchange="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;ad&#39;,this.value)" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:13px;font-weight:600">
-        <button onclick="hesapMekanSil(&#39;m178387840571093&#39;)" title="Mekanı sil" style="background:none;border:none;color:var(--red,#dc2626);cursor:pointer;font-size:16px;padding:2px 6px">✕</button>
-      </div>
-      <div class="step-bd">
-        <div style="display:flex;gap:6px;margin-bottom:10px">
-          <button class="mbtn pri" onclick="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;tip&#39;,&#39;dikdortgen&#39;)" style="font-size:11px;padding:5px 10px">Dikdörtgen (En×Boy)</button>
-          <button class="mbtn " onclick="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;tip&#39;,&#39;duzensiz&#39;)" style="font-size:11px;padding:5px 10px">Düzensiz (Duvar duvar)</button>
-        </div>
+          <!-- Mekanlar: sağa doğru sütun sütun eklenir -->
+          <div id="hs-mekanlar" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px"></div>
 
-        
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
-          <div><label style="font-size:10px;color:var(--text3)">EN (m)</label>
-            <input type="number" step="0.01" value="" onchange="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;en&#39;,this.value)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-          <div><label style="font-size:10px;color:var(--text3)">BOY (m)</label>
-            <input type="number" step="0.01" value="" onchange="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;boy&#39;,this.value)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-          <div><label style="font-size:10px;color:var(--text3)">YÜKSEKLİK (m, duvar için)</label>
-            <input type="number" step="0.01" value="" onchange="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;yukseklik&#39;,this.value)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-        </div>
-
-        <div style="margin-bottom:10px">
-          <label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">DÜŞÜLECEK BOŞLUKLAR (kapı/pencere — duvar alanından düşülür)</label>
-          <div id="hs-bosluk-m178387840571093">
-            
-          </div>
-          <button class="mbtn" onclick="hesapBosluk_Ekle(&#39;m178387840571093&#39;)" style="font-size:11px;padding:5px 10px">+ Boşluk Ekle</button>
-        </div>
-
-        <div style="display:flex;gap:16px;margin-bottom:10px;font-size:12px">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
-            <input type="checkbox" checked="" onchange="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;tabanDahil&#39;,this.checked)"> Taban m²'sini hesaba kat
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
-            <input type="checkbox" onchange="hesapMekanAlanGuncelle(&#39;m178387840571093&#39;,&#39;duvarDahil&#39;,this.checked)"> Duvar m²'sini hesaba kat
-          </label>
-        </div>
-
-        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;background:var(--bg3);padding:8px 10px;border-radius:6px">
-          Taban: <strong>0 m²</strong>
-          &nbsp;·&nbsp; Duvar: <strong>0 m²</strong>
-        </div>
-
-        <label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">BU MEKAN İÇİN ÜRÜN SEÇ (kutu hesabı için)</label>
-        <div style="position:relative">
-    <input type="text" id="hs-urun-m178387840571093-inp" value="" placeholder="Ürün ara (isim veya kod)…" oninput="hesapUrunAra(&#39;hs-urun-m178387840571093&#39;)" onfocus="hesapUrunAra(&#39;hs-urun-m178387840571093&#39;)" autocomplete="off" style="width:100%;max-width:420px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box">
-    <input type="hidden" id="hs-urun-m178387840571093-kod" value="">
-    <div id="hs-urun-m178387840571093-dd" style="display:none;position:absolute;z-index:30;top:100%;left:0;right:0;max-width:420px;background:var(--bg1);border:1px solid var(--border);border-radius:6px;max-height:220px;overflow-y:auto;box-shadow:0 4px 14px rgba(0,0,0,.18)"></div>
-    <div style="font-size:10px;color:var(--text3);margin-top:4px">Ürün seçilince kutu m² otomatik okunur (adında (x,xx m²-y,y m²) varsa)</div>
-  </div>
-      </div>
-    </div></div>
-
-          <div class="step" style="margin-top:18px">
-            <div class="step-hd">🧴 Yapıştırıcı &amp; Derz Dolgu Varsayımları <span style="font-weight:400;color:var(--text3);font-size:11px">(gerekirse değiştirin)</span></div>
-            <div class="step-bd" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-              <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Yapıştırıcı (kg/m²)</label>
-                <input id="hs-yapkg" type="number" step="0.1" value="5" onchange="hesapSave();hesapSonuclarRender()" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-              <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Yapıştırıcı Torba (kg)</label>
-                <input id="hs-yaptorba" type="number" value="25" onchange="hesapSave();hesapSonuclarRender()" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-              <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Derz Dolgu (kg/m²)</label>
-                <input id="hs-derzkg" type="number" step="0.05" value="0.4" onchange="hesapSave();hesapSonuclarRender()" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-              <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Derz Paketi (kg)</label>
-                <input id="hs-derzpaket" type="number" value="5" onchange="hesapSave();hesapSonuclarRender()" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-            </div>
-            <div style="font-size:10px;color:var(--text3);margin-top:6px">
-              Not: Bu değerler standart varsayımlardır (ör. 5kg/m² yapıştırıcı, 0,4kg/m² derz) — ürüne/duvar-zemin durumuna göre değişebilir, kendi tecrübenize göre ayarlayabilirsiniz.
+          <!-- Yan malzemeler yöneticisi -->
+          <div class="step" style="margin-bottom:16px">
+            <div class="step-hd">🧴 Yan Malzemeler <span style="font-weight:400;color:var(--text3);font-size:11px">(yapıştırıcı, derz dolgu, silikon vb. — her birine sarfiyat tanımlayın)</span></div>
+            <div class="step-bd">
+              <div id="hs-yanlist" style="margin-bottom:10px"></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">
+                <div style="flex:1;min-width:180px">
+                  <label style="font-size:10px;color:var(--text3)">MALZEME ADI</label>
+                  <input id="hs-yan-yeni-ad" placeholder="Ör. Seramik Yapıştırıcısı" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box">
+                </div>
+                <div>
+                  <label style="font-size:10px;color:var(--text3)">SARFİYAT (m² başına)</label>
+                  <input id="hs-yan-yeni-sarfiyat" type="number" step="0.01" placeholder="Ör. 5" style="width:90px;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box">
+                </div>
+                <div>
+                  <label style="font-size:10px;color:var(--text3)">BİRİM</label>
+                  <select id="hs-yan-yeni-birim" style="padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
+                    <option value="kg">kg</option>
+                    <option value="adet">adet</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:10px;color:var(--text3)">PAKET MİKTARI</label>
+                  <input id="hs-yan-yeni-paket" type="number" step="0.01" placeholder="Ör. 25" style="width:90px;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box">
+                </div>
+                <button class="mbtn" onclick="hesapYanEkle()">+ Ekle</button>
+              </div>
             </div>
           </div>
 
-          <div id="hs-sonuc" style="margin-top:18px">
-    <div class="step">
-      <div class="step-hd">📐 Toplam Alan</div>
-      <div class="step-bd" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
-        <div><div style="font-size:11px;color:var(--text3)">Taban</div><div style="font-size:18px;font-weight:700">0 m²</div></div>
-        <div><div style="font-size:11px;color:var(--text3)">Duvar</div><div style="font-size:18px;font-weight:700">0 m²</div></div>
-        <div><div style="font-size:11px;color:var(--text3)">Toplam (fire ile)</div><div style="font-size:18px;font-weight:700;color:var(--blue)">0 m²</div></div>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-hd">🧱 Malzeme Listesi </div>
-      <div class="step-bd">
-        <div style="color:var(--text3);font-size:12px">Mekanlara ürün seçilince kutu hesabı burada görünecek.</div>
-        <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:12px">
-          <div style="background:var(--bg3);padding:8px 10px;border-radius:6px">🧴 Yapıştırıcı: <strong>0 kg</strong> → <strong>0 torba</strong> (25kg'lık)</div>
-          <div style="background:var(--bg3);padding:8px 10px;border-radius:6px">🧵 Derz Dolgu: <strong>0 kg</strong> → <strong>0 paket</strong> (5kg'lık)</div>
-        </div>
-        
-      </div>
-    </div></div>
+          <div id="hs-sonuc"></div>
 
           <div class="mbtns" style="margin-top:16px">
             <button class="mbtn" onclick="if(confirm(&#39;Tüm seramik hesaplamasını sıfırlamak istediğinize emin misiniz?&#39;))hesapSeramikSifirla()">🗑️ Sıfırla</button>
-            <button class="mbtn pri" onclick="window.print()">🖨️ Yazdır</button>
+            <button class="mbtn" onclick="window.print()">🖨️ Yazdır</button>
+            <button class="mbtn pri" onclick="hesapTeklifeAktar(&#39;seramik&#39;)">📋 Teklife Aktar</button>
           </div>
         </div>
 
         <!-- PARKE HESAPLAMA -->
         <div id="hesap-parke-body" style="display:none">
           <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+
             <div style="flex:1;min-width:220px">
               <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">MÜŞTERİ ADI</label>
               <input id="hp-musteri" placeholder="Müşteri ismi" onchange="hesapSave()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
@@ -2146,7 +2090,8 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
           <div class="mbtns" style="margin-top:16px">
             <button class="mbtn" onclick="if(confirm(&#39;Tüm parke hesaplamasını sıfırlamak istediğinize emin misiniz?&#39;))hesapParkeSifirla()">🗑️ Sıfırla</button>
-            <button class="mbtn pri" onclick="window.print()">🖨️ Yazdır</button>
+            <button class="mbtn" onclick="window.print()">🖨️ Yazdır</button>
+            <button class="mbtn pri" onclick="hesapTeklifeAktar(&#39;parke&#39;)">📋 Teklife Aktar</button>
           </div>
         </div>
       </div>
@@ -2350,7 +2295,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
       <button onclick="gorselBuyukAdim(-1)" title="Önceki" style="position:absolute;left:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">‹</button>
-      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_20.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
+      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_21.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
       <button onclick="gorselBuyukAdim(1)" title="Sonraki" style="position:absolute;right:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">›</button>
     </div>
@@ -5013,11 +4958,11 @@ document.addEventListener("keydown", e => {
 // HESAPLAMA MODÜLÜ (Seramik + Parke)
 // Veriler bu cihazda (localStorage) saklanır — henüz sunucuya senkronize edilmiyor.
 // ════════════════════════════════════════════════
-const HESAP_LS_KEY = "fincanlar_hesap_v1";
+const HESAP_LS_KEY = "fincanlar_hesap_v2";
 
 function hesapVarsayilan(){
   return {
-    seramik: { musteri:"", fire:10, yapKg:5, yapTorba:25, derzKg:0.4, derzPaket:5, mekanlar:[] },
+    seramik: { musteri:"", fire:10, yanMalzemeler:[], mekanlar:[] },
     parke:   { musteri:"", fire:5, mod:"oda", odalar:[], topluM2:"", urunKodu:null },
   };
 }
@@ -5029,19 +4974,15 @@ function hesapInit(){
       S.hesap = raw ? Object.assign(hesapVarsayilan(), JSON.parse(raw)) : hesapVarsayilan();
     }catch(e){ S.hesap = hesapVarsayilan(); }
   }
+  if(!S.hesap.seramik.yanMalzemeler) S.hesap.seramik.yanMalzemeler = [];
   if(!S._hesapSubTab) S._hesapSubTab = "seramik";
   hesapSubTab(S._hesapSubTab);
 }
 
 function hesapSave(){
-  // Formlardaki güncel değerleri S.hesap'a yaz, sonra localStorage'a kaydet.
   const sk = S.hesap.seramik, pk = S.hesap.parke;
   if($("hs-musteri")) sk.musteri = $("hs-musteri").value;
   if($("hs-fire")) sk.fire = parseFloat($("hs-fire").value) || 0;
-  if($("hs-yapkg")) sk.yapKg = parseFloat($("hs-yapkg").value) || 0;
-  if($("hs-yaptorba")) sk.yapTorba = parseFloat($("hs-yaptorba").value) || 1;
-  if($("hs-derzkg")) sk.derzKg = parseFloat($("hs-derzkg").value) || 0;
-  if($("hs-derzpaket")) sk.derzPaket = parseFloat($("hs-derzpaket").value) || 1;
   if($("hp-musteri")) pk.musteri = $("hp-musteri").value;
   if($("hp-fire")) pk.fire = parseFloat($("hp-fire").value) || 0;
   if($("hp-toplum2")) pk.topluM2 = $("hp-toplum2").value;
@@ -5057,10 +4998,7 @@ function hesapSubTab(which){
   if(which==="seramik"){
     $("hs-musteri").value = S.hesap.seramik.musteri||"";
     $("hs-fire").value = S.hesap.seramik.fire;
-    $("hs-yapkg").value = S.hesap.seramik.yapKg;
-    $("hs-yaptorba").value = S.hesap.seramik.yapTorba;
-    $("hs-derzkg").value = S.hesap.seramik.derzKg;
-    $("hs-derzpaket").value = S.hesap.seramik.derzPaket;
+    hesapYanRenderAll();
     hesapMekanRenderAll();
     hesapSonuclarRender();
   } else {
@@ -5078,8 +5016,6 @@ function hesapSeramikSifirla(){ S.hesap.seramik = hesapVarsayilan().seramik; hes
 function hesapParkeSifirla(){ S.hesap.parke = hesapVarsayilan().parke; hesapSave(); hesapSubTab("parke"); }
 
 // ── Ürün (kutu m²) yardımcıları ──
-// Stok adlarında sıkça geçen "(1,44m²-57,6m²)" gibi kalıptan İLK sayıyı (kutu m²) alır.
-// Tek sayı varsa (ör. parke ürünlerinde "2,223m²") onu kullanır.
 function hesapKutuM2Parse(stokAdi){
   if(!stokAdi) return null;
   let m = stokAdi.match(/\(?\s*([\d]+[.,][\d]+)\s*m²\s*[-–]\s*[\d]+[.,][\d]+\s*m²\s*\)?/i);
@@ -5089,16 +5025,16 @@ function hesapKutuM2Parse(stokAdi){
   return null;
 }
 
-function hesapProdSearchHTML(instId, currentKod){
+function hesapProdSearchHTML(instId, currentKod, placeholder){
   const urun = currentKod ? (S.stoklar||[]).find(s=>s.STOK_KODU===currentKod) : null;
   const kutuM2 = urun ? hesapKutuM2Parse(urun.STOK_ADI) : null;
   return `<div style="position:relative">
-    <input type="text" id="${instId}-inp" value="${urun?String(urun.STOK_ADI).replace(/"/g,"&quot;"):""}" placeholder="Ürün ara (isim veya kod)…"
+    <input type="text" id="${instId}-inp" value="${urun?String(urun.STOK_ADI).replace(/"/g,"&quot;"):""}" placeholder="${placeholder||"Ürün ara…"}"
       oninput="hesapUrunAra('${instId}')" onfocus="hesapUrunAra('${instId}')" autocomplete="off"
-      style="width:100%;max-width:420px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box">
+      style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
     <input type="hidden" id="${instId}-kod" value="${currentKod||""}">
-    <div id="${instId}-dd" style="display:none;position:absolute;z-index:30;top:100%;left:0;right:0;max-width:420px;background:var(--bg1);border:1px solid var(--border);border-radius:6px;max-height:220px;overflow-y:auto;box-shadow:0 4px 14px rgba(0,0,0,.18)"></div>
-    <div style="font-size:10px;color:var(--text3);margin-top:4px">${kutuM2 ? ("Kutu m²: <strong>"+kutuM2.toLocaleString("tr-TR")+"</strong> (üründeki ölçüden otomatik alındı)") : "Ürün seçilince kutu m² otomatik okunur (adında (x,xx m²-y,y m²) varsa)"}</div>
+    <div id="${instId}-dd" style="display:none;position:absolute;z-index:30;top:100%;left:0;right:0;min-width:220px;background:var(--bg1);border:1px solid var(--border);border-radius:6px;max-height:220px;overflow-y:auto;box-shadow:0 4px 14px rgba(0,0,0,.18)"></div>
+    ${kutuM2 ? `<div style="font-size:9px;color:var(--text3);margin-top:2px">Kutu m²: <strong>${kutuM2.toLocaleString("tr-TR")}</strong></div>` : ""}
   </div>`;
 }
 
@@ -5130,11 +5066,19 @@ function hesapUrunSec(instId, kod){
     const mid = instId.replace("hs-urun-","");
     const mk = S.hesap.seramik.mekanlar.find(m=>m.id===mid);
     if(mk) mk.urunKodu = kod;
+  } else if(instId.indexOf("hs-urunduvar-")===0){
+    const mid = instId.replace("hs-urunduvar-","");
+    const mk = S.hesap.seramik.mekanlar.find(m=>m.id===mid);
+    if(mk) mk.duvarUrunKodu = kod;
+  } else if(instId.indexOf("hs-yanurun-")===0){
+    const yid = instId.replace("hs-yanurun-","");
+    const y = S.hesap.seramik.yanMalzemeler.find(x=>x.id===yid);
+    if(y) y.urunKodu = kod;
   } else if(instId==="hp-urun"){
     S.hesap.parke.urunKodu = kod;
   }
   hesapSave();
-  hesapSubTab(S._hesapSubTab); // yeniden çiz (kutu m² notunu da güncellemek için)
+  hesapSubTab(S._hesapSubTab);
 }
 
 document.addEventListener("click", e=>{
@@ -5143,19 +5087,21 @@ document.addEventListener("click", e=>{
   });
 });
 
-// ── SERAMİK: MEKAN YÖNETİMİ ──
+// ── SERAMİK: MEKAN YÖNETİMİ (sütun sütun) ──
 function hesapMekanEkle(){
   hesapSave();
   S.hesap.seramik.mekanlar.push({
     id: "m"+Date.now()+Math.floor(Math.random()*1000),
     ad: "Mekan " + (S.hesap.seramik.mekanlar.length+1),
-    tip: "dikdortgen", // "dikdortgen" | "duzensiz"
+    tip: "dikdortgen", // "dikdortgen" | "duzensiz" | "zemin"
     en:"", boy:"", yukseklik:"",
-    duvarlar: [""], // düzensiz modda tekil duvar genişlikleri
-    bosluklar: [], // {g,h,adet} kapı/pencere gibi düşülecek alanlar
-    tabanDahil: true,
-    duvarDahil: false,
+    duvarlar: [""],
+    bosluklarAktif:false,
+    bosluklar: [],
+    duvarAyniUrun: true,
     urunKodu: null,
+    duvarUrunKodu: null,
+    yanSecili: [],
   });
   hesapSave();
   hesapMekanRenderAll();
@@ -5168,105 +5114,122 @@ function hesapMekanSil(id){
 }
 
 function hesapMekanAlan(mekan){
-  // Taban: sadece dikdörtgen modda en×boy ile hesaplanabilir.
-  const taban = (mekan.tip==="dikdortgen" && mekan.en && mekan.boy)
-    ? (parseFloat(mekan.en)||0) * (parseFloat(mekan.boy)||0) : 0;
-
-  // Duvar: dikdörtgen modda çevre×yükseklik; düzensiz modda tekil duvar genişlikleri toplamı×yükseklik.
-  let duvarCevre = 0;
-  if(mekan.tip==="dikdortgen"){
-    duvarCevre = 2 * ((parseFloat(mekan.en)||0) + (parseFloat(mekan.boy)||0));
-  } else {
-    duvarCevre = (mekan.duvarlar||[]).reduce((t,d)=>t+(parseFloat(d)||0), 0);
+  let taban=0, duvar=0, bosluk=0;
+  if(mekan.tip==="zemin"){
+    taban = (parseFloat(mekan.en)||0) * (parseFloat(mekan.boy)||0);
+  } else if(mekan.tip==="dikdortgen"){
+    taban = (parseFloat(mekan.en)||0) * (parseFloat(mekan.boy)||0);
+    const cevre = 2 * ((parseFloat(mekan.en)||0) + (parseFloat(mekan.boy)||0));
+    duvar = cevre * (parseFloat(mekan.yukseklik)||0);
+  } else if(mekan.tip==="duzensiz"){
+    const cevre = (mekan.duvarlar||[]).reduce((t,d)=>t+(parseFloat(d)||0), 0);
+    duvar = cevre * (parseFloat(mekan.yukseklik)||0);
   }
-  const yukseklik = parseFloat(mekan.yukseklik)||0;
-  let duvar = duvarCevre * yukseklik;
-
-  // Boşlukları (kapı/pencere) duvar alanından düş
-  const bosluk = (mekan.bosluklar||[]).reduce((t,b)=>
-    t + (parseFloat(b.g)||0) * (parseFloat(b.h)||0) * (parseInt(b.adet)||1), 0);
-  duvar = Math.max(0, duvar - bosluk);
-
-  return { taban, duvar, bosluk };
+  if(mekan.bosluklarAktif){
+    bosluk = (mekan.bosluklar||[]).reduce((t,b)=>
+      t + (parseFloat(b.g)||0) * (parseFloat(b.h)||0) * (parseInt(b.adet)||1), 0);
+    duvar = Math.max(0, duvar - bosluk);
+  }
+  return { taban, duvar, bosluk, toplam: taban+duvar };
 }
 
 function hesapMekanRenderAll(){
   const box = $("hs-mekanlar");
   const mekanlar = S.hesap.seramik.mekanlar;
   if(mekanlar.length===0){
-    box.innerHTML = `<div style="text-align:center;color:var(--text3);font-size:12px;padding:24px;border:1px dashed var(--border);border-radius:var(--r)">Henüz mekan eklenmedi. "+ Mekan Ekle" ile başlayın.</div>`;
+    box.innerHTML = `<div style="text-align:center;color:var(--text3);font-size:12px;padding:24px;border:1px dashed var(--border);border-radius:var(--r);width:100%">Henüz mekan eklenmedi. "+ Mekan Ekle" ile başlayın.</div>`;
     return;
   }
+  const yanMalzemeler = S.hesap.seramik.yanMalzemeler || [];
   box.innerHTML = mekanlar.map(m=>{
     const a = hesapMekanAlan(m);
+    const duvarVar = m.tip==="dikdortgen" || m.tip==="duzensiz";
     return `
-    <div class="step" style="margin-bottom:12px">
-      <div class="step-hd" style="display:flex;align-items:center;gap:8px">
+    <div style="flex:0 0 200px;width:200px;border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--bg1)">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
         <input value="${(m.ad||"").replace(/"/g,"&quot;")}" onchange="hesapMekanAlanGuncelle('${m.id}','ad',this.value)"
-          style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:13px;font-weight:600">
-        <button onclick="hesapMekanSil('${m.id}')" title="Mekanı sil" style="background:none;border:none;color:var(--red,#dc2626);cursor:pointer;font-size:16px;padding:2px 6px">✕</button>
+          style="flex:1;min-width:0;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;font-weight:600">
+        <button onclick="hesapMekanSil('${m.id}')" title="Mekanı sil" style="background:none;border:none;color:var(--red,#dc2626);cursor:pointer;font-size:14px;flex:none">✕</button>
       </div>
-      <div class="step-bd">
-        <div style="display:flex;gap:6px;margin-bottom:10px">
-          <button class="mbtn ${m.tip==="dikdortgen"?"pri":""}" onclick="hesapMekanAlanGuncelle('${m.id}','tip','dikdortgen')" style="font-size:11px;padding:5px 10px">Dikdörtgen (En×Boy)</button>
-          <button class="mbtn ${m.tip==="duzensiz"?"pri":""}" onclick="hesapMekanAlanGuncelle('${m.id}','tip','duzensiz')" style="font-size:11px;padding:5px 10px">Düzensiz (Duvar duvar)</button>
-        </div>
 
-        ${m.tip==="dikdortgen" ? `
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
-          <div><label style="font-size:10px;color:var(--text3)">EN (m)</label>
-            <input type="number" step="0.01" value="${m.en}" onchange="hesapMekanAlanGuncelle('${m.id}','en',this.value)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-          <div><label style="font-size:10px;color:var(--text3)">BOY (m)</label>
-            <input type="number" step="0.01" value="${m.boy}" onchange="hesapMekanAlanGuncelle('${m.id}','boy',this.value)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-          <div><label style="font-size:10px;color:var(--text3)">YÜKSEKLİK (m, duvar için)</label>
-            <input type="number" step="0.01" value="${m.yukseklik}" onchange="hesapMekanAlanGuncelle('${m.id}','yukseklik',this.value)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)"></div>
-        </div>` : `
-        <div style="margin-bottom:10px">
-          <label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">DUVAR GENİŞLİKLERİ (m) — düzensiz mekanlar için tek tek girin</label>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
-            ${(m.duvarlar||[]).map((d,i)=>`<input type="number" step="0.01" value="${d}" placeholder="Duvar ${i+1}"
-              onchange="hesapDuvarGuncelle('${m.id}',${i},this.value)" style="width:90px;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">`).join("")}
-            ${(m.duvarlar||[]).length<8 ? `<button class="mbtn" onclick="hesapDuvarEkle('${m.id}')" style="font-size:11px;padding:5px 10px">+ Duvar</button>` : ""}
-          </div>
-          <div style="margin-top:8px;max-width:160px">
-            <label style="font-size:10px;color:var(--text3)">YÜKSEKLİK (m)</label>
-            <input type="number" step="0.01" value="${m.yukseklik}" onchange="hesapMekanAlanGuncelle('${m.id}','yukseklik',this.value)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">
-          </div>
-        </div>`}
-
-        <div style="margin-bottom:10px">
-          <label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">DÜŞÜLECEK BOŞLUKLAR (kapı/pencere — duvar alanından düşülür)</label>
-          <div id="hs-bosluk-${m.id}">
-            ${(m.bosluklar||[]).map((b,i)=>`
-              <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
-                <input type="number" step="0.01" value="${b.g}" placeholder="Genişlik" onchange="hesapBosluk_Guncelle('${m.id}',${i},'g',this.value)" style="width:80px;padding:5px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">
-                <span style="color:var(--text3);font-size:11px">×</span>
-                <input type="number" step="0.01" value="${b.h}" placeholder="Yükseklik" onchange="hesapBosluk_Guncelle('${m.id}',${i},'h',this.value)" style="width:80px;padding:5px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">
-                <span style="color:var(--text3);font-size:11px">× adet</span>
-                <input type="number" value="${b.adet||1}" style="width:56px;padding:5px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)" onchange="hesapBosluk_Guncelle('${m.id}',${i},'adet',this.value)">
-                <button onclick="hesapBosluk_Sil('${m.id}',${i})" style="background:none;border:none;color:var(--red,#dc2626);cursor:pointer">✕</button>
-              </div>`).join("")}
-          </div>
-          <button class="mbtn" onclick="hesapBosluk_Ekle('${m.id}')" style="font-size:11px;padding:5px 10px">+ Boşluk Ekle</button>
-        </div>
-
-        <div style="display:flex;gap:16px;margin-bottom:10px;font-size:12px">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
-            <input type="checkbox" ${m.tabanDahil?"checked":""} onchange="hesapMekanAlanGuncelle('${m.id}','tabanDahil',this.checked)"> Taban m²'sini hesaba kat
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
-            <input type="checkbox" ${m.duvarDahil?"checked":""} onchange="hesapMekanAlanGuncelle('${m.id}','duvarDahil',this.checked)"> Duvar m²'sini hesaba kat
-          </label>
-        </div>
-
-        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;background:var(--bg3);padding:8px 10px;border-radius:6px">
-          Taban: <strong>${a.taban.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²</strong>
-          &nbsp;·&nbsp; Duvar: <strong>${a.duvar.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²</strong>${a.bosluk>0?` (boşluk düşüldü: ${a.bosluk.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²)`:""}
-        </div>
-
-        <label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">BU MEKAN İÇİN ÜRÜN SEÇ (kutu hesabı için)</label>
-        ${hesapProdSearchHTML("hs-urun-"+m.id, m.urunKodu)}
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
+        <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer">
+          <input type="radio" name="tip-${m.id}" ${m.tip==="dikdortgen"?"checked":""} onchange="hesapMekanAlanGuncelle('${m.id}','tip','dikdortgen')"> Dikdörtgen
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer">
+          <input type="radio" name="tip-${m.id}" ${m.tip==="duzensiz"?"checked":""} onchange="hesapMekanAlanGuncelle('${m.id}','tip','duzensiz')"> Düzensiz Duvar
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer">
+          <input type="radio" name="tip-${m.id}" ${m.tip==="zemin"?"checked":""} onchange="hesapMekanAlanGuncelle('${m.id}','tip','zemin')"> Sadece Zemin
+        </label>
       </div>
+
+      ${m.tip==="dikdortgen" ? `
+      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px">
+        <input type="number" step="0.01" placeholder="En (m)" value="${m.en}" onchange="hesapMekanAlanGuncelle('${m.id}','en',this.value)" style="width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
+        <input type="number" step="0.01" placeholder="Boy (m)" value="${m.boy}" onchange="hesapMekanAlanGuncelle('${m.id}','boy',this.value)" style="width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
+        <input type="number" step="0.01" placeholder="Yükseklik (m)" value="${m.yukseklik}" onchange="hesapMekanAlanGuncelle('${m.id}','yukseklik',this.value)" style="width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
+      </div>` : ""}
+
+      ${m.tip==="duzensiz" ? `
+      <div style="margin-bottom:8px">
+        <div style="font-size:9px;color:var(--text3);margin-bottom:3px">DUVAR GENİŞLİKLERİ (m)</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${(m.duvarlar||[]).map((d,i)=>`<input type="number" step="0.01" value="${d}" placeholder="Duvar ${i+1}"
+            onchange="hesapDuvarGuncelle('${m.id}',${i},this.value)" style="width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">`).join("")}
+        </div>
+        ${(m.duvarlar||[]).length<8 ? `<button class="mbtn" onclick="hesapDuvarEkle('${m.id}')" style="font-size:10px;padding:3px 8px;margin-top:4px;width:100%">+ Duvar</button>` : ""}
+        <input type="number" step="0.01" placeholder="Yükseklik (m)" value="${m.yukseklik}" onchange="hesapMekanAlanGuncelle('${m.id}','yukseklik',this.value)" style="width:100%;margin-top:6px;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
+      </div>` : ""}
+
+      ${m.tip==="zemin" ? `
+      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px">
+        <input type="number" step="0.01" placeholder="En (m)" value="${m.en}" onchange="hesapMekanAlanGuncelle('${m.id}','en',this.value)" style="width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
+        <input type="number" step="0.01" placeholder="Boy (m)" value="${m.boy}" onchange="hesapMekanAlanGuncelle('${m.id}','boy',this.value)" style="width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
+      </div>` : ""}
+
+      ${duvarVar ? `
+      <label style="display:flex;align-items:center;gap:5px;font-size:10px;cursor:pointer;margin-bottom:6px">
+        <input type="checkbox" ${m.bosluklarAktif?"checked":""} onchange="hesapMekanAlanGuncelle('${m.id}','bosluklarAktif',this.checked)"> Boşluk düş (kapı/pencere)
+      </label>
+      ${m.bosluklarAktif ? `
+      <div id="hs-bosluk-${m.id}" style="margin-bottom:6px">
+        ${(m.bosluklar||[]).map((b,i)=>`
+          <div style="display:flex;gap:3px;align-items:center;margin-bottom:3px">
+            <input type="number" step="0.01" value="${b.g}" placeholder="G" onchange="hesapBosluk_Guncelle('${m.id}',${i},'g',this.value)" style="width:38px;padding:4px;border:1px solid var(--border);border-radius:5px;background:var(--bg2);color:var(--text);font-size:10px">
+            <input type="number" step="0.01" value="${b.h}" placeholder="Y" onchange="hesapBosluk_Guncelle('${m.id}',${i},'h',this.value)" style="width:38px;padding:4px;border:1px solid var(--border);border-radius:5px;background:var(--bg2);color:var(--text);font-size:10px">
+            <input type="number" value="${b.adet||1}" placeholder="Ad" onchange="hesapBosluk_Guncelle('${m.id}',${i},'adet',this.value)" style="width:32px;padding:4px;border:1px solid var(--border);border-radius:5px;background:var(--bg2);color:var(--text);font-size:10px">
+            <button onclick="hesapBosluk_Sil('${m.id}',${i})" style="background:none;border:none;color:var(--red,#dc2626);cursor:pointer;font-size:11px">✕</button>
+          </div>`).join("")}
+        <button class="mbtn" onclick="hesapBosluk_Ekle('${m.id}')" style="font-size:10px;padding:3px 8px;width:100%">+ Boşluk</button>
+      </div>` : ""}
+
+      ${m.tip==="dikdortgen" ? `
+      <label style="display:flex;align-items:center;gap:5px;font-size:10px;cursor:pointer;margin-bottom:6px">
+        <input type="checkbox" ${m.duvarAyniUrun?"checked":""} onchange="hesapMekanAlanGuncelle('${m.id}','duvarAyniUrun',this.checked)"> Duvar tabanla aynı ürün olsun
+      </label>` : ""}
+      ` : ""}
+
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px;background:var(--bg3);padding:6px 7px;border-radius:6px;text-align:center">
+        <strong>${a.toplam.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²</strong>
+        ${m.tip==="dikdortgen" ? `<div style="font-size:9px;color:var(--text3)">taban ${a.taban.toLocaleString("tr-TR",{maximumFractionDigits:2})} + duvar ${a.duvar.toLocaleString("tr-TR",{maximumFractionDigits:2})}</div>` : ""}
+      </div>
+
+      <div style="font-size:9px;color:var(--text3);margin-bottom:3px">${m.tip==="zemin"?"ZEMİN ÜRÜNÜ":(m.tip==="duzensiz"?"DUVAR ÜRÜNÜ":"TABAN ÜRÜNÜ")}</div>
+      ${hesapProdSearchHTML("hs-urun-"+m.id, m.urunKodu, "Ürün ara…")}
+
+      ${(m.tip==="dikdortgen" && !m.duvarAyniUrun) ? `
+      <div style="font-size:9px;color:var(--text3);margin:8px 0 3px">DUVAR ÜRÜNÜ</div>
+      ${hesapProdSearchHTML("hs-urunduvar-"+m.id, m.duvarUrunKodu, "Ürün ara…")}` : ""}
+
+      ${yanMalzemeler.length>0 ? `
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">
+        <div style="font-size:9px;color:var(--text3);margin-bottom:4px">YAN MALZEMELER</div>
+        ${yanMalzemeler.map(y=>`
+          <label style="display:flex;align-items:center;gap:5px;font-size:10px;cursor:pointer;margin-bottom:3px">
+            <input type="checkbox" ${(m.yanSecili||[]).includes(y.id)?"checked":""} onchange="hesapMekanYanToggle('${m.id}','${y.id}',this.checked)"> ${y.ad}
+          </label>`).join("")}
+      </div>` : ""}
     </div>`;
   }).join("");
 }
@@ -5276,10 +5239,8 @@ function hesapMekanAlanGuncelle(id, alan, val){
   if(!m) return;
   m[alan]=val;
   hesapSave();
-  if(alan==="tip"){ hesapMekanRenderAll(); }
+  if(alan==="tip" || alan==="bosluklarAktif" || alan==="duvarAyniUrun"){ hesapMekanRenderAll(); }
   hesapSonuclarRender();
-  // sadece alanı etkileyen değişimlerde tüm kartı yeniden çizmeye gerek yok,
-  // ama tip değişince yapı tamamen değiştiği için yukarıda ayrıca render ediliyor.
 }
 function hesapDuvarGuncelle(id, idx, val){
   const m = S.hesap.seramik.mekanlar.find(x=>x.id===id);
@@ -5310,6 +5271,46 @@ function hesapBosluk_Guncelle(id, idx, alan, val){
   hesapSave(); hesapSonuclarRender();
 }
 
+// ── SERAMİK: YAN MALZEMELER ──
+function hesapYanEkle(){
+  const ad = ($("hs-yan-yeni-ad").value||"").trim();
+  const sarfiyat = parseFloat($("hs-yan-yeni-sarfiyat").value)||0;
+  const birim = $("hs-yan-yeni-birim").value;
+  const paket = parseFloat($("hs-yan-yeni-paket").value)||1;
+  if(!ad){ alert("Malzeme adı girin."); return; }
+  S.hesap.seramik.yanMalzemeler.push({ id:"y"+Date.now()+Math.floor(Math.random()*1000), ad, sarfiyat, birim, paket, urunKodu:null });
+  $("hs-yan-yeni-ad").value=""; $("hs-yan-yeni-sarfiyat").value=""; $("hs-yan-yeni-paket").value="";
+  hesapSave(); hesapYanRenderAll(); hesapMekanRenderAll(); hesapSonuclarRender();
+}
+function hesapYanSil(id){
+  S.hesap.seramik.yanMalzemeler = S.hesap.seramik.yanMalzemeler.filter(y=>y.id!==id);
+  S.hesap.seramik.mekanlar.forEach(m=>{ m.yanSecili = (m.yanSecili||[]).filter(x=>x!==id); });
+  hesapSave(); hesapYanRenderAll(); hesapMekanRenderAll(); hesapSonuclarRender();
+}
+function hesapMekanYanToggle(mid, yid, checked){
+  const m = S.hesap.seramik.mekanlar.find(x=>x.id===mid);
+  if(!m) return;
+  m.yanSecili = m.yanSecili||[];
+  if(checked){ if(!m.yanSecili.includes(yid)) m.yanSecili.push(yid); }
+  else { m.yanSecili = m.yanSecili.filter(x=>x!==yid); }
+  hesapSave(); hesapSonuclarRender();
+}
+function hesapYanRenderAll(){
+  const box = $("hs-yanlist");
+  const list = S.hesap.seramik.yanMalzemeler||[];
+  if(list.length===0){
+    box.innerHTML = `<div style="font-size:11px;color:var(--text3)">Henüz yan malzeme eklenmedi.</div>`;
+    return;
+  }
+  box.innerHTML = list.map(y=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:6px;margin-bottom:5px;flex-wrap:wrap">
+      <div style="font-weight:600;font-size:12px;min-width:140px">${y.ad}</div>
+      <div style="font-size:11px;color:var(--text3)">Sarfiyat: ${y.sarfiyat} ${y.birim}/m²</div>
+      <div style="font-size:11px;color:var(--text3)">Paket: ${y.paket} ${y.birim}</div>
+      <button onclick="hesapYanSil('${y.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;margin-left:auto">✕</button>
+    </div>`).join("");
+}
+
 // ── SERAMİK: SONUÇ / MALZEME LİSTESİ ──
 function hesapUrunFiyat(kod){
   const f = S.fiyatlar && S.fiyatlar[kod];
@@ -5322,24 +5323,25 @@ function hesapSonuclarRender(){
   if(!box) return;
   const sk = S.hesap.seramik;
   const fire = 1 + ((parseFloat(sk.fire)||0)/100);
-  let toplamTaban=0, toplamDuvar=0;
-  const urunM2 = {}; // kod -> toplam m2 (fire dahil)
+  let toplamGenel=0;
+  const urunM2 = {}; // kod -> toplam m2
+  const yanM2 = {};  // yanMalzemeId -> toplam m2 (checked olduğu mekanların m²'si)
+
   sk.mekanlar.forEach(m=>{
     const a = hesapMekanAlan(m);
-    let m2icin = 0;
-    if(m.tabanDahil) { toplamTaban += a.taban; m2icin += a.taban; }
-    if(m.duvarDahil) { toplamDuvar += a.duvar; m2icin += a.duvar; }
-    if(m.urunKodu && m2icin>0){
-      urunM2[m.urunKodu] = (urunM2[m.urunKodu]||0) + m2icin;
+    toplamGenel += a.toplam;
+    if(m.tip==="zemin" || m.tip==="duzensiz"){
+      if(m.urunKodu && a.toplam>0) urunM2[m.urunKodu] = (urunM2[m.urunKodu]||0) + a.toplam;
+    } else if(m.tip==="dikdortgen"){
+      if(m.duvarAyniUrun){
+        if(m.urunKodu && a.toplam>0) urunM2[m.urunKodu] = (urunM2[m.urunKodu]||0) + a.toplam;
+      } else {
+        if(m.urunKodu && a.taban>0) urunM2[m.urunKodu] = (urunM2[m.urunKodu]||0) + a.taban;
+        if(m.duvarUrunKodu && a.duvar>0) urunM2[m.duvarUrunKodu] = (urunM2[m.duvarUrunKodu]||0) + a.duvar;
+      }
     }
+    (m.yanSecili||[]).forEach(yid=>{ yanM2[yid] = (yanM2[yid]||0) + a.toplam; });
   });
-  const toplamM2 = toplamTaban + toplamDuvar;
-  const toplamM2Fire = toplamM2 * fire;
-
-  const yapKg = toplamM2Fire * (parseFloat(sk.yapKg)||0);
-  const yapTorbaSayi = sk.yapTorba>0 ? Math.ceil(yapKg / sk.yapTorba) : 0;
-  const derzKg = toplamM2Fire * (parseFloat(sk.derzKg)||0);
-  const derzPaketSayi = sk.derzPaket>0 ? Math.ceil(derzKg / sk.derzPaket) : 0;
 
   const urunSatirlari = Object.entries(urunM2).map(([kod,m2])=>{
     const urun = (S.stoklar||[]).find(s=>s.STOK_KODU===kod);
@@ -5348,26 +5350,35 @@ function hesapSonuclarRender(){
     const kutuSayi = kutuM2 ? Math.ceil(m2Fire / kutuM2) : null;
     const fiyat = hesapUrunFiyat(kod);
     const tutar = (fiyat && kutuM2) ? kutuSayi * kutuM2 * fiyat : null;
-    return { kod, ad: urun?urun.STOK_ADI:kod, m2, m2Fire, kutuM2, kutuSayi, tutar };
+    return { kod, ad: urun?urun.STOK_ADI:kod, m2Fire, kutuM2, kutuSayi, fiyat, tutar };
   });
 
-  const toplamTutar = urunSatirlari.reduce((t,r)=>t+(r.tutar||0), 0);
+  const yanSatirlari = (sk.yanMalzemeler||[]).filter(y=>yanM2[y.id]>0).map(y=>{
+    const m2 = yanM2[y.id];
+    const m2Fire = m2 * fire;
+    const miktar = m2Fire * (parseFloat(y.sarfiyat)||0);
+    const paketSayi = y.paket>0 ? Math.ceil(miktar/y.paket) : 0;
+    const fiyat = y.urunKodu ? hesapUrunFiyat(y.urunKodu) : null;
+    const tutar = fiyat ? paketSayi * fiyat : null;
+    return { ...y, m2Fire, miktar, paketSayi, tutar };
+  });
+
+  const toplamTutar = urunSatirlari.reduce((t,r)=>t+(r.tutar||0),0) + yanSatirlari.reduce((t,r)=>t+(r.tutar||0),0);
 
   box.innerHTML = `
     <div class="step">
       <div class="step-hd">📐 Toplam Alan</div>
-      <div class="step-bd" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
-        <div><div style="font-size:11px;color:var(--text3)">Taban</div><div style="font-size:18px;font-weight:700">${toplamTaban.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²</div></div>
-        <div><div style="font-size:11px;color:var(--text3)">Duvar</div><div style="font-size:18px;font-weight:700">${toplamDuvar.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²</div></div>
-        <div><div style="font-size:11px;color:var(--text3)">Toplam (fire ile)</div><div style="font-size:18px;font-weight:700;color:var(--blue)">${toplamM2Fire.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²</div></div>
+      <div class="step-bd" style="text-align:center">
+        <div style="font-size:11px;color:var(--text3)">Tüm mekanlar toplamı (fire hariç)</div>
+        <div style="font-size:20px;font-weight:700;color:var(--blue)">${toplamGenel.toLocaleString("tr-TR",{maximumFractionDigits:2})} m²</div>
       </div>
     </div>
 
     <div class="step">
       <div class="step-hd">🧱 Malzeme Listesi ${sk.musteri?("— "+sk.musteri):""}</div>
       <div class="step-bd">
-        ${urunSatirlari.length===0 ? `<div style="color:var(--text3);font-size:12px">Mekanlara ürün seçilince kutu hesabı burada görünecek.</div>` : `
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
+        ${urunSatirlari.length===0 ? `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">Mekanlara ürün seçilince kutu hesabı burada görünecek.</div>` : `
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px">
           <thead><tr style="text-align:left;color:var(--text3);border-bottom:1px solid var(--border)">
             <th style="padding:6px 4px">Ürün</th><th style="padding:6px 4px;text-align:right">m² (fire dahil)</th>
             <th style="padding:6px 4px;text-align:right">Kutu m²</th><th style="padding:6px 4px;text-align:right">Kutu Adedi</th>
@@ -5382,14 +5393,25 @@ function hesapSonuclarRender(){
           </tr>`).join("")}
           </tbody>
         </table>`}
-        <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:12px">
-          <div style="background:var(--bg3);padding:8px 10px;border-radius:6px">🧴 Yapıştırıcı: <strong>${yapKg.toLocaleString("tr-TR",{maximumFractionDigits:1})} kg</strong> → <strong>${yapTorbaSayi} torba</strong> (${sk.yapTorba}kg'lık)</div>
-          <div style="background:var(--bg3);padding:8px 10px;border-radius:6px">🧵 Derz Dolgu: <strong>${derzKg.toLocaleString("tr-TR",{maximumFractionDigits:1})} kg</strong> → <strong>${derzPaketSayi} paket</strong> (${sk.derzPaket}kg'lık)</div>
-        </div>
-        ${toplamTutar>0 ? `<div style="margin-top:10px;text-align:right;font-size:14px;font-weight:700">Tahmini Ürün Tutarı: ${toplamTutar.toLocaleString("tr-TR",{style:"currency",currency:"TRY"})}</div>` : ""}
+        ${yanSatirlari.length>0 ? `
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="text-align:left;color:var(--text3);border-bottom:1px solid var(--border)">
+            <th style="padding:6px 4px">Yan Malzeme</th><th style="padding:6px 4px;text-align:right">Gerekli Miktar</th>
+            <th style="padding:6px 4px;text-align:right">Paket Adedi</th><th style="padding:6px 4px;text-align:right">Tutar</th></tr></thead>
+          <tbody>
+          ${yanSatirlari.map(y=>`<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:6px 4px">${y.ad}</td>
+            <td style="padding:6px 4px;text-align:right">${y.miktar.toLocaleString("tr-TR",{maximumFractionDigits:1})} ${y.birim}</td>
+            <td style="padding:6px 4px;text-align:right;font-weight:600">${y.paketSayi} paket</td>
+            <td style="padding:6px 4px;text-align:right">${y.tutar!=null?y.tutar.toLocaleString("tr-TR",{style:"currency",currency:"TRY"}):"—"}</td>
+          </tr>`).join("")}
+          </tbody>
+        </table>` : ""}
+        ${toplamTutar>0 ? `<div style="margin-top:10px;text-align:right;font-size:14px;font-weight:700">Tahmini Toplam Tutar: ${toplamTutar.toLocaleString("tr-TR",{style:"currency",currency:"TRY"})}</div>` : ""}
       </div>
     </div>`;
 }
+
 
 // ── PARKE HESAPLAMA ──
 function hesapParkeMod(mod){
@@ -5471,6 +5493,91 @@ function hesapParkeSonuclarRender(){
           </tr></tbody>
         </table>` : `<div style="color:var(--text3);font-size:12px">Kutu hesabı için yukarıdan bir parke ürünü seçin.</div>`}
     </div>`;
+}
+
+// ── HESAPLAMA → TEKLİFE AKTAR ──
+// Seramik veya parke hesabındaki ürün/malzeme satırlarını, Teklif modülündeki kalem listesine
+// (teklifList) ekler ve Teklif sekmesine geçer. Miktar birimi "Kutu" / "Paket" olarak eklenir,
+// fiyat biliniyorsa otomatik doldurulur, bilinmiyorsa kullanıcı Teklif ekranında kendisi girer.
+function hesapTeklifeAktar(hangisi){
+  hesapSave();
+  let eklenen = 0;
+  let musteri = "";
+
+  if(hangisi==="seramik"){
+    const sk = S.hesap.seramik;
+    musteri = sk.musteri||"";
+    const fire = 1 + ((parseFloat(sk.fire)||0)/100);
+    const urunM2 = {}, yanM2 = {};
+    sk.mekanlar.forEach(m=>{
+      const a = hesapMekanAlan(m);
+      if(m.tip==="zemin" || m.tip==="duzensiz"){
+        if(m.urunKodu && a.toplam>0) urunM2[m.urunKodu] = (urunM2[m.urunKodu]||0) + a.toplam;
+      } else if(m.tip==="dikdortgen"){
+        if(m.duvarAyniUrun){
+          if(m.urunKodu && a.toplam>0) urunM2[m.urunKodu] = (urunM2[m.urunKodu]||0) + a.toplam;
+        } else {
+          if(m.urunKodu && a.taban>0) urunM2[m.urunKodu] = (urunM2[m.urunKodu]||0) + a.taban;
+          if(m.duvarUrunKodu && a.duvar>0) urunM2[m.duvarUrunKodu] = (urunM2[m.duvarUrunKodu]||0) + a.duvar;
+        }
+      }
+      (m.yanSecili||[]).forEach(yid=>{ yanM2[yid] = (yanM2[yid]||0) + a.toplam; });
+    });
+
+    Object.entries(urunM2).forEach(([kod,m2])=>{
+      const urun = (S.stoklar||[]).find(s=>s.STOK_KODU===kod);
+      const kutuM2 = urun ? hesapKutuM2Parse(urun.STOK_ADI) : null;
+      const m2Fire = m2 * fire;
+      const kutuSayi = kutuM2 ? Math.ceil(m2Fire / kutuM2) : Math.ceil(m2Fire);
+      const fiyat = hesapUrunFiyat(kod);
+      teklifList.push({
+        stokKodu: kod, ad: urun?urun.STOK_ADI:kod, miktar: kutuSayi,
+        birim: kutuM2?"Kutu":"M²", birimFiyat: (fiyat && kutuM2) ? fiyat*kutuM2 : null,
+        iskonto: null, kdvOrani: 20,
+      });
+      eklenen++;
+    });
+
+    (sk.yanMalzemeler||[]).filter(y=>yanM2[y.id]>0).forEach(y=>{
+      const m2Fire = yanM2[y.id] * fire;
+      const miktar = m2Fire * (parseFloat(y.sarfiyat)||0);
+      const paketSayi = y.paket>0 ? Math.ceil(miktar/y.paket) : Math.ceil(miktar);
+      const fiyat = y.urunKodu ? hesapUrunFiyat(y.urunKodu) : null;
+      teklifList.push({
+        stokKodu: y.urunKodu||"", ad: y.ad, miktar: paketSayi,
+        birim: y.birim==="kg"?"Torba":"Adet", birimFiyat: fiyat||null,
+        iskonto: null, kdvOrani: 20,
+      });
+      eklenen++;
+    });
+  } else {
+    const pk = S.hesap.parke;
+    musteri = pk.musteri||"";
+    const fire = 1 + ((parseFloat(pk.fire)||0)/100);
+    const toplamM2 = pk.mod==="toplu"
+      ? (parseFloat(pk.topluM2)||0)
+      : pk.odalar.reduce((t,o)=>t+(parseFloat(o.en)||0)*(parseFloat(o.boy)||0), 0);
+    const toplamM2Fire = toplamM2 * fire;
+    const urun = pk.urunKodu ? (S.stoklar||[]).find(s=>s.STOK_KODU===pk.urunKodu) : null;
+    if(urun){
+      const kutuM2 = hesapKutuM2Parse(urun.STOK_ADI);
+      const kutuSayi = kutuM2 ? Math.ceil(toplamM2Fire / kutuM2) : Math.ceil(toplamM2Fire);
+      const fiyat = hesapUrunFiyat(urun.STOK_KODU);
+      teklifList.push({
+        stokKodu: urun.STOK_KODU, ad: urun.STOK_ADI, miktar: kutuSayi,
+        birim: kutuM2?"Kutu":"M²", birimFiyat: (fiyat && kutuM2) ? fiyat*kutuM2 : null,
+        iskonto: null, kdvOrani: 20,
+      });
+      eklenen++;
+    }
+  }
+
+  if(eklenen===0){ alert("Aktarılacak bir ürün/malzeme bulunamadı — önce mekanlara ürün seçin."); return; }
+
+  if(musteri && !$("teklif-musteri").value.trim()) $("teklif-musteri").value = musteri;
+  renderTeklif();
+  ST("teklif");
+  showSyncStatus("📋 "+eklenen+" kalem teklife aktarıldı", "ok");
 }
 
 async function gorselSil(kod, sira) {
@@ -5733,6 +5840,6 @@ function closeMobSidebar() {
 // Filtre uygulandığında mobilden sidebar'ı kapat
 const _origApplyF = typeof applyF === "function" ? applyF : null;
 
-</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 20:46 itibarıyla senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 11:17 itibarıyla senkronize edildi</div>
+</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 02:54 itibarıyla senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 11:17 itibarıyla senkronize edildi</div>
 
 </body></html>
