@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_24.html -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_25.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -289,7 +289,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
 <div id="sistem-durum" title="Son senkronizasyon durumu" style="position: fixed; bottom: 34px; right: 12px; z-index: 1000; font-size: 11px; padding: 4px 10px; border-radius: 12px; background: rgb(220, 252, 231); color: rgb(21, 128, 61); display: flex; align-items: center; gap: 5px; box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 4px; transition: 0.3s;">
   <span id="sistem-durum-nokta" style="width: 7px; height: 7px; border-radius: 50%; background: rgb(22, 163, 74); display: inline-block;"></span>
-  <span id="sistem-durum-metin">Sistem aktif — 13:43</span>
+  <span id="sistem-durum-metin">Sistem aktif — 23:51</span>
 </div>
 
 <div class="topbar">
@@ -1990,16 +1990,16 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
 
 
-    <div id="page-hesaplama" style="display:none" class="pb">
+    <div id="page-hesaplama" style="display: none;" class="pb">
       <div class="panel" style="max-width:980px">
         <h2 style="margin-bottom:10px">🧮 Hesaplama</h2>
         <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:10px">
           <button class="tab-btn hesap-subtab" id="hesap-tab-seramik" onclick="hesapSubTab(&#39;seramik&#39;)">🧱 Seramik Hesaplama</button>
-          <button class="tab-btn hesap-subtab" id="hesap-tab-parke" onclick="hesapSubTab(&#39;parke&#39;)">🪵 Parke Hesaplama</button>
+          <button class="tab-btn hesap-subtab active" id="hesap-tab-parke" onclick="hesapSubTab(&#39;parke&#39;)">🪵 Parke Hesaplama</button>
         </div>
 
         <!-- SERAMİK HESAPLAMA -->
-        <div id="hesap-seramik-body">
+        <div id="hesap-seramik-body" style="display: none;">
           <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
             <div style="flex:1;min-width:220px">
               <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">MÜŞTERİ ADI</label>
@@ -2013,9 +2013,25 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
           </div>
 
           <!-- Mekanlar: sağa doğru sütun sütun eklenir -->
-          <div id="hs-mekanlar" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px"></div>
+          <div id="hs-mekanlar" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px"><div style="text-align:center;color:var(--text3);font-size:12px;padding:24px;border:1px dashed var(--border);border-radius:var(--r);width:100%">Henüz mekan eklenmedi. "+ Mekan Ekle" ile başlayın.</div></div>
 
-          <div id="hs-sonuc"></div>
+          <div id="hs-sonuc">
+    <div class="step">
+      <div class="step-hd">📐 Toplam Alan</div>
+      <div class="step-bd" style="text-align:center">
+        <div style="font-size:11px;color:var(--text3)">Tüm mekanlar toplamı (fire hariç)</div>
+        <div style="font-size:20px;font-weight:700;color:var(--blue)">0 m²</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-hd">🧱 Malzeme Listesi  <span style="font-weight:400;color:var(--text3);font-size:11px">(Tutar hariç tüm sayılar elle değiştirilebilir)</span></div>
+      <div class="step-bd">
+        <div style="color:var(--text3);font-size:12px;margin-bottom:8px">Mekanlara ürün seçilince kutu hesabı burada görünecek.</div>
+        
+        
+      </div>
+    </div></div>
 
           <!-- Yan Malzeme Tanımları: sayfanın en altında, açılır/kapanır, kolon mantığında -->
           <div class="step" style="margin-top:16px">
@@ -2026,7 +2042,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
                 <span id="hs-yanpanel-ok">▼</span>
               </span>
             </div>
-            <div class="step-bd" id="hs-yanpanel-body" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
+            <div class="step-bd" id="hs-yanpanel-body" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"><div style="font-size:11px;color:var(--text3);padding:8px">Henüz malzeme tanımlanmadı — "+ Malzeme Ekle" ile başlayın.</div></div>
           </div>
 
           <div class="mbtns" style="margin-top:16px;justify-content:space-between">
@@ -2040,7 +2056,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         </div>
 
         <!-- PARKE HESAPLAMA -->
-        <div id="hesap-parke-body" style="display:none">
+        <div id="hesap-parke-body" style="display: block;">
           <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
 
             <div style="flex:1;min-width:220px">
@@ -2052,13 +2068,13 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
               <input id="hp-fire" type="number" value="5" min="0" max="50" oninput="hesapSave();hesapParkeSonuclarRender()" style="width:80px;padding:8px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
             </div>
             <div style="display:flex;gap:4px;background:var(--bg3);padding:4px;border-radius:var(--r)">
-              <button class="mbtn" id="hp-mod-oda" onclick="hesapParkeMod(&#39;oda&#39;)">Oda Oda</button>
+              <button class="mbtn pri" id="hp-mod-oda" onclick="hesapParkeMod(&#39;oda&#39;)">Oda Oda</button>
               <button class="mbtn" id="hp-mod-toplu" onclick="hesapParkeMod(&#39;toplu&#39;)">Toplu m²</button>
             </div>
           </div>
 
-          <div id="hp-oda-body">
-            <div id="hp-odalar"></div>
+          <div id="hp-oda-body" style="display: block;">
+            <div id="hp-odalar"><div style="text-align:center;color:var(--text3);font-size:12px;padding:16px;border:1px dashed var(--border);border-radius:var(--r);margin-bottom:10px">Henüz oda eklenmedi.</div></div>
             <button class="mbtn" onclick="hesapOdaEkle()">+ Oda Ekle</button>
           </div>
           <div id="hp-toplu-body" style="display:none">
@@ -2066,7 +2082,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
             <input id="hp-toplum2" type="number" step="0.01" placeholder="Örn. 85.5" oninput="hesapSave();hesapParkeSonuclarRender()" style="width:200px;padding:8px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
           </div>
 
-          <div id="hp-toplam-badge" style="margin-top:10px;font-size:13px;color:var(--text2);background:var(--bg3);padding:8px 10px;border-radius:var(--r);display:inline-block"></div>
+          <div id="hp-toplam-badge" style="margin-top:10px;font-size:13px;color:var(--text2);background:var(--bg3);padding:8px 10px;border-radius:var(--r);display:inline-block">Toplam <strong>0 m²</strong> · Fire ile <strong style="color:var(--blue)">0 m²</strong></div>
 
           <div class="step" style="margin-top:16px">
             <div class="step-hd">📦 Parke Ürünü Ekle <span style="font-weight:400;color:var(--text3);font-size:11px">(AGT/Çamsan fiyat listesinden — model adını dilerseniz elle değiştirebilirsiniz)</span></div>
@@ -2074,7 +2090,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
                 <div style="flex:1;min-width:220px">
                   <label style="font-size:10px;color:var(--text3)">ÜRÜN GRUBU</label>
-                  <select id="hp-katalog-secim" style="width:100%;padding:7px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px" onchange="hesapParkeKatalogSecimGuncelle()"></select>
+                  <select id="hp-katalog-secim" style="width:100%;padding:7px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px" onchange="hesapParkeKatalogSecimGuncelle()"><optgroup label="AGT Serisi"><option value="0">AGT Bella (8 mm - 31. Sınıf)</option><option value="1">AGT Natura Select (8 mm - 32. Sınıf)</option><option value="2">AGT Natura Line (8 mm - 32. Sınıf)</option><option value="3">AGT Effect (8 mm - 32. Sınıf)</option><option value="4">AGT Armonia Large (8 mm - 32. Sınıf)</option><option value="5">AGT Armonia Slim (8 mm - 32. Sınıf)</option><option value="6">AGT Pruva XL Yeni (8 mm - 32. Sınıf)</option><option value="7">AGT Marco Polo (8 mm - 32. Sınıf)</option><option value="8">AGT Yoga (8 mm - 32. Sınıf)</option><option value="9">AGT Foresta XL Yeni (8 mm - 32. Sınıf)</option><option value="10">AGT Concept Neo (10 mm - 32. Sınıf)</option><option value="11">AGT Pera (10 mm - 32. Sınıf)</option><option value="12">AGT Mood (10 mm - 32. Sınıf)</option><option value="13">AGT Effect Premium (12 mm - 33. Sınıf)</option></optgroup><optgroup label="Çamsan ZEN Serisi"><option value="14">Çamsan ZEN Serisi (8 mm - 32. Sınıf)</option></optgroup></select>
                 </div>
                 <button class="mbtn pri" onclick="hesapParkeUrunEkle()">+ Listeye Ekle</button>
               </div>
@@ -2088,14 +2104,22 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
                 <div style="flex:1;min-width:220px">
                   <label style="font-size:10px;color:var(--text3)">MALZEME</label>
-                  <select id="hp-yardimci-secim" style="width:100%;padding:7px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px"></select>
+                  <select id="hp-yardimci-secim" style="width:100%;padding:7px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px"><option value="0">AkSüper Süpürgelik 4cm — 25 ₺</option><option value="1">AkSüper Süpürgelik 6cm — 28 ₺</option><option value="2">AkSüper Süpürgelik 8cm — 40 ₺</option><option value="3">AGT Süpürgelik 6cm — 29 ₺</option><option value="4">AGT Süpürgelik 8cm — 50 ₺</option><option value="5">Şilte 2mm — 6 ₺</option><option value="6">Delikli Şilte 1,5mm — 10 ₺</option><option value="7">Delikli Şilte 2mm — 18 ₺</option><option value="8">Delikli Şilte 3mm — 23 ₺</option><option value="9">Delikli Karton 3mm — 30 ₺</option><option value="10">Folyolu Şilte 3mm — 27 ₺</option><option value="11">Folyolu Şilte 5mm — 35 ₺</option><option value="12">Delikli Folyolu Şilte 3mm — 31 ₺</option><option value="13">Delikli Folyolu Şilte 5mm — 40 ₺</option><option value="14">Kapron 3mm — 22 ₺</option><option value="15">Kapron 5mm — 25 ₺</option><option value="16">Kapron 1cm — 62 ₺</option><option value="17">Mantar 2mm — 245 ₺</option><option value="18">Düz Profil — 175 ₺</option><option value="19">Kot Farkı Profil — 200 ₺</option><option value="20">L Profil (2,5x2,5) — 200 ₺</option><option value="21">L Profil (3,5x3,5) — 250 ₺</option><option value="22">U Profil — 175 ₺</option><option value="23">Z Profil — 225 ₺</option><option value="24">Merdiven Profili — 275 ₺</option><option value="25">Silikon — 95 ₺</option><option value="26">Mastik — 60 ₺</option></select>
                 </div>
                 <button class="mbtn pri" onclick="hesapParkeYardimciEkle()">+ Listeye Ekle</button>
               </div>
             </div>
           </div>
 
-          <div id="hp-sonuc" style="margin-top:18px"></div>
+          <div id="hp-sonuc" style="margin-top:18px">
+    <div class="step">
+      <div class="step-hd">📦 Parke Malzeme Listesi  <span style="font-weight:400;color:var(--text3);font-size:11px">(Tutar hariç tüm sayılar elle değiştirilebilir)</span></div>
+      <div class="step-bd">
+        <div style="color:var(--text3);font-size:12px;margin-bottom:8px">Yukarıdan bir parke ürünü ekleyin.</div>
+        
+        
+      </div>
+    </div></div>
 
           <div class="mbtns" style="margin-top:16px;justify-content:space-between">
             <button class="mbtn" onclick="hesapTumTemizle()" style="color:var(--red,#dc2626);border-color:var(--red,#dc2626)">🧹 Tüm Ekranı Temizle</button>
@@ -2307,7 +2331,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
       <button onclick="gorselBuyukAdim(-1)" title="Önceki" style="position:absolute;left:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">‹</button>
-      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_24.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
+      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_25.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
       <button onclick="gorselBuyukAdim(1)" title="Sonraki" style="position:absolute;right:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">›</button>
     </div>
@@ -5080,7 +5104,7 @@ function hesapProdSearchHTML(instId, currentKod, placeholder){
       oninput="hesapUrunAra('${instId}')" onfocus="hesapUrunAra('${instId}')" autocomplete="off"
       style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;box-sizing:border-box">
     <input type="hidden" id="${instId}-kod" value="${currentKod||""}">
-    <div id="${instId}-dd" style="display:none;position:fixed;z-index:500;background:var(--bg1);border:1px solid var(--border);border-radius:8px;max-height:280px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.25)"></div>
+    <div id="${instId}-dd" style="display:none;position:fixed;z-index:500;background:var(--bg2);border:1px solid var(--border);border-radius:8px;max-height:280px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.25)"></div>
     ${kutuM2 ? `<div style="font-size:9px;color:var(--text3);margin-top:2px">Kutu m²: <strong>${kutuM2.toLocaleString("tr-TR")}</strong></div>` : ""}
   </div>`;
 }
@@ -5210,6 +5234,20 @@ function hesapMekanAlan(mekan){
   return { taban, duvar, bosluk, toplam: taban+duvar };
 }
 
+// Bir mekanın ölçüsü/alanı değiştiğinde, o mekana bağlı ürün(ler)in "Kaç Kutu" / "Seramik m²"
+// alanlarındaki ELLE girilmiş değerleri temizler — böylece "ölçü → kutu hesabı" bağlantısı
+// her zaman aktif kalır ve yeni ölçüye göre otomatik yeniden hesaplanır. Kutu m² ve Birim Fiyat
+// (ürünün kendi özellikleri, ölçüden bağımsız) elle girilmişse korunur, silinmez.
+function hesapUrunAyarOlcuTemizle(m){
+  const ayarlar = S.hesap.seramik.urunAyar;
+  [m.urunKodu, m.duvarUrunKodu].forEach(kod=>{
+    if(kod && ayarlar[kod]){
+      delete ayarlar[kod].m2;
+      delete ayarlar[kod].kutuSayi;
+    }
+  });
+}
+
 // Ölçü kutularına yazarken (oninput) SADECE o mekanın m² rozetini ve alt sonuç panelini
 // güncelleyen hafif fonksiyon — tüm sütunu yeniden çizmediği için input'tan odak kaybolmuyor,
 // anında (başka bir tetikleme beklemeden) hesap güncelleniyor.
@@ -5217,6 +5255,7 @@ function hesapMekanCanli(id, alan, val){
   const m = S.hesap.seramik.mekanlar.find(x=>x.id===id);
   if(!m) return;
   m[alan]=val;
+  hesapUrunAyarOlcuTemizle(m);
   const a = hesapMekanAlan(m);
   const badge = document.getElementById("hs-toplam-"+id);
   if(badge){
@@ -5258,7 +5297,7 @@ function hesapMekanRenderAll(){
     const a = hesapMekanAlan(m);
     const duvarVar = m.tip==="dikdortgen" || m.tip==="duzensiz";
     return `
-    <div style="flex:0 0 200px;width:200px;border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--bg1)">
+    <div style="flex:0 0 200px;width:200px;border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--bg2)">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
         <input value="${(m.ad||"").replace(/"/g,"&quot;")}" onchange="hesapMekanAlanGuncelle('${m.id}','ad',this.value)"
           style="flex:1;min-width:0;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;font-weight:600">
@@ -5372,6 +5411,9 @@ function hesapMekanAlanGuncelle(id, alan, val){
   const m = S.hesap.seramik.mekanlar.find(x=>x.id===id);
   if(!m) return;
   m[alan]=val;
+  if(alan==="tip" || alan==="bosluklarAktif" || alan==="duvarAyniUrun" || alan==="tabanDahil"){
+    hesapUrunAyarOlcuTemizle(m);
+  }
   hesapSave();
   if(alan==="tip" || alan==="bosluklarAktif" || alan==="duvarAyniUrun" || alan==="tabanDahil"){ hesapMekanRenderAll(); }
   hesapSonuclarRender();
@@ -5391,6 +5433,7 @@ function hesapBosluk_Sil(id, idx){
   const m = S.hesap.seramik.mekanlar.find(x=>x.id===id);
   if(!m) return;
   m.bosluklar.splice(idx,1);
+  hesapUrunAyarOlcuTemizle(m);
   hesapSave(); hesapMekanRenderAll(); hesapSonuclarRender();
 }
 
@@ -5448,7 +5491,7 @@ function hesapYanPanelRender(){
     return;
   }
   body.innerHTML = list.map(y=>`
-    <div style="flex:0 0 190px;width:190px;border:1px solid var(--border);border-radius:var(--r);padding:9px;background:var(--bg1)">
+    <div style="flex:0 0 190px;width:190px;border:1px solid var(--border);border-radius:var(--r);padding:9px;background:var(--bg2)">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
         <input value="${(y.ad||"").replace(/"/g,"&quot;")}" onchange="hesapYanGuncelle('${y.id}','ad',this.value)"
           style="flex:1;min-width:0;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px;font-weight:600">
@@ -6275,6 +6318,6 @@ function closeMobSidebar() {
 // Filtre uygulandığında mobilden sidebar'ı kapat
 const _origApplyF = typeof applyF === "function" ? applyF : null;
 
-</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 13:43 itibarıyla senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 11:17 itibarıyla senkronize edildi</div>
+</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 23:51 itibarıyla senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 11:17 itibarıyla senkronize edildi</div>
 
 </body></html>
