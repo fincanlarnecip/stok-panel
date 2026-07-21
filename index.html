@@ -4617,7 +4617,7 @@ function openFaturaDetay(kod) {
     } catch(e) { return t; }
   }
 
-  cconst _kdvOr = f.kdvOrani||20;
+  const _kdvOr = f.kdvOrani||20;
   const rows = [
     ["Liste Fiyatı",   fmt(f.birimFiyat) + " ₺"],
     ["İskonto",        (f.iskonto||0) > 0 ? "%" + (f.iskonto||0) : "—"],
