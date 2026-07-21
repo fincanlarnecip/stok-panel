@@ -4621,7 +4621,7 @@ function openFaturaDetay(kod) {
   const rows = [
     ["Liste Fiyatı",   fmt(f.birimFiyat) + " ₺"],
     ["İskonto",        (f.iskonto||0) > 0 ? "%" + (f.iskonto||0) : "—"],
-    ["Net Fiyat (KDV Hariç)", fmt(f.birimFiyat / (1 + _kdvOr/100)) + " ₺"],
+    ["Net Fiyat (KDV Hariç)", fmt(f.netFiyat||f.maliyetFiyat||f.birimFiyat) + " ₺"],
     ["Nakliye Payı",   (f.nakliyePayi||0) > 0 ? fmt(f.nakliyePayi) + " ₺/m²" : "—"],
     ["Maliyet Fiyatı (KDV Dahil)", fmt((f.maliyetFiyat||f.netFiyat||f.birimFiyat) * (1 + _kdvOr/100)) + " ₺", true],
     ["KDV Oranı",      "%" + (f.kdvOrani||0)],
