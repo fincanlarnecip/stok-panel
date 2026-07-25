@@ -335,6 +335,9 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   <button id="mob-filter-btn" onclick="toggleMobSidebar()" style="display:none;align-items:center;gap:4px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;flex-shrink:0">
   ☰ Filtre
 </button>
+<button id="excel-export-btn" onclick="exportListToExcel()" title="Şu an listede görünen (filtrelenmiş) ürünleri Excel dosyası olarak indir" style="display:flex;align-items:center;gap:4px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;flex-shrink:0">
+  📊 Excel&#39;e Aktar
+</button>
 <span class="sh">Ctrl+T: temizle · Alt+←: geri</span>
   <div class="pills">
     <div class="pill p-tot">Toplam <strong id="s-tot">1.008</strong></div>
@@ -474,6 +477,9 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     </div>
     <div class="sb-sec">
       <div class="sh2"><span class="sl">Etiket</span><button class="clrb" id="clre" onclick="clrF(&#39;e&#39;)">✕ Temizle</button></div>
+      <label class="fchk" style="margin-bottom:5px" title="Açıksa, seçili etikete karşılık gelen metin ürün adında geçen ürünleri de listeye ekler — o ürüne etiket olarak atanmamış olsa bile.">
+        <input type="checkbox" id="etiket-adda-ara" onchange="applyF()"> Ürün adında da ara
+      </label>
       <div id="elist"><span class="tpill " style="border-color:#e9166044" onclick="togE(&#39;60X120&#39;,this)">60X120</span><span class="tpill " style="border-color:#0c310f44" onclick="togE(&#39;50X50&#39;,this)">50X50</span><span class="tpill " style="border-color:#11e8a144" onclick="togE(&#39;45X45&#39;,this)">45X45</span><span class="tpill " style="border-color:#7c3aed44" onclick="togE(&#39;30X60&#39;,this)">30X60</span><span class="tpill " style="border-color:#c3c51b44" onclick="togE(&#39;60X60&#39;,this)">60X60</span><span class="tpill " style="border-color:#7c3aed44" onclick="togE(&#39;20X120&#39;,this)">20X120</span><span class="tpill " style="border-color:#7c3aed44" onclick="togE(&#39;20X90&#39;,this)">20X90</span><span class="tpill " style="border-color:#27e9ec44" onclick="togE(&#39;30X75&#39;,this)">30X75</span><span class="tpill " style="border-color:#d9770644" onclick="togE(&#39;LAVABO&#39;,this)">LAVABO</span></div>
     </div>
     <div class="sb-sec">
@@ -2838,10 +2844,17 @@ function applyF(skipH){
   }
   if(S.aktM.length>0) rows=rows.filter(r=>S.aktM.includes(String(r.STOK_KODU).replace(/\D/g,"").substring(0,2)));
   if(S.aktE.length>0) rows=rows.filter(r=>{
-    const a=trNorm(r.STOK_ADI);
+    const atananlar=(S.urunEt[r.STOK_KODU]||[]).map(x=>trNorm(x));
+    const adiDaAra=$("etiket-adda-ara")?.checked;
+    const ad=trNorm(r.STOK_ADI);
     return S.aktE.every(t=>{
       const varyantlar=etiketGenisEslesenler(t);
-      return varyantlar.some(v=>a.includes(trNorm(v)));
+      // 1) Ürüne gerçekten atanmış etiketlerde (ölçü toleransı dahil) var mı?
+      const atandiMi=varyantlar.some(v=>atananlar.includes(trNorm(v)));
+      if(atandiMi) return true;
+      // 2) "Ürün adında da ara" işaretliyse, etiket atanmamış olsa da ürün adında geçiyorsa say
+      if(adiDaAra) return varyantlar.some(v=>ad.includes(trNorm(v)));
+      return false;
     });
   });
 
@@ -3024,6 +3037,40 @@ function updPager(){
   $("bp").disabled=S.page===0;$("bn").disabled=S.page>=tp-1;
 }
 function chPg(d){S.page+=d;renderTbl();}
+
+// ── EXCEL'E AKTAR ──
+// Şu an filtrelenmiş/görünen listeyi (arama, marka, etiket, durum filtreleri dahil) .xlsx olarak indirir.
+function exportListToExcel(){
+  if(typeof XLSX==="undefined"){ alert("Excel kütüphanesi yüklenemedi, sayfayı yenileyip tekrar deneyin."); return; }
+  if(!S.filtered || S.filtered.length===0){ alert("Aktarılacak ürün yok — filtreleri kontrol edin."); return; }
+  const rows = S.filtered.map(r=>{
+    const brand = getBrand(r.STOK_KODU);
+    const etiket = (S.urunEt[r.STOK_KODU]||[]).join(", ");
+    const _f = S.fiyatlar && S.fiyatlar[r.STOK_KODU];
+    const fiyat = (!S.fiyatGizli && _f && _f.birimFiyat) ? _f.birimFiyat : "";
+    const _nm = S.numuneler && S.numuneler.find(n=>String(n.stokKodu)===String(r.STOK_KODU));
+    const numune = _nm ? (_nm.magazaVar?"Var":"Yok") : "";
+    const not_ = S.notes[r.STOK_KODU]||"";
+    return {
+      "Stok Kodu": r.STOK_KODU,
+      "Stok Adı": r.STOK_ADI,
+      "Marka": brand,
+      "Etiket": etiket,
+      "Merkez Depo": parseFloat(r.MERKEZ_DEPO)||0,
+      "Ayrılmış": parseFloat(r.AYRILMIS)||0,
+      "Satılabilir": parseFloat(r.SATILABILIR)||0,
+      "Liste Fiyatı": fiyat,
+      "Numune": numune,
+      "Not": not_,
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{wch:16},{wch:46},{wch:16},{wch:20},{wch:12},{wch:12},{wch:12},{wch:12},{wch:8},{wch:26}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Stok Listesi");
+  const tarih = new Date().toISOString().split("T")[0];
+  XLSX.writeFile(wb, `stok_listesi_${tarih}.xlsx`);
+}
 
 // ── SORT ──
 function sortBy(id){if(S.sortCol===id)S.sortDir*=-1;else{S.sortCol=id;S.sortDir=1;}applyF(true);}
