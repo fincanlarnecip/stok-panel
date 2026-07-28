@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_41.html -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_42.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -324,7 +324,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     </div>
   </div>
   <button class="tab-btn" onclick="ST(&#39;ayarlar&#39;)" id="tab-ayarlar">⚙️ Ayarlar</button>
-  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 22.07.2026 (3g)</div>
+  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 22.07.2026 (6g)</div>
 </div>
 
 <div class="search-bar" id="sbwrap" style="display: flex;">
@@ -341,7 +341,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 <button id="excel-export-btn" onclick="exportListToExcel()" title="Şu an listede görünen (filtrelenmiş) ürünleri Excel dosyası olarak indir" style="display:flex;align-items:center;gap:4px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;flex-shrink:0">
   📊 Excel'e Aktar
 </button>
-<span class="sh">Ctrl+T: temizle · Alt+←: geri</span>
+<span class="sh">Alt+T: temizle · Alt+←: geri</span>
   <div class="pills">
     <div class="pill p-tot">Toplam <strong id="s-tot">1.948</strong></div>
     <div class="pill p-neg">Negatif <strong id="s-neg">20</strong></div>
@@ -2632,7 +2632,7 @@ Net: 8,92 ₺" style="color:var(--green);font-weight:600">8,92 ₺</span><span s
       </div>
       <div class="panel" data-grp="kisayollar" style="display:none">
         <h2>⌨️ Klavye Kısayolları</h2>
-        <div class="scrow"><kbd>Ctrl+T</kbd><span class="scdesc">Tüm filtreleri temizle</span></div>
+        <div class="scrow"><kbd>Alt+T</kbd><span class="scdesc">Tüm filtreleri temizle</span></div>
         <div class="scrow"><kbd>Ctrl+F</kbd><span class="scdesc">Arama kutusuna odaklan</span></div>
         <div class="scrow"><kbd>Alt+←</kbd><span class="scdesc">Önceki filtre durumuna geri dön</span></div>
         <div class="scrow"><kbd>Esc</kbd><span class="scdesc">Açık modalı kapat</span></div>
@@ -2696,7 +2696,7 @@ Net: 8,92 ₺" style="color:var(--green);font-weight:600">8,92 ₺</span><span s
     <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
       <button onclick="gorselBuyukAdim(-1)" title="Önceki" style="position:absolute;left:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">‹</button>
-      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_41.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
+      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_42.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
       <button onclick="gorselBuyukAdim(1)" title="Sonraki" style="position:absolute;right:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">›</button>
     </div>
@@ -3553,12 +3553,17 @@ function bDrop(e,ti){
   bDrag=null;rndBPanel();rndSidebar();
   syncMarkaSirasi();
 }
+// Yeni marka/etiket eklenirken otomatik atanacak renkler — sabit tek renk yerine, birbirinden
+// görsel olarak ayrışan bir palet döngüsel olarak kullanılır (elle renk değiştirmesen bile her
+// yeni eklenen öncekilerden farklı görünür).
+const RENK_PALETI=["#2563eb","#16a34a","#dc2626","#d97706","#7c3aed","#0891b2","#db2777","#65a30d","#ea580c","#4f46e5","#0d9488","#be185d"];
+function sonrakiPaletRengi(mevcutSayisi){ return RENK_PALETI[mevcutSayisi % RENK_PALETI.length]; }
 function addBrand(){
   const k=$("nb-c").value.trim().replace(/\D/g,"").substring(0,2);
   const a=$("nb-n").value.trim();
   if(!k||!a){alert("Kod ve ad gerekli");return;}
   if(S.markalar.find(m=>m.k===k)){alert("Bu kod zaten var");return;}
-  const c="#2563eb";
+  const c=sonrakiPaletRengi(S.markalar.length);
   S.markalar.push({k,a,c});
   $("nb-c").value="";$("nb-n").value="";
   rndBPanel();rndSidebar();applyF(true);
@@ -3597,7 +3602,7 @@ function addTagDef(){
   if(!ham)return;
   const v=etiketNormalizeEt(ham); // ör. "60,5X60,5" yazılsa bile "60X60" olarak tanımlanır
   if(S.etiketler.find(e=>(e.t||e)===v))return;
-  S.etiketler.push({t:v,c:"#d97706"});
+  S.etiketler.push({t:v,c:sonrakiPaletRengi(S.etiketler.length)});
   $("nti").value="";rndTPanel();rndSidebar();
   syncEtiketler();
 }
@@ -4419,7 +4424,7 @@ function resetTheme(){Object.entries(DFT_THEME).forEach(([k,v])=>{document.docum
 
 // ── KEYBOARD ──
 document.addEventListener("keydown",e=>{
-  if(e.ctrlKey&&e.key==="t"){e.preventDefault();clrAll();}
+  if(e.altKey&&e.key==="t"){e.preventDefault();clrAll();}
   if(e.ctrlKey&&e.key==="f"){e.preventDefault();$("ms").focus();}
   if(e.altKey&&e.key==="ArrowLeft"){e.preventDefault();goBack();}
   if(e.key==="Escape"){closeNote();closeTE();closeDateEdit();closeFaturaDetay();}
@@ -4603,8 +4608,10 @@ function toplaAyarlar() {
   };
 }
 async function syncAyarlar() {
+  showSyncStatus("💾 Ayarlar kaydediliyor...","saving");
   const ayarlar = toplaAyarlar();
   await apiWrite("saveAyar", {ayarlar});
+  showSyncStatus("✅ Ayarlar kaydedildi","ok");
 }
 function apiBeacon(action, data={}) {
   // fetch yerine sendBeacon: sayfa kapanırken/yenilenirken bile tarayıcı isteği göndermeyi garanti eder.
@@ -4616,7 +4623,16 @@ function apiBeacon(action, data={}) {
 }
 window.addEventListener("beforeunload", () => {
   try {
-    if (_colPrefsSyncT) { clearTimeout(_colPrefsSyncT); apiBeacon("saveAyar", {ayarlar: toplaAyarlar()}); }
+    // ÖNEMLİ DÜZELTME: Daha önce burada sadece _colPrefsSyncT kontrol ediliyordu — ama tema/satır
+    // renkleri (_ayarTimer) ve yazı tipi ayarları (_fontSyncT) FARKLI zamanlayıcılar kullanıyor.
+    // Kullanıcı bir renk/font ayarı değiştirip debounce süresi (1-2sn) dolmadan sayfayı kapatır/
+    // yenilerse, eski kod bu değişikliği hiç sunucuya göndermeden sessizce kaybediyordu.
+    // Artık üç zamanlayıcıdan HERHANGİ biri bekliyorsa, tüm ayarlar (toplaAyarlar) tek seferde
+    // zorla gönderiliyor.
+    if (_colPrefsSyncT || window._ayarTimer || window._fontSyncT) {
+      clearTimeout(_colPrefsSyncT); clearTimeout(window._ayarTimer); clearTimeout(window._fontSyncT);
+      apiBeacon("saveAyar", {ayarlar: toplaAyarlar()});
+    }
   } catch(e) {}
   try {
     Object.keys(_urunEtSyncT).forEach(kod => {
