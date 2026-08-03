@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_52.html -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_53.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070; --tbl-font: 14px; --hdr-font: 10px; --sb-font: 11px; --panel-font: 13px; --font: Arial,Helvetica,sans-serif; --row-pad-v: 6px; --tbl-weight: 400;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -333,7 +333,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   </div>
   <button class="tab-btn" onclick="ST(&#39;ayarlar&#39;)" id="tab-ayarlar">⚙️ Ayarlar</button>
   <span onclick="yardimAc()" title="Yardım / SSS aç" style="cursor:pointer;font-size:10px;color:var(--text3);opacity:.55;margin-left:-6px;margin-right:2px;user-select:none">❓ Alt+F1</span>
-  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 01.08.2026 (1g)</div>
+  <div class="date-badge" id="dbadge" onclick="openDateEdit()" title="Tarihi düzenlemek için tıkla" style="background: rgb(220, 252, 231); border-color: rgb(22, 163, 74); color: rgb(22, 163, 74);">📅 01.08.2026 (2g)</div>
 </div>
 
 <div class="search-bar" id="sbwrap" style="display: flex;">
@@ -2356,7 +2356,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <h2>⭐ Öncelikli Stoklar</h2>
         <p style="font-size:11px;color:var(--text2);margin-bottom:8px">Buradan seçtiğiniz ürünler <b>her zaman</b> listenin en üstünde gösterilir — sadece sayfa boşken değil, bir marka seçtiğinizde (örn. GPD), bir etiketle filtrelediğinizde veya arama kutusuna bir şey yazdığınızda (örn. "mtl") da o filtrenin/aramanın sonuçları arasında en üstte çıkar. (Bir sütun başlığına tıklayıp elle sıralama yaparsanız, o sıralama geçici olarak önceliklidir.)</p>
         <div style="position:relative;margin-bottom:10px">
-          <input id="acilis-ara" placeholder="Ürün ara ve ekle..." oninput="acilisAra()" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text)">
+          <input id="acilis-ara" placeholder="Ürün ara ve ekle..." oninput="acilisAra()" onkeydown="acilisAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text)">
           <div id="acilis-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
         </div>
         <div id="acilis-secili-liste" style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:6px">
@@ -2476,7 +2476,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
           <button class="addbtn" style="font-size:11px;padding:5px 10px" onclick="markaSiralamaSifirla()">Sıralamayı Sıfırla</button>
         </div>
         <div id="marka-sira-ara-wrap" style="position:relative;margin-bottom:10px;display:none">
-          <input id="marka-sira-ara" placeholder="Bu markada ürün ara ve sıralamaya ekle..." oninput="markaSiralamaAra()" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
+          <input id="marka-sira-ara" placeholder="Bu markada ürün ara ve sıralamaya ekle..." oninput="markaSiralamaAra()" onkeydown="markaSiralamaAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
           <div id="marka-sira-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
         </div>
         <div id="marka-sira-liste" style="display:flex;flex-direction:column;gap:4px">
@@ -2492,7 +2492,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
         <h3 style="font-size:12px;margin:6px 0 6px">Ürün Ara ve Takma Ad Ver</h3>
         <div style="position:relative;margin-bottom:10px">
-          <input id="takma-urun-ara" placeholder="Ürün ara..." oninput="takmaAdAra()" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
+          <input id="takma-urun-ara" placeholder="Ürün ara..." oninput="takmaAdAra()" onkeydown="takmaAdAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
           <div id="takma-urun-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
         </div>
         <div id="takma-urun-secili" style="display:none;margin-bottom:14px;padding:10px;background:var(--bg3);border-radius:var(--r)">
@@ -2641,7 +2641,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
         <h3 style="font-size:12px;margin:6px 0 6px">Ürün Koduna Göre Dışla (tek tek ürün)</h3>
         <div style="position:relative;margin-bottom:8px">
-          <input id="dis-urun-ara" placeholder="Ürün ara ve ekle..." oninput="disUrunAra()" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
+          <input id="dis-urun-ara" placeholder="Ürün ara ve ekle..." oninput="disUrunAra()" onkeydown="disUrunAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
           <div id="dis-urun-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
         </div>
         <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center">
@@ -2801,7 +2801,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
         <h3 style="font-size:12px;margin:6px 0 6px">Yeni Grup Oluştur</h3>
         <div style="position:relative;margin-bottom:6px">
-          <input id="eg-ara" placeholder="Ürün ara ve gruba ekle (en az 2 ürün seçin)..." oninput="egAra()" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
+          <input id="eg-ara" placeholder="Ürün ara ve gruba ekle (en az 2 ürün seçin)..." oninput="egAra()" onkeydown="egAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
           <div id="eg-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
         </div>
         <div id="eg-taslak" style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px"></div>
@@ -2884,7 +2884,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
       <button onclick="gorselBuyukAdim(-1)" title="Önceki" style="position:absolute;left:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">‹</button>
-      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_52.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
+      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_53.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
       <button onclick="gorselBuyukAdim(1)" title="Sonraki" style="position:absolute;right:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">›</button>
     </div>
@@ -4045,9 +4045,11 @@ function teklifUrunEkle(stokKodu) {
 // Liste dışı / manuel ürün — fiyatı serbestçe girilebilir
 // ── AÇILIŞ ÜRÜNLERİ (Ayarlar) ──
 let acilisAraSonuclar = [];
+let acilisAraIdx = -1;
 function acilisAra() {
   const q = $("acilis-ara").value.trim();
   const sonuc = $("acilis-ara-sonuc");
+  acilisAraIdx = -1;
   if (!q) { sonuc.style.display="none"; acilisAraSonuclar=[]; return; }
   const ws = trNorm(q).split(/\s+/).filter(Boolean);
   acilisAraSonuclar = S.stoklar.filter(s => {
@@ -4061,13 +4063,22 @@ function rndAcilisAraSonuc(){
   const sonuc = $("acilis-ara-sonuc");
   if (acilisAraSonuclar.length===0){ sonuc.style.display="none"; return; }
   sonuc.style.display="block";
-  sonuc.innerHTML = acilisAraSonuclar.map(s => {
-    return `<div class="tkf-ara-item" onclick="acilisEkle('${s.STOK_KODU}')"
+  sonuc.innerHTML = acilisAraSonuclar.map((s,i) => {
+    return `<div class="tkf-ara-item${i===acilisAraIdx?" hi":""}" onclick="acilisEkle('${s.STOK_KODU}')"
       style="padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--border);font-size:12px">
       <div style="font-weight:600">${s.STOK_ADI}</div>
       <div style="color:var(--text3);font-size:11px">${s.STOK_KODU}</div>
     </div>`;
   }).join("");
+  const hi=sonuc.querySelector(".hi");
+  if(hi) hi.scrollIntoView({block:"nearest"});
+}
+function acilisAraKey(e){
+  if(acilisAraSonuclar.length===0) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); acilisAraIdx=Math.min(acilisAraIdx+1, acilisAraSonuclar.length-1); rndAcilisAraSonuc(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); acilisAraIdx=Math.max(acilisAraIdx-1, 0); rndAcilisAraSonuc(); }
+  else if(e.key==="Enter"){ e.preventDefault(); const s=acilisAraSonuclar[acilisAraIdx>=0?acilisAraIdx:0]; if(s) acilisEkle(String(s.STOK_KODU)); }
+  else if(e.key==="Escape"){ $("acilis-ara-sonuc").style.display="none"; acilisAraSonuclar=[]; acilisAraIdx=-1; }
 }
 // Numuneler bölümündeki "🚀 Açılış" tik kutusu: işaretlenince aynı ürünü Açılış Ürünleri
 // listesine ekler (mevcut acilisEkle/acilisSil mekanizmasını kullanır), kaldırılınca çıkarır.
@@ -4781,9 +4792,11 @@ function disMarkaSil(kod){
 }
 
 let disUrunAraSonuclar=[];
+let disUrunAraIdx = -1;
 function disUrunAra(){
   const q=$("dis-urun-ara").value.trim();
   const sonuc=$("dis-urun-ara-sonuc");
+  disUrunAraIdx = -1;
   if(!q){ sonuc.style.display="none"; disUrunAraSonuclar=[]; return; }
   const ws=trNorm(q).split(/\s+/).filter(Boolean);
   disUrunAraSonuclar = S.stoklar.filter(s=>{
@@ -4791,14 +4804,27 @@ function disUrunAra(){
     const h=trNorm(s.STOK_KODU)+" "+trNorm(s.STOK_ADI);
     return ws.every(w=>fuzzyMatch(w,h));
   }).slice(0,15);
+  rndDisUrunAraSonuc();
+}
+function rndDisUrunAraSonuc(){
+  const sonuc=$("dis-urun-ara-sonuc");
   if(disUrunAraSonuclar.length===0){ sonuc.style.display="none"; return; }
   sonuc.style.display="block";
-  sonuc.innerHTML = disUrunAraSonuclar.map(s=>`
-    <div style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
+  sonuc.innerHTML = disUrunAraSonuclar.map((s,i)=>`
+    <div class="tkf-ara-item${i===disUrunAraIdx?" hi":""}" style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
       onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''"
       onclick="disUrunEkle('${String(s.STOK_KODU).replace(/'/g,"\\'")}')">
       <b>${s.STOK_KODU}</b> — ${s.STOK_ADI}
     </div>`).join("");
+  const hi = sonuc.querySelector(".hi");
+  if(hi) hi.scrollIntoView({block:"nearest"});
+}
+function disUrunAraKey(e){
+  if(disUrunAraSonuclar.length===0) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); disUrunAraIdx=Math.min(disUrunAraIdx+1, disUrunAraSonuclar.length-1); rndDisUrunAraSonuc(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); disUrunAraIdx=Math.max(disUrunAraIdx-1, 0); rndDisUrunAraSonuc(); }
+  else if(e.key==="Enter"){ e.preventDefault(); const s=disUrunAraSonuclar[disUrunAraIdx>=0?disUrunAraIdx:0]; if(s) disUrunEkle(String(s.STOK_KODU)); }
+  else if(e.key==="Escape"){ $("dis-urun-ara-sonuc").style.display="none"; disUrunAraSonuclar=[]; disUrunAraIdx=-1; }
 }
 
 function disUrunKoduEkle(){
@@ -4911,10 +4937,12 @@ function markaSiralamaSec(){
 }
 
 let markaSiraAraSonuclar=[];
+let markaSiraAraIdx=-1;
 function markaSiralamaAra(){
   const kod=$("marka-sira-sec").value;
   const q=$("marka-sira-ara").value.trim();
   const sonuc=$("marka-sira-ara-sonuc");
+  markaSiraAraIdx=-1;
   if(!kod || !q){ sonuc.style.display="none"; markaSiraAraSonuclar=[]; return; }
   const sira = (S.markaSiralama && S.markaSiralama[kod]) || [];
   const ws=trNorm(q).split(/\s+/).filter(Boolean);
@@ -4930,14 +4958,27 @@ function markaSiralamaAra(){
     }
     return false;
   }).slice(0,15);
+  rndMarkaSiraAraSonuc();
+}
+function rndMarkaSiraAraSonuc(){
+  const sonuc=$("marka-sira-ara-sonuc");
   if(markaSiraAraSonuclar.length===0){ sonuc.style.display="none"; return; }
   sonuc.style.display="block";
-  sonuc.innerHTML = markaSiraAraSonuclar.map(s=>`
-    <div style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
+  sonuc.innerHTML = markaSiraAraSonuclar.map((s,i)=>`
+    <div class="tkf-ara-item${i===markaSiraAraIdx?" hi":""}" style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
       onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''"
       onclick="markaSiralamaUrunEkle('${String(s.STOK_KODU).replace(/'/g,"\\'")}')">
       <b>${s.STOK_KODU}</b> — ${s.STOK_ADI}
     </div>`).join("");
+  const hi=sonuc.querySelector(".hi");
+  if(hi) hi.scrollIntoView({block:"nearest"});
+}
+function markaSiralamaAraKey(e){
+  if(markaSiraAraSonuclar.length===0) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); markaSiraAraIdx=Math.min(markaSiraAraIdx+1, markaSiraAraSonuclar.length-1); rndMarkaSiraAraSonuc(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); markaSiraAraIdx=Math.max(markaSiraAraIdx-1, 0); rndMarkaSiraAraSonuc(); }
+  else if(e.key==="Enter"){ e.preventDefault(); const s=markaSiraAraSonuclar[markaSiraAraIdx>=0?markaSiraAraIdx:0]; if(s) markaSiralamaUrunEkle(String(s.STOK_KODU)); }
+  else if(e.key==="Escape"){ $("marka-sira-ara-sonuc").style.display="none"; markaSiraAraSonuclar=[]; markaSiraAraIdx=-1; }
 }
 
 function markaSiralamaUrunEkle(urunKod){
@@ -5003,24 +5044,39 @@ function olcuBasaAlToggle(){
 }
 
 let takmaUrunAraSonuclar=[];
+let takmaUrunAraIdx=-1;
 let _takmaSeciliKod=null;
 function takmaAdAra(){
   const q=$("takma-urun-ara").value.trim();
   const sonuc=$("takma-urun-ara-sonuc");
+  takmaUrunAraIdx=-1;
   if(!q){ sonuc.style.display="none"; takmaUrunAraSonuclar=[]; return; }
   const ws=trNorm(q).split(/\s+/).filter(Boolean);
   takmaUrunAraSonuclar = S.stoklar.filter(s=>{
     const h=trNorm(s.STOK_KODU)+" "+trNorm(s.STOK_ADI);
     return ws.every(w=>fuzzyMatch(w,h));
   }).slice(0,15);
+  rndTakmaUrunAraSonuc();
+}
+function rndTakmaUrunAraSonuc(){
+  const sonuc=$("takma-urun-ara-sonuc");
   if(takmaUrunAraSonuclar.length===0){ sonuc.style.display="none"; return; }
   sonuc.style.display="block";
-  sonuc.innerHTML = takmaUrunAraSonuclar.map(s=>`
-    <div style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
+  sonuc.innerHTML = takmaUrunAraSonuclar.map((s,i)=>`
+    <div class="tkf-ara-item${i===takmaUrunAraIdx?" hi":""}" style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
       onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''"
       onclick="takmaAdUrunSec('${String(s.STOK_KODU).replace(/'/g,"\\'")}')">
       <b>${s.STOK_KODU}</b> — ${s.STOK_ADI}
     </div>`).join("");
+  const hi=sonuc.querySelector(".hi");
+  if(hi) hi.scrollIntoView({block:"nearest"});
+}
+function takmaAdAraKey(e){
+  if(takmaUrunAraSonuclar.length===0) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); takmaUrunAraIdx=Math.min(takmaUrunAraIdx+1, takmaUrunAraSonuclar.length-1); rndTakmaUrunAraSonuc(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); takmaUrunAraIdx=Math.max(takmaUrunAraIdx-1, 0); rndTakmaUrunAraSonuc(); }
+  else if(e.key==="Enter"){ e.preventDefault(); const s=takmaUrunAraSonuclar[takmaUrunAraIdx>=0?takmaUrunAraIdx:0]; if(s) takmaAdUrunSec(String(s.STOK_KODU)); }
+  else if(e.key==="Escape"){ $("takma-urun-ara-sonuc").style.display="none"; takmaUrunAraSonuclar=[]; takmaUrunAraIdx=-1; }
 }
 
 function takmaAdUrunSec(kod){
@@ -5243,10 +5299,12 @@ async function lgKaydet(hangi){
 // ── EŞLEŞEN STOKLAR (kutu/palet vb. paketleme varyantları) — AYARLAR SEKMESİ ──
 let egTaslak = []; // yeni grup oluştururken geçici seçim listesi
 let egAraSonuclar = [];
+let egAraIdx = -1;
 
 function egAra(){
   const q = $("eg-ara").value.trim();
   const sonuc = $("eg-ara-sonuc");
+  egAraIdx = -1;
   if(!q){ sonuc.style.display="none"; egAraSonuclar=[]; return; }
   const ws = trNorm(q).split(/\s+/).filter(Boolean);
   const ekOlcular = olcuGenisletListe(ws);
@@ -5260,14 +5318,27 @@ function egAra(){
     }
     return false;
   }).slice(0,15);
+  rndEgAraSonuc();
+}
+function rndEgAraSonuc(){
+  const sonuc = $("eg-ara-sonuc");
   if(egAraSonuclar.length===0){ sonuc.style.display="none"; return; }
   sonuc.style.display="block";
-  sonuc.innerHTML = egAraSonuclar.map(s=>`
-    <div style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
+  sonuc.innerHTML = egAraSonuclar.map((s,i)=>`
+    <div class="tkf-ara-item${i===egAraIdx?" hi":""}" style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
       onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''"
       onclick="egTaslakaEkle('${String(s.STOK_KODU).replace(/'/g,"\\'")}')">
       <b>${s.STOK_KODU}</b> — ${s.STOK_ADI}
     </div>`).join("");
+  const hi = sonuc.querySelector(".hi");
+  if(hi) hi.scrollIntoView({block:"nearest"});
+}
+function egAraKey(e){
+  if(egAraSonuclar.length===0) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); egAraIdx=Math.min(egAraIdx+1, egAraSonuclar.length-1); rndEgAraSonuc(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); egAraIdx=Math.max(egAraIdx-1, 0); rndEgAraSonuc(); }
+  else if(e.key==="Enter"){ e.preventDefault(); const s=egAraSonuclar[egAraIdx>=0?egAraIdx:0]; if(s) egTaslakaEkle(String(s.STOK_KODU)); }
+  else if(e.key==="Escape"){ $("eg-ara-sonuc").style.display="none"; egAraSonuclar=[]; egAraIdx=-1; }
 }
 
 function egTaslakaEkle(kod){
@@ -5275,7 +5346,7 @@ function egTaslakaEkle(kod){
   if(!egTaslak.includes(kod)) egTaslak.push(kod);
   $("eg-ara").value="";
   $("eg-ara-sonuc").style.display="none";
-  egAraSonuclar=[];
+  egAraSonuclar=[]; egAraIdx=-1;
   egTaslakRender();
 }
 
@@ -5317,6 +5388,7 @@ function egGrupKaydet(){
 function egGrupSil(id){
   if(!confirm("Bu eşleşme grubu tamamen silinsin mi?")) return;
   S.esleskodGruplari = (S.esleskodGruplari||[]).filter(g=>g.id!==id);
+  if(egGrupEklemeAcikId===id) egGrupEklemeAcikId=null;
   egListeRender();
   syncAyarlar();
   applyF();
@@ -5329,7 +5401,81 @@ function egGruptanUrunSil(id, kod){
   // 1 veya 0 ürün kaldıysa grubun anlamı kalmaz, tamamen sil.
   if(g.kodlar.length<2){
     S.esleskodGruplari = S.esleskodGruplari.filter(x=>x.id!==id);
+    if(egGrupEklemeAcikId===id) egGrupEklemeAcikId=null;
   }
+  egListeRender();
+  syncAyarlar();
+  applyF();
+}
+
+// ── Mevcut bir gruba sonradan ürün ekleme ──
+let egGrupEklemeAcikId = null; // hangi grubun "+ Ürün Ekle" arama kutusu açık
+let egGrupEkleSonuclar = [];
+let egGrupEkleIdx = -1;
+
+function egGrupEkleAc(id){
+  egGrupEklemeAcikId = (egGrupEklemeAcikId===id) ? null : id;
+  egGrupEkleSonuclar = []; egGrupEkleIdx = -1;
+  egListeRender();
+  if(egGrupEklemeAcikId){
+    setTimeout(()=>{ const el=$("eg-grup-ekle-ara-"+id); if(el) el.focus(); }, 30);
+  }
+}
+
+function egGrupEkleAra(id){
+  const inp = $("eg-grup-ekle-ara-"+id);
+  const sonuc = $("eg-grup-ekle-sonuc-"+id);
+  if(!inp || !sonuc) return;
+  const q = inp.value.trim();
+  egGrupEkleIdx = -1;
+  if(!q){ sonuc.style.display="none"; egGrupEkleSonuclar=[]; return; }
+  const g = (S.esleskodGruplari||[]).find(x=>x.id===id);
+  const mevcutKodlar = g ? g.kodlar : [];
+  const ws = trNorm(q).split(/\s+/).filter(Boolean);
+  const ekOlcular = olcuGenisletListe(ws);
+  egGrupEkleSonuclar = S.stoklar.filter(s=>{
+    if(mevcutKodlar.includes(String(s.STOK_KODU))) return false;
+    const h = trNorm(s.STOK_KODU)+" "+trNorm(s.STOK_ADI);
+    if(ws.every(w=>fuzzyMatch(w,h))) return true;
+    if(ekOlcular.length>0){
+      const hU=(s.STOK_ADI||"").toUpperCase();
+      return ekOlcular.some(o=>hU.includes(o));
+    }
+    return false;
+  }).slice(0,15);
+  rndEgGrupEkleSonuc(id);
+}
+
+function rndEgGrupEkleSonuc(id){
+  const sonuc = $("eg-grup-ekle-sonuc-"+id);
+  if(!sonuc) return;
+  if(egGrupEkleSonuclar.length===0){ sonuc.style.display="none"; return; }
+  sonuc.style.display="block";
+  sonuc.innerHTML = egGrupEkleSonuclar.map((s,i)=>`
+    <div class="tkf-ara-item${i===egGrupEkleIdx?" hi":""}" style="padding:8px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)"
+      onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''"
+      onclick="egGrupaUrunEkle('${id}','${String(s.STOK_KODU).replace(/'/g,"\\'")}')">
+      <b>${s.STOK_KODU}</b> — ${s.STOK_ADI}
+    </div>`).join("");
+  const hi = sonuc.querySelector(".hi");
+  if(hi) hi.scrollIntoView({block:"nearest"});
+}
+
+function egGrupEkleKey(e, id){
+  if(egGrupEkleSonuclar.length===0) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); egGrupEkleIdx=Math.min(egGrupEkleIdx+1, egGrupEkleSonuclar.length-1); rndEgGrupEkleSonuc(id); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); egGrupEkleIdx=Math.max(egGrupEkleIdx-1, 0); rndEgGrupEkleSonuc(id); }
+  else if(e.key==="Enter"){ e.preventDefault(); const s=egGrupEkleSonuclar[egGrupEkleIdx>=0?egGrupEkleIdx:0]; if(s) egGrupaUrunEkle(id, String(s.STOK_KODU)); }
+  else if(e.key==="Escape"){ const el=$("eg-grup-ekle-sonuc-"+id); if(el) el.style.display="none"; egGrupEkleSonuclar=[]; egGrupEkleIdx=-1; }
+}
+
+function egGrupaUrunEkle(id, kod){
+  const g = (S.esleskodGruplari||[]).find(x=>x.id===id);
+  if(!g) return;
+  kod = String(kod);
+  if(!g.kodlar.includes(kod)) g.kodlar.push(kod);
+  egGrupEklemeAcikId = null;
+  egGrupEkleSonuclar = []; egGrupEkleIdx = -1;
   egListeRender();
   syncAyarlar();
   applyF();
@@ -5343,11 +5489,17 @@ function egListeRender(){
     wrap.innerHTML='<div style="font-size:11px;color:var(--text3)">Henüz eşleşen stok grubu tanımlanmadı.</div>';
     return;
   }
-  wrap.innerHTML = gruplar.map(g=>`
-    <div style="border:1px solid var(--border);border-radius:var(--r);padding:8px 10px">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:4px">
+  wrap.innerHTML = gruplar.map(g=>{
+    const eklemeAcik = egGrupEklemeAcikId===g.id;
+    return `<div style="border:1px solid var(--border);border-radius:var(--r);padding:8px 10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <button onclick="egGrupEkleAc('${g.id}')" style="background:none;border:none;color:var(--blue);cursor:pointer;font-size:11px;font-weight:600">${eklemeAcik?"✕ Vazgeç":"+ Ürün Ekle"}</button>
         <button onclick="egGrupSil('${g.id}')" style="background:none;border:none;color:var(--danger,#e33);cursor:pointer;font-size:11px">Grubu Sil</button>
       </div>
+      ${eklemeAcik?`<div style="position:relative;margin-bottom:8px">
+        <input id="eg-grup-ekle-ara-${g.id}" placeholder="Bu gruba eklenecek ürünü ara..." oninput="egGrupEkleAra('${g.id}')" onkeydown="egGrupEkleKey(event,'${g.id}')" autocomplete="off" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
+        <div id="eg-grup-ekle-sonuc-${g.id}" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:180px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+      </div>`:""}
       ${g.kodlar.map(kod=>{
         const s=S.stoklar.find(x=>String(x.STOK_KODU)===kod);
         const ad = s ? s.STOK_ADI : "(bilinmeyen ürün)";
@@ -5356,8 +5508,10 @@ function egListeRender(){
           <button onclick="egGruptanUrunSil('${g.id}','${kod}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0 4px">✕</button>
         </div>`;
       }).join("")}
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
+
 
 // Bir stok kodunun bağlı olduğu eşleşme grubundaki DİĞER kodları döndürür (kendisi hariç).
 function egEslesenKodlar(kod){
@@ -5637,10 +5791,24 @@ function toplaAyarlar() {
     tblBold: document.getElementById("f-bold")?.checked ? "1" : "0",
   };
 }
+// Kaydedilen ayarları yerel önbelleğe (localStorage) de yazar — sayfa hemen yenilenirse
+// önbellekten yüklenen eski ayarların bir an görünüp sonra sunucudan gelenle düzelmesi ("titreme")
+// önlenmiş olur. Sadece "ayarlar" alanını günceller, stok/fiyat verisine dokunmaz.
+function _cacheAyarlariGuncelle(ayarlar){
+  try {
+    const raw = localStorage.getItem("stok_full_cache");
+    if (!raw) return;
+    const cached = JSON.parse(raw);
+    cached.ayarlar = Object.assign({}, cached.ayarlar, ayarlar);
+    localStorage.setItem("stok_full_cache", JSON.stringify(cached));
+  } catch(e) {}
+}
+
 async function syncAyarlar() {
   showSyncStatus("💾 Ayarlar kaydediliyor...","saving");
   const ayarlar = toplaAyarlar();
   await apiWrite("saveAyar", {ayarlar});
+  _cacheAyarlariGuncelle(ayarlar);
   showSyncStatus("✅ Ayarlar kaydedildi","ok");
 }
 function apiBeacon(action, data={}) {
@@ -5661,7 +5829,9 @@ window.addEventListener("beforeunload", () => {
     // zorla gönderiliyor.
     if (_colPrefsSyncT || window._ayarTimer || window._fontSyncT) {
       clearTimeout(_colPrefsSyncT); clearTimeout(window._ayarTimer); clearTimeout(window._fontSyncT);
-      apiBeacon("saveAyar", {ayarlar: toplaAyarlar()});
+      const _sonAyarlar = toplaAyarlar();
+      apiBeacon("saveAyar", {ayarlar: _sonAyarlar});
+      _cacheAyarlariGuncelle(_sonAyarlar);
     }
   } catch(e) {}
   try {
@@ -6410,7 +6580,7 @@ function nuAra() {
       return ekOlcular.some(o=>hU.includes(o));
     }
     return false;
-  }).slice(0, 30);
+  }).sort((a,b)=>(parseFloat(b.SATILABILIR)||0)-(parseFloat(a.SATILABILIR)||0)).slice(0, 30);
   rndNuSonuc();
 }
 
@@ -8625,6 +8795,6 @@ function closeMobSidebar() {
 // Filtre uygulandığında mobilden sidebar'ı kapat
 const _origApplyF = typeof applyF === "function" ? applyF : null;
 
-</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(219, 234, 254); color: rgb(29, 78, 216); opacity: 1;">🔄 Sunucuya bağlanılıyor, veriler bir süre önceki hâliyle gösteriliyor...</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 11:17 itibarıyla senkronize edildi</div>
+</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(219, 234, 254); color: rgb(29, 78, 216); opacity: 0;">🔄 Sunucuya bağlanılıyor, veriler bir süre önceki hâliyle gösteriliyor...</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 11:17 itibarıyla senkronize edildi</div>
 
 </body></html>
