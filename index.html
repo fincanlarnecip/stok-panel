@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)https://fincanlarnecip.github.io/stok-panel/ -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_56.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070; --tbl-font: 14px; --hdr-font: 13px; --sb-font: 11px; --panel-font: 13px; --font: Arial,Helvetica,sans-serif; --row-pad-v: 6px; --tbl-weight: 400;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
 <link href="./index_files/css2" rel="stylesheet">
-<script src="file:///C:/Users/furka/Downloads/lib/xlsx.full.min.js" onerror="var s=document.createElement(&#39;script&#39;);s.src=&#39;https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js&#39;;document.head.appendChild(s);"></script><script src="./index_files/xlsx.full.min.js.indir"></script><script src="./index_files/xlsx.full.min(1).js.indir"></script>
+<script src="file:///C:/Users/furka/Downloads/lib/xlsx.full.min.js" onerror="var s=document.createElement(&#39;script&#39;);s.src=&#39;https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js&#39;;document.head.appendChild(s);"></script><script src="./index_files/xlsx.full.min.js.indir"></script>
 <script type="module">
   import * as pdfjsLib from './lib/pdf.min.mjs';
   pdfjsLib.GlobalWorkerOptions.workerSrc = './lib/pdf.worker.min.mjs';
@@ -304,9 +304,9 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 </head>
 <body style="font-family: var(--font);">
 
-<div id="sistem-durum" title="Son senkronizasyon durumu" style="position: fixed; bottom: 34px; right: 12px; z-index: 1000; font-size: 11px; padding: 4px 10px; border-radius: 12px; background: rgb(220, 252, 231); color: rgb(21, 128, 61); display: flex; align-items: center; gap: 5px; box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 4px; transition: 0.3s;">
-  <span id="sistem-durum-nokta" style="width: 7px; height: 7px; border-radius: 50%; background: rgb(22, 163, 74); display: inline-block;"></span>
-  <span id="sistem-durum-metin">Sistem aktif — 09:48</span>
+<div id="sistem-durum" title="Son senkronizasyon durumu" style="position: fixed; bottom: 34px; right: 12px; z-index: 1000; font-size: 11px; padding: 4px 10px; border-radius: 12px; background: rgb(241, 245, 249); color: rgb(100, 116, 139); display: flex; align-items: center; gap: 5px; box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 4px; transition: 0.3s;">
+  <span id="sistem-durum-nokta" style="width: 7px; height: 7px; border-radius: 50%; background: rgb(148, 163, 184); display: inline-block;"></span>
+  <span id="sistem-durum-metin">Bağlanıyor...</span>
 </div>
 
 <div class="topbar">
@@ -2370,6 +2370,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <button class="tab-btn" data-at="listeguncelle" onclick="ATab(&#39;listeguncelle&#39;)">📋 Liste Güncelleme</button>
         <button class="tab-btn" data-at="esleskod" onclick="ATab(&#39;esleskod&#39;)">🔗 Eşleşen Stoklar</button>
         <button class="tab-btn" data-at="yardim" onclick="ATab(&#39;yardim&#39;)">❓ Yardım</button>
+        <button class="tab-btn" data-at="varsayilantik" onclick="ATab(&#39;varsayilantik&#39;)">🔘 Varsayılan Tikler</button>
         <button class="tab-btn" data-at="kisayollar" onclick="ATab(&#39;kisayollar&#39;)">⌨️ Kısayollar</button>
       </div>
       <div class="panel" data-grp="gorunum">
@@ -2936,6 +2937,15 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <input id="yardim-ara" placeholder="Soru ara (ör. &#39;sıralama&#39;, &#39;kısayol&#39;, &#39;ölçü&#39;)..." oninput="yardimRender()" autocomplete="off" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box;margin-bottom:12px">
         <div id="yardim-liste" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
+      <div class="panel" data-grp="varsayilantik" style="display:none">
+        <h2>🔘 Varsayılan Tikler</h2>
+        <p style="font-size:11px;color:var(--text2);margin-bottom:14px">Uygulamanın çeşitli yerlerine dağılmış tüm aç/kapa tiklerin bir arada toplandığı genel bakış. Buradan değiştirdiğinde hem şu anki görünüm hem de bir sonraki sayfa açılışındaki varsayılan durum güncellenir.</p>
+        <div class="setrow"><span class="setlbl">Arama: Tam eşleşme</span><span class="setval"><input type="checkbox" id="s-vt-tameslesme" onchange="vtTamEslesmeToggle()"></span></div>
+        <div class="setrow"><span class="setlbl">0 ve eski stokları göster</span><span class="setval"><input type="checkbox" id="s-vt-eskigoster" onchange="vtEskiGosterToggle()"></span></div>
+        <div class="setrow"><span class="setlbl">Durum filtresi ızgarasını göster</span><span class="setval"><input type="checkbox" id="s-vt-durumizgara" onchange="vtDurumIzgaraToggle()"></span></div>
+        <div class="setrow"><span class="setlbl">Ölçüyü ürün adının başına al</span><span class="setval"><input type="checkbox" id="s-vt-olcubasaal" onchange="vtOlcuBasaAlToggle()"></span></div>
+        <div class="setrow"><span class="setlbl">Takma adları kullan</span><span class="setval"><input type="checkbox" id="s-vt-takmaad" onchange="vtTakmaAdToggle()"></span></div>
+      </div>
       <div class="panel" data-grp="kisayollar" style="display:none">
         <h2>⌨️ Klavye Kısayolları</h2>
         <div class="scrow"><kbd>Alt+F1</kbd><span class="scdesc">Yardım / SSS bölümünü aç</span></div>
@@ -3004,7 +3014,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
       <button onclick="gorselBuyukAdim(-1)" title="Önceki" style="position:absolute;left:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">‹</button>
-      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_55.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
+      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_56.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
       <button onclick="gorselBuyukAdim(1)" title="Sonraki" style="position:absolute;right:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">›</button>
     </div>
@@ -3108,6 +3118,9 @@ let S={
   takmaAdlar:{},
   takmaAdKullan:true,
   olcuBasaAl:false,
+  varsayilanTamEslesme:false,
+  varsayilanEskiGoster:true,
+  varsayilanDurumIzgara:true,
   esleskodGruplari:[],
   disMarkalar:[],
   disUrunler:[],
@@ -4805,6 +4818,7 @@ function ATab(grp){
   if(grp==="markasira") markaSiralamaDropdoldur();
   if(grp==="esleskod") egListeRender();
   if(grp==="yardim") yardimRender();
+  if(grp==="varsayilantik") vtRender();
   if(grp==="takmaad"){ renderTakmaAdListesi(); const el=$("s-takma-kullan"); if(el) el.checked=S.takmaAdKullan!==false; }
 }
 // ── FONT ──
@@ -5153,12 +5167,52 @@ function markaSiralamaSifirla(){
 // ── ÖZEL ÜRÜN İSMİ (TAKMA AD) — AYARLAR SEKMESİ ──
 function takmaAdKullanToggle(){
   S.takmaAdKullan = $("s-takma-kullan").checked;
+  const vt=$("s-vt-takmaad"); if(vt) vt.checked = S.takmaAdKullan;
   syncAyarlar();
   applyF();
 }
 
 function olcuBasaAlToggle(){
   S.olcuBasaAl = $("s-olcu-basa-al").checked;
+  const vt=$("s-vt-olcubasaal"); if(vt) vt.checked = S.olcuBasaAl;
+  syncAyarlar();
+  applyF();
+}
+
+// ── VARSAYILAN TİKLER — AYARLAR SEKMESİ (dağınık tüm aç/kapa tiklerin toplu görünümü) ──
+function vtRender(){
+  const set=(id,val)=>{ const el=$(id); if(el) el.checked=!!val; };
+  set("s-vt-tameslesme", S.varsayilanTamEslesme);
+  set("s-vt-eskigoster", S.varsayilanEskiGoster!==false);
+  set("s-vt-durumizgara", S.varsayilanDurumIzgara!==false);
+  set("s-vt-olcubasaal", S.olcuBasaAl);
+  set("s-vt-takmaad", S.takmaAdKullan!==false);
+}
+function vtTamEslesmeToggle(){
+  S.varsayilanTamEslesme = $("s-vt-tameslesme").checked;
+  const el=$("s-tam-eslesme"); if(el){ el.checked = S.varsayilanTamEslesme; applyF(); }
+  syncAyarlar();
+}
+function vtEskiGosterToggle(){
+  S.varsayilanEskiGoster = $("s-vt-eskigoster").checked;
+  const el=$("s-show-eski"); if(el){ el.checked = S.varsayilanEskiGoster; applyF(); }
+  syncAyarlar();
+}
+function vtDurumIzgaraToggle(){
+  S.varsayilanDurumIzgara = $("s-vt-durumizgara").checked;
+  const el=$("s-showdur");
+  if(el && el.checked !== S.varsayilanDurumIzgara){ el.checked = S.varsayilanDurumIzgara; toggleDurGrid(); }
+  syncAyarlar();
+}
+function vtOlcuBasaAlToggle(){
+  S.olcuBasaAl = $("s-vt-olcubasaal").checked;
+  const el=$("s-olcu-basa-al"); if(el) el.checked = S.olcuBasaAl;
+  syncAyarlar();
+  applyF();
+}
+function vtTakmaAdToggle(){
+  S.takmaAdKullan = $("s-vt-takmaad").checked;
+  const el=$("s-takma-kullan"); if(el) el.checked = S.takmaAdKullan;
   syncAyarlar();
   applyF();
 }
@@ -5899,6 +5953,9 @@ function toplaAyarlar() {
     takmaAdlarJson: JSON.stringify(S.takmaAdlar||{}),
     takmaAdKullan: S.takmaAdKullan===false ? "0" : "1",
     olcuBasaAl: S.olcuBasaAl===true ? "1" : "0",
+    varsayilanTamEslesme: S.varsayilanTamEslesme===true ? "1" : "0",
+    varsayilanEskiGoster: S.varsayilanEskiGoster===false ? "0" : "1",
+    varsayilanDurumIzgara: S.varsayilanDurumIzgara===false ? "0" : "1",
     esleskodGruplariJson: JSON.stringify(S.esleskodGruplari||[]),
     disMarkalarJson: JSON.stringify(S.disMarkalar||[]),
     disUrunlerJson: JSON.stringify(S.disUrunler||[]),
@@ -6168,6 +6225,20 @@ function uygulaSheetsVerisi(data) {
       S.olcuBasaAl = a.olcuBasaAl==="1";
       const el2=$("s-olcu-basa-al"); if(el2) el2.checked = S.olcuBasaAl;
     }
+    if (a.varsayilanTamEslesme!=null) {
+      S.varsayilanTamEslesme = a.varsayilanTamEslesme==="1";
+      const el=$("s-tam-eslesme"); if(el) el.checked = S.varsayilanTamEslesme;
+    }
+    if (a.varsayilanEskiGoster!=null) {
+      S.varsayilanEskiGoster = a.varsayilanEskiGoster!=="0";
+      const el=$("s-show-eski"); if(el) el.checked = S.varsayilanEskiGoster;
+    }
+    if (a.varsayilanDurumIzgara!=null) {
+      S.varsayilanDurumIzgara = a.varsayilanDurumIzgara!=="0";
+      const el=$("s-showdur");
+      if(el && el.checked !== S.varsayilanDurumIzgara){ el.checked = S.varsayilanDurumIzgara; toggleDurGrid(); }
+    }
+    vtRender();
     if (a.esleskodGruplariJson) {
       try{ S.esleskodGruplari = JSON.parse(a.esleskodGruplariJson) || []; }catch(e){ S.esleskodGruplari = []; }
     }
@@ -8923,6 +8994,6 @@ function closeMobSidebar() {
 // Filtre uygulandığında mobilden sidebar'ı kapat
 const _origApplyF = typeof applyF === "function" ? applyF : null;
 
-</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(220, 252, 231); color: rgb(21, 128, 61); opacity: 0;">✅ Veriler güncel — 09:48 itibarıyla senkronize edildi</div><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(219, 234, 254); color: rgb(29, 78, 216); opacity: 0;">🔄 Sunucuya bağlanılıyor, veriler bir süre önceki hâliyle gösteriliyor...</div>
+</script><div id="sync-bar" style="position: fixed; bottom: 0px; left: 0px; right: 0px; padding: 5px 14px; font-size: 11px; z-index: 999; transition: 0.3s; text-align: center; background: rgb(219, 234, 254); color: rgb(29, 78, 216); opacity: 0;">🔄 Sunucuya bağlanılıyor, veriler bir süre önceki hâliyle gösteriliyor...</div>
 
 </body></html>
