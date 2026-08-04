@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_56.html -->
+<!-- saved from url=(0046)file:///C:/Users/furka/Downloads/index_57.html -->
 <html lang="tr" style="--hover-row: #788dd3; --active-row: #fffdf0; --new-row: #fef9c3; --pasif-row: #f1f1f1; --blue: #2563eb; --blue-l: #2563eb33; --bg: #f7f8fa; --bg2: #ffffff; --bg4: #e8edf5; --border: #e0e3e8; --text: #1a1d23; --text2: #5a6070; --tbl-font: 14px; --hdr-font: 13px; --sb-font: 11px; --panel-font: 13px; --font: Arial,Helvetica,sans-serif; --row-pad-v: 6px; --tbl-weight: 400;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2371,6 +2371,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <button class="tab-btn" data-at="esleskod" onclick="ATab(&#39;esleskod&#39;)">🔗 Eşleşen Stoklar</button>
         <button class="tab-btn" data-at="yardim" onclick="ATab(&#39;yardim&#39;)">❓ Yardım</button>
         <button class="tab-btn" data-at="varsayilantik" onclick="ATab(&#39;varsayilantik&#39;)">🔘 Varsayılan Tikler</button>
+        <button class="tab-btn" data-at="magazabolum" onclick="ATab(&#39;magazabolum&#39;)">🗺️ Mağaza Bölümleri</button>
         <button class="tab-btn" data-at="kisayollar" onclick="ATab(&#39;kisayollar&#39;)">⌨️ Kısayollar</button>
       </div>
       <div class="panel" data-grp="gorunum">
@@ -2946,6 +2947,38 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <div class="setrow"><span class="setlbl">Ölçüyü ürün adının başına al</span><span class="setval"><input type="checkbox" id="s-vt-olcubasaal" onchange="vtOlcuBasaAlToggle()"></span></div>
         <div class="setrow"><span class="setlbl">Takma adları kullan</span><span class="setval"><input type="checkbox" id="s-vt-takmaad" onchange="vtTakmaAdToggle()"></span></div>
       </div>
+      <div class="panel" data-grp="magazabolum" style="display:none">
+        <h2>🗺️ Mağaza Bölümleri</h2>
+        <p style="font-size:11px;color:var(--text2);margin-bottom:14px">Mağazadaki her standın/bölümün fotoğrafını yükleyin, fotoğrafın üzerine tıklayarak hangi ürünün orada durduğunu işaretleyin. Rozetlerdeki sayılar her zaman güncel stok miktarını gösterir (kırmızı: stok yok, sarı: az, yeşil: yeterli).</p>
+
+        <div style="display:flex;gap:6px;margin-bottom:16px;align-items:center">
+          <input id="mb-yeni-ad" placeholder="Yeni bölüm adı (ör. Metal Stant)..." style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text)">
+          <input type="file" id="mb-yeni-foto" accept="image/*" style="display:none" onchange="mbYeniBolumFotoSecildi(this)">
+          <button class="addbtn" style="font-size:12px;padding:6px 14px" onclick="mbYeniBolumBaslat()">+ Fotoğraflı Bölüm Ekle</button>
+        </div>
+
+        <div id="mb-liste" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:10px"></div>
+
+        <div id="mb-editor" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <h3 id="mb-editor-ad" style="font-size:14px;margin:0"></h3>
+            <div style="display:flex;gap:8px">
+              <button onclick="mbBolumSil()" style="background:none;border:none;color:var(--danger,#e33);cursor:pointer;font-size:11px">Bölümü Sil</button>
+              <button onclick="mbEditorKapat()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px">✕ Kapat</button>
+            </div>
+          </div>
+          <p style="font-size:10px;color:var(--text3);margin:0 0 8px">Fotoğrafa tıklayarak ürün ekleyin. Bir rozete tıklarsanız kaldırma seçeneği çıkar; sürükleyerek konumunu değiştirebilirsiniz.</p>
+          <div id="mb-editor-foto-wrap" style="position:relative;display:inline-block;max-width:100%;user-select:none">
+            <img id="mb-editor-img" style="max-width:100%;display:block;border-radius:8px;cursor:crosshair" onclick="mbFotoTiklandi(event)">
+          </div>
+        </div>
+
+        <div id="mb-pin-ara-popup" style="display:none;position:fixed;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:2000;width:280px">
+          <input id="mb-pin-ara" placeholder="Ürün ara..." oninput="mbPinAra()" onkeydown="mbPinAraKey(event)" autocomplete="off" style="width:100%;margin-bottom:6px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg3);color:var(--text);box-sizing:border-box">
+          <div id="mb-pin-ara-sonuc" style="max-height:200px;overflow-y:auto"></div>
+          <button onclick="mbPinPopupKapat()" style="margin-top:6px;font-size:11px;background:none;border:none;color:var(--text3);cursor:pointer">İptal</button>
+        </div>
+      </div>
       <div class="panel" data-grp="kisayollar" style="display:none">
         <h2>⌨️ Klavye Kısayolları</h2>
         <div class="scrow"><kbd>Alt+F1</kbd><span class="scdesc">Yardım / SSS bölümünü aç</span></div>
@@ -3014,7 +3047,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
       <button onclick="gorselBuyukAdim(-1)" title="Önceki" style="position:absolute;left:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">‹</button>
-      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_56.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
+      <img id="gorselbuyuk-img" src="file:///C:/Users/furka/Downloads/index_57.html" style="max-width:100%;max-height:74vh;object-fit:contain;border-radius:6px;background:#111">
       <button onclick="gorselBuyukAdim(1)" title="Sonraki" style="position:absolute;right:6px;z-index:2;background:rgba(0,0,0,.5);color:#fff;border:none;
         border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;line-height:1">›</button>
     </div>
@@ -3122,6 +3155,7 @@ let S={
   varsayilanEskiGoster:true,
   varsayilanDurumIzgara:true,
   esleskodGruplari:[],
+  magazaBolumleri:[],
   disMarkalar:[],
   disUrunler:[],
   fiyatGizli:false,
@@ -4819,6 +4853,7 @@ function ATab(grp){
   if(grp==="esleskod") egListeRender();
   if(grp==="yardim") yardimRender();
   if(grp==="varsayilantik") vtRender();
+  if(grp==="magazabolum") mbRender();
   if(grp==="takmaad"){ renderTakmaAdListesi(); const el=$("s-takma-kullan"); if(el) el.checked=S.takmaAdKullan!==false; }
 }
 // ── FONT ──
@@ -5756,6 +5791,235 @@ function yardimGit(tabId){
   }, 50);
 }
 
+// ── MAĞAZA BÖLÜMLERİ (fotoğraf üzerine ürün pinleme) — AYARLAR SEKMESİ ──
+let mbAcikBolumId = null;
+let mbPinAraSonuclar = [];
+let mbPinAraIdx = -1;
+let mbBekleyenXY = null; // {x,y} — fotoğrafa tıklanan ama henüz ürün seçilmemiş nokta
+let mbSurukleyen = null; // {pinId, wrapEl}
+
+function mbRender(){
+  const wrap = $("mb-liste");
+  if(!wrap) return;
+  const bolumler = S.magazaBolumleri || [];
+  if(bolumler.length===0){
+    wrap.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--text3)">Henüz bölüm eklenmedi. Yukarıdan bir isim yazıp fotoğraf yükleyerek başlayın.</div>';
+  } else {
+    wrap.innerHTML = bolumler.map(b=>`
+      <div onclick="mbBolumAc('${b.id}')" style="cursor:pointer;border:2px solid ${mbAcikBolumId===b.id?"var(--blue)":"var(--border)"};border-radius:var(--r);overflow:hidden;background:var(--bg3)">
+        <div style="aspect-ratio:4/3;background:#222 url('${b.url}') center/cover"></div>
+        <div style="padding:6px 8px;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.ad}</div>
+        <div style="padding:0 8px 6px;font-size:10px;color:var(--text3)">${(b.pinler||[]).length} ürün</div>
+      </div>`).join("");
+  }
+  if(mbAcikBolumId) mbEditorGuncelle();
+}
+
+function mbYeniBolumBaslat(){
+  const ad = $("mb-yeni-ad").value.trim();
+  if(!ad){ alert("Önce bölüm için bir isim yazın."); return; }
+  $("mb-yeni-foto").click();
+}
+
+async function mbYeniBolumFotoSecildi(inputEl){
+  const file = inputEl.files[0];
+  const ad = $("mb-yeni-ad").value.trim();
+  if(!file || !ad) return;
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const base64 = reader.result.split(",")[1];
+    const res = await apiPost("saveMagazaBolum", { ad, base64, mimeType: file.type||"image/jpeg" });
+    inputEl.value = "";
+    if(res && res.ok){
+      $("mb-yeni-ad").value = "";
+      if(!S.magazaBolumleri) S.magazaBolumleri=[];
+      S.magazaBolumleri.push({ id: res.bolumId, ad: res.ad, fileId: res.fileId, url: res.url, pinler: [] });
+      mbRender();
+      mbBolumAc(res.bolumId);
+    } else {
+      alert("Bölüm eklenemedi: " + (res && res.hata ? res.hata : "bilinmeyen hata"));
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function mbBolumAc(id){
+  mbAcikBolumId = id;
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===id);
+  if(!b) return;
+  $("mb-editor").style.display = "block";
+  $("mb-editor-ad").textContent = b.ad;
+  $("mb-editor-img").src = b.url;
+  mbRender();
+  setTimeout(mbPinlerCiz, 60); // görsel yüklenip boyutu netleşsin diye küçük bir gecikme
+}
+
+function mbEditorKapat(){
+  mbAcikBolumId = null;
+  $("mb-editor").style.display = "none";
+  mbRender();
+}
+
+async function mbBolumSil(){
+  if(!mbAcikBolumId) return;
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
+  if(!confirm(`"${b?b.ad:""}" bölümü ve üzerindeki tüm ürün işaretleri tamamen silinsin mi?`)) return;
+  await apiPost("silMagazaBolum", { bolumId: mbAcikBolumId });
+  S.magazaBolumleri = (S.magazaBolumleri||[]).filter(x=>x.id!==mbAcikBolumId);
+  mbEditorKapat();
+}
+
+function mbFotoTiklandi(e){
+  const img = $("mb-editor-img");
+  const rect = img.getBoundingClientRect();
+  const x = ((e.clientX-rect.left)/rect.width)*100;
+  const y = ((e.clientY-rect.top)/rect.height)*100;
+  mbBekleyenXY = { x, y };
+  const popup = $("mb-pin-ara-popup");
+  popup.style.display = "block";
+  let left = e.clientX, top = e.clientY;
+  if(left + 290 > window.innerWidth) left = window.innerWidth - 300;
+  if(top + 260 > window.innerHeight) top = window.innerHeight - 270;
+  popup.style.left = left + "px";
+  popup.style.top = top + "px";
+  $("mb-pin-ara").value = "";
+  $("mb-pin-ara-sonuc").innerHTML = "";
+  mbPinAraSonuclar = []; mbPinAraIdx = -1;
+  setTimeout(()=>$("mb-pin-ara").focus(), 30);
+}
+
+function mbPinPopupKapat(){
+  $("mb-pin-ara-popup").style.display = "none";
+  mbBekleyenXY = null;
+}
+
+function mbPinAra(){
+  const q = $("mb-pin-ara").value.trim();
+  const sonuc = $("mb-pin-ara-sonuc");
+  mbPinAraIdx = -1;
+  if(!q){ sonuc.innerHTML=""; mbPinAraSonuclar=[]; return; }
+  const ws = trNorm(q).split(/\s+/).filter(Boolean);
+  const ekOlcular = olcuGenisletListe(ws);
+  mbPinAraSonuclar = S.stoklar.filter(s=>{
+    const h = trNorm(s.STOK_KODU)+" "+trNorm(s.STOK_ADI);
+    if(ws.every(w=>fuzzyMatch(w,h))) return true;
+    if(ekOlcular.length>0){
+      const hU=(s.STOK_ADI||"").toUpperCase();
+      return ekOlcular.some(o=>hU.includes(o));
+    }
+    return false;
+  }).slice(0,15);
+  rndMbPinAraSonuc();
+}
+function rndMbPinAraSonuc(){
+  const sonuc = $("mb-pin-ara-sonuc");
+  sonuc.innerHTML = mbPinAraSonuclar.map((s,i)=>`
+    <div class="tkf-ara-item${i===mbPinAraIdx?" hi":""}" style="padding:6px 8px;cursor:pointer;font-size:11px;border-bottom:1px solid var(--border)"
+      onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''"
+      onclick="mbPinSec('${String(s.STOK_KODU).replace(/'/g,"\\'")}')">
+      <b>${s.STOK_KODU}</b> — ${s.STOK_ADI}
+    </div>`).join("");
+}
+function mbPinAraKey(e){
+  if(mbPinAraSonuclar.length===0) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); mbPinAraIdx=Math.min(mbPinAraIdx+1, mbPinAraSonuclar.length-1); rndMbPinAraSonuc(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); mbPinAraIdx=Math.max(mbPinAraIdx-1, 0); rndMbPinAraSonuc(); }
+  else if(e.key==="Enter"){ e.preventDefault(); const s=mbPinAraSonuclar[mbPinAraIdx>=0?mbPinAraIdx:0]; if(s) mbPinSec(String(s.STOK_KODU)); }
+  else if(e.key==="Escape"){ mbPinPopupKapat(); }
+}
+
+async function mbPinSec(stokKodu){
+  if(!mbBekleyenXY || !mbAcikBolumId) return;
+  const {x,y} = mbBekleyenXY;
+  const res = await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, stokKodu, x, y });
+  mbPinPopupKapat();
+  if(res && res.ok){
+    const b = (S.magazaBolumleri||[]).find(bl=>bl.id===mbAcikBolumId);
+    if(b){ b.pinler.push({ id: res.pinId, stokKodu, x, y }); }
+    mbPinlerCiz();
+    mbRender();
+  }
+}
+
+function mbPinlerCiz(){
+  const wrap = $("mb-editor-foto-wrap");
+  if(!wrap || !mbAcikBolumId) return;
+  wrap.querySelectorAll(".mb-pin").forEach(el=>el.remove());
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
+  if(!b) return;
+  (b.pinler||[]).forEach(p=>{
+    const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
+    const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
+    const renk = miktar===null ? "#94a3b8" : miktar<=0 ? "#dc2626" : miktar<50 ? "#d97706" : "#16a34a";
+    const ad = s ? s.STOK_ADI : "(bilinmeyen ürün — "+p.stokKodu+")";
+    const pin = document.createElement("div");
+    pin.className = "mb-pin";
+    pin.title = ad + (miktar!==null ? " — "+miktar+" adet" : "");
+    pin.style.cssText = `position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);
+      background:${renk};color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;
+      cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.35);white-space:nowrap;user-select:none;z-index:10`;
+    pin.textContent = miktar!==null ? miktar : "?";
+    pin.onpointerdown = (e)=>mbPinSurukleBaslat(e, p.id);
+    pin.onclick = (e)=>{ e.stopPropagation(); if(!mbSurukleyen) mbPinKaldirSor(p.id, ad); };
+    wrap.appendChild(pin);
+  });
+}
+
+function mbPinKaldirSor(pinId, ad){
+  if(!confirm(`"${ad}" bu bölümden kaldırılsın mı?`)) return;
+  mbPinSil(pinId);
+}
+
+async function mbPinSil(pinId){
+  await apiPost("magazaPinSil", { pinId });
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
+  if(b) b.pinler = b.pinler.filter(p=>p.id!==pinId);
+  mbPinlerCiz();
+  mbRender();
+}
+
+function mbPinSurukleBaslat(e, pinId){
+  e.stopPropagation();
+  e.preventDefault();
+  mbSurukleyen = { pinId, hareketEtti:false };
+  document.onpointermove = mbPinSurukleDevam;
+  document.onpointerup = mbPinSurukleBitir;
+}
+function mbPinSurukleDevam(e){
+  if(!mbSurukleyen) return;
+  mbSurukleyen.hareketEtti = true;
+  const img = $("mb-editor-img");
+  const rect = img.getBoundingClientRect();
+  let x = ((e.clientX-rect.left)/rect.width)*100;
+  let y = ((e.clientY-rect.top)/rect.height)*100;
+  x = Math.max(0,Math.min(100,x));
+  y = Math.max(0,Math.min(100,y));
+  const b = (S.magazaBolumleri||[]).find(bl=>bl.id===mbAcikBolumId);
+  const p = b && b.pinler.find(pp=>pp.id===mbSurukleyen.pinId);
+  if(p){ p.x=x; p.y=y; mbPinlerCiz(); }
+}
+async function mbPinSurukleBitir(e){
+  document.onpointermove = null;
+  document.onpointerup = null;
+  if(!mbSurukleyen) return;
+  const {pinId, hareketEtti} = mbSurukleyen;
+  mbSurukleyen = null;
+  if(!hareketEtti) return; // sadece tıklamaysa (sürüklenmediyse) onclick zaten halletti
+  const b = (S.magazaBolumleri||[]).find(bl=>bl.id===mbAcikBolumId);
+  const p = b && b.pinler.find(pp=>pp.id===pinId);
+  if(p) await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, pinId, stokKodu: p.stokKodu, x: p.x, y: p.y });
+}
+
+// Ayarlar sekmesi tekrar açıldığında ya da liste yeniden çizildiğinde editör açıksa pinleri de tazele.
+function mbEditorGuncelle(){
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
+  if(!b) return;
+  $("mb-editor-ad").textContent = b.ad;
+  const img = $("mb-editor-img");
+  if(img.src !== b.url) img.src = b.url;
+  mbPinlerCiz();
+}
+
 function resetFontAyarlari(){
   const varsayilan={tbl:12,hdr:11,sb:12,panel:13};
   Object.entries(varsayilan).forEach(([t,v])=>{ applyFontSize(t,v); const el=$("f-"+t); if(el) el.value=v; });
@@ -6169,6 +6433,7 @@ function uygulaSheetsVerisi(data) {
     try{ S.teklifler = JSON.parse(localStorage.getItem("stok_teklifler")||"[]"); }catch(e){ S.teklifler=[]; }
   }
   if (data.urunGorseller) S.urunGorseller = data.urunGorseller;
+  if (data.magazaBolumleri) S.magazaBolumleri = data.magazaBolumleri;
 
   // Fatura listesini oluştur
   S.faturalar = buildFaturaList(data.fiyatlar || {}, data.fiyatGecmis || {});
