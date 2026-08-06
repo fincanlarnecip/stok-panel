@@ -238,45 +238,59 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   .layout { position:relative; }
   .content { min-width:0; }
 
-  /* Tablo: gereksiz kolonları gizle */
-  .stbl th[data-cid="STOK_KODU"],
-  .stbl td[data-cid="STOK_KODU"] { display:none !important; }
-  .stbl th[data-cid="MARKA"],
-  .stbl td[data-cid="MARKA"] { display:none !important; }
-  .stbl th[data-cid="ETIKET"],
-  .stbl td[data-cid="ETIKET"] { display:none !important; }
-  .stbl th[data-cid="NOT"],
-  .stbl td[data-cid="NOT"] { display:none !important; }
-
-  /* Stok adı — sabit sol, okunabilir */
-  .stbl th[data-cid="STOK_ADI"],
-  .stbl td[data-cid="STOK_ADI"] {
-    position:sticky !important;
-    left:0 !important;
-    z-index:10 !important;
+  /* Tablo → Kart görünümü: her ürün ayrı kutu, alt alta */
+  .stbl thead { display:none; }
+  .stbl, .stbl tbody, .stbl tr, .stbl td { display:block; width:100% !important; }
+  .stbl { table-layout:auto !important; font-size:12px !important; }
+  .stbl tr {
+    border:1px solid var(--border) !important;
+    border-radius:10px !important;
+    margin-bottom:8px !important;
+    padding:10px 12px !important;
     background:var(--bg2) !important;
-    width:160px !important;
-    min-width:140px !important;
-    white-space:normal !important;
-    word-break:break-word !important;
-    font-size:12px !important;
-    line-height:1.4 !important;
-    box-shadow:2px 0 4px rgba(0,0,0,.08) !important;
+    box-shadow:0 1px 3px rgba(0,0,0,.06) !important;
   }
 
-  /* Sayısal kolonlar */
-  .stbl th[data-cid="MERKEZ_DEPO"],
-  .stbl td[data-cid="MERKEZ_DEPO"] { width:72px !important; white-space:nowrap !important; }
-  .stbl th[data-cid="AYRILMIS"],
-  .stbl td[data-cid="AYRILMIS"] { width:65px !important; white-space:nowrap !important; }
-  .stbl th[data-cid="SATILABILIR"],
-  .stbl td[data-cid="SATILABILIR"] { width:72px !important; white-space:nowrap !important; }
-  .stbl th[data-cid="FIYAT"],
-  .stbl td[data-cid="FIYAT"] { width:80px !important; white-space:nowrap !important; }
+  /* Gizlenen sütunlar (kartta gösterilmiyor) */
+  .stbl td[data-cid="STOK_KODU"],
+  .stbl td[data-cid="MARKA"],
+  .stbl td[data-cid="ETIKET"],
+  .stbl td[data-cid="NOT"],
+  .stbl td[data-cid="NUMUNE"],
+  .stbl td[data-cid="GORSEL"] { display:none !important; }
 
-  /* Tablo genel */
-  .stbl { font-size:12px !important; table-layout:auto !important; }
-  .stbl td, .stbl th { padding:6px 5px !important; }
+  /* Ürün adı — kartın başlığı */
+  .stbl td[data-cid="STOK_ADI"] {
+    position:static !important;
+    box-shadow:none !important;
+    width:auto !important; min-width:0 !important;
+    background:transparent !important;
+    font-size:13px !important; font-weight:600 !important; line-height:1.4 !important;
+    white-space:normal !important; word-break:break-word !important;
+    padding:0 0 8px 0 !important;
+    margin-bottom:8px !important;
+    border-bottom:1px solid var(--border) !important;
+  }
+
+  /* Sayısal alanlar — etiket + değer, tek satır */
+  .stbl td[data-cid="MERKEZ_DEPO"],
+  .stbl td[data-cid="AYRILMIS"],
+  .stbl td[data-cid="SATILABILIR"],
+  .stbl td[data-cid="FIYAT"] {
+    width:auto !important;
+    display:flex !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+    padding:3px 0 !important;
+    font-size:12px !important;
+    white-space:nowrap !important;
+  }
+  .stbl td[data-cid="MERKEZ_DEPO"]::before  { content:"Merkez Depo";  color:var(--text3); font-weight:500; }
+  .stbl td[data-cid="AYRILMIS"]::before     { content:"Ayrılmış";     color:var(--text3); font-weight:500; }
+  .stbl td[data-cid="SATILABILIR"]::before  { content:"Satılabilir";  color:var(--text3); font-weight:500; }
+  .stbl td[data-cid="FIYAT"]::before        { content:"Fiyat";        color:var(--text3); font-weight:500; }
+
+  .stbl td, .stbl th { padding:6px 0 !important; }
 
   /* Modal tam ekran */
   .modal { width:95vw !important; max-width:95vw !important; max-height:90vh; overflow-y:auto; }
