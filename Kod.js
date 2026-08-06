@@ -1718,3 +1718,5 @@ function guncelleGorselEtiket(body) {
 
   // test: github otomasyonu 05.08.2026
 }
+
+// deploy-tetikleme: dogru deployment ID hedeflemesi icin
