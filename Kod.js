@@ -1581,13 +1581,14 @@ function magazaPinSil(body) {
   if (!pinId) return { ok: false, hata: "Eksik parametre (pinId)" };
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sheet = ss.getSheetByName(SHEETS.magazaPinler);
-  if (sheet) {
-    const data = sheet.getDataRange().getValues();
-    for (let i = data.length - 1; i >= 1; i--) {
-      if (String(data[i][1]) === pinId) sheet.deleteRow(i + 1);
-    }
+  if (!sheet) return { ok: false, hata: "MagazaPinler sayfası bulunamadı" };
+  const data = sheet.getDataRange().getValues();
+  let silindi = 0;
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][1]).trim() === pinId) { sheet.deleteRow(i + 1); silindi++; }
   }
-  return { ok: true };
+  if (silindi === 0) return { ok: false, hata: "Eşleşen pin bulunamadı (pinId: " + pinId + ")" };
+  return { ok: true, silinen: silindi };
 }
 
 function getUrunGorselMap(ss) {
