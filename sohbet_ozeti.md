@@ -57,7 +57,48 @@ Google Apps Script backend (`fincanlarstok_v3_fixed.gs`) + tek dosya HTML/JS fro
 
 ## Dosyalar
 - `index.html` — tüm frontend (tek dosya, ~750KB)
-- `fincanlarstok_v3_fixed.gs` — tüm backend
+- `Kod.js` — tüm backend (Apps Script kodu; eski adı `fincanlarstok_v3_fixed.gs`, artık clasp
+  ile senkron olduğu için `Kod.js` adıyla repoda duruyor)
+- `appsscript.json`, `.clasp.json` — clasp/Apps Script proje bağlantı dosyaları
+- `.github/workflows/deploy.yml` — GitHub Actions otomasyonu (bkz. aşağıda)
 - `lib/xlsx.full.min.js`, `lib/pdf.min.mjs`, `lib/pdf.worker.min.mjs` — yerel kütüphaneler
 - `gpd_fiyat_listesi.csv` — orijinal referans veri (artık kullanılmıyor, Liste Güncelleme
   özelliği bunun yerini aldı)
+- `sohbet_ozeti.md` — bu dosya, her oturum sonunda güncellenir
+
+## 06.08.2026 — GitHub üzerinden tek noktadan otomasyon kuruldu
+**ARTIK MANUEL "Deploy → New version" ADIMI YOK.** Repo: https://github.com/fincanlarnecip/stok-panel
+(sahibi: `fincanlarnecip`, çalışma hesabı: `fincanlaryapi@gmail.com`)
+
+- clasp (Google'ın resmi Apps Script CLI'ı) kuruldu, proje şu Script ID'ye bağlandı:
+  `17AUz3HZF0RBGkKQkQcCcSLDtc44zLCmzS4GsQwvOJZT5BgOV-1ZYcxDl`
+- `.clasprc.json` (clasp kimlik bilgisi) GitHub'da **`CLASPRC_JSON`** adlı repository secret
+  olarak saklanıyor (Settings → Secrets and variables → Actions).
+- `.github/workflows/deploy.yml` şunu yapıyor: `Kod.js`, `appsscript.json` veya `.clasp.json`
+  dosyalarından biri `main` branch'e push edildiğinde otomatik olarak:
+  1. `clasp push --force` (kodu Apps Script projesine gönderir)
+  2. `clasp deploy` (yeni bir deployment/versiyon oluşturur, otomatik canlıya alır)
+- **Yeni iş akışı:** `.gs`/backend kodunda değişiklik → GitHub'da `Kod.js`'i düzenle/yükle →
+  commit et → Actions sekmesinde (https://github.com/fincanlarnecip/stok-panel/actions)
+  birkaç saniye içinde yeşil tik görülür → değişiklik otomatik canlıda.
+- ⚠️ **Dikkat:** GitHub'ın web düzenleyicisinde büyük dosyada (Kod.js ~70KB) elle satır
+  silme/ekleme risklidir — bir kez yanlışlıkla parantez silinip "Unexpected end of input"
+  syntax hatası çıktı, önceki çalışan commit'ten (raw URL üzerinden) kopyalayıp düzeltildi.
+  Bundan sonra büyük değişiklikleri Claude'a yaptırıp tam dosyayı yapıştırmak, veya yerel
+  editörde (VS Code vb.) düzenleyip öyle yüklemek daha güvenli.
+- `index.html` değişikliği zaten eskisi gibi normal commit ile GitHub Pages'e yansıyor,
+  ayrı bir adım gerekmiyor.
+
+## Yeni sohbet başlatma yöntemi (GÜNCEL — Drive/zip artık kullanılmıyor)
+Kullanıcı artık zip veya Drive yüklemek zorunda değil. Yeni sohbette şu yeterli:
+> "GitHub'daki stok-panel reposunu çek, analiz et"
+Claude, `raw.githubusercontent.com/fincanlarnecip/stok-panel/main/...` üzerinden tüm
+dosyaları (index.html, Kod.js, sohbet_ozeti.md vb.) doğrudan okuyabiliyor (repo public).
+
+Sohbet sonunda Claude bu dosyayı (sohbet_ozeti.md) günceller. Kullanıcı, Claude'a
+**yazma izinli bir GitHub fine-grained personal access token** verdi (sadece bu repoya,
+sadece "Contents: Read and write" izniyle) — böylece Claude artık dosyayı GitHub'a
+**doğrudan kendisi commit edebiliyor**, kullanıcının manuel yükleme yapmasına gerek yok.
+Token her yeni sohbette kullanıcı tarafından tekrar verilmesi gerekir (Claude'un
+sohbetler arası hafızası yok) — token GitHub'da `github.com/settings/personal-access-tokens`
+adresinden istenildiğinde iptal edilebilir (Revoke).
