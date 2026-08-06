@@ -1713,3 +1713,8 @@ function guncelleGorselEtiket(body) {
   } finally {
     lock.releaseLock();
   }
+
+
+
+
+
