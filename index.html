@@ -5598,7 +5598,15 @@ function mbPinMenudenSil(){
 }
 
 async function mbPinSil(pinId){
-  await apiPost("magazaPinSil", { pinId });
+  const res = await apiPost("magazaPinSil", { pinId });
+  if(res && res.error){
+    alert("Bağlantı hatası: " + res.error);
+    return;
+  }
+  if(res && res.ok === false){
+    alert("Silme başarısız: " + (res.hata || "bilinmeyen hata"));
+    return;
+  }
   const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
   if(b) b.pinler = b.pinler.filter(p=>p.id!==pinId);
   mbPinlerCiz();
