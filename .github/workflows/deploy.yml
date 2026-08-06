@@ -29,5 +29,5 @@ jobs:
       - name: Push to Apps Script
         run: clasp push --force
 
-      - name: Deploy new version
-        run: clasp deploy --description "Auto-deploy from GitHub $(date +'%Y-%m-%d %H:%M')"
+      - name: Deploy to EXISTING web app (panelin kullandığı sabit adres)
+        run: clasp deploy -i AKfycbxHEjTuSVDVCL1EcoaPWdxHGxjPTOfUrf0mrIRZfjkoiMl7VC-Bcr6gIMqbTzH0vmr4Yw --description "Auto-deploy from GitHub $(date +'%Y-%m-%d %H:%M')"
