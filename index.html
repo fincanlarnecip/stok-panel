@@ -321,6 +321,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   <button class="tab-btn" onclick="ST(&#39;kurulum&#39;)" id="tab-kurulum">🔧 Kurulum</button>
   <button class="tab-btn" onclick="ST(&#39;teklif&#39;)" id="tab-teklif">📋 Teklif</button>
   <button class="tab-btn" onclick="ST(&#39;hesaplama&#39;)" id="tab-hesaplama">🧮 Hesaplama</button>
+  <button class="tab-btn" onclick="ST(&#39;kontrol&#39;)" id="tab-kontrol">🗺️ Kontrol</button>
   <!-- Uyarı butonu -->
   <div style="position:relative;margin-left:auto;flex-shrink:0">
     <button id="uyari-btn" onclick="toggleUyariPanel()" style="display: flex; align-items: center; gap: 4px; padding: 4px 10px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 12px; color: rgb(255, 255, 255); cursor: pointer; font-size: 12px; font-weight: 700; background: rgb(37, 99, 235);" title="0 kritik · 0 düşük · 53 eksik numune">
@@ -2536,6 +2537,36 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   </div>
 </div>
 
+<div id="page-kontrol" style="display:none" class="pb">
+  <div class="panel">
+    <h2>🗺️ Kontrol — Mağaza Bölümleri</h2>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:14px">Mağaza bölümlerini salt-okunur olarak görüntüleyin. Düzenlemek (ürün ekleme/çıkarma, fotoğraf değiştirme) için <strong>Ayarlar → Mağaza Bölümleri</strong> sekmesini kullanın.</p>
+    <div id="kontrol-liste" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:10px"></div>
+    <div id="kontrol-editor" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h3 id="kontrol-editor-ad" style="font-size:14px;margin:0"></h3>
+        <button onclick="kontrolEditorKapat()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px">✕ Kapat</button>
+      </div>
+      <p style="font-size:10px;color:var(--text3);margin:0 0 8px">Fareyi bir ürün etiketinin üzerine getirerek büyütebilirsiniz.</p>
+      <div id="kontrol-foto-wrap" style="position:relative;display:inline-block;max-width:100%;user-select:none">
+        <img id="kontrol-img" style="max-width:100%;display:block;border-radius:8px">
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .kontrol-pin-label{
+    color:#fff;padding:2px 5px;border-radius:5px;font-size:8px;max-width:56px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.3);
+    cursor:default;transition:all .15s ease;display:inline-block;
+  }
+  .kontrol-pin-label:hover{
+    max-width:none;font-size:12px;padding:5px 10px;position:relative;z-index:50;
+    box-shadow:0 4px 14px rgba(0,0,0,.45);
+  }
+</style>
+
 <!-- FATURA DETAY MODAL -->
 <div class="ov hide" id="fdov">
   <div class="modal" style="width:520px;max-height:90vh;overflow-y:auto">
@@ -2896,7 +2927,7 @@ function visCols(){return S.colOrder.map(id=>S.cols.find(c=>c.id===id)).filter(c
 
 // ── TABS ──
 function ST(t){
-  ["stok","markalar","etiketler","kolonlar","numuneler","faturalar","yukle","kurulum","ayarlar","teklif","hesaplama"].forEach(p=>{
+  ["stok","markalar","etiketler","kolonlar","numuneler","faturalar","yukle","kurulum","ayarlar","teklif","hesaplama","kontrol"].forEach(p=>{
     const pg=$("page-"+p),tb=$("tab-"+p);
     if(pg) pg.style.display=p===t?(p==="stok"?"flex":"block"):"none";
     if(tb) tb.classList.toggle("active",p===t);
@@ -2910,6 +2941,7 @@ function ST(t){
   if(t==="numuneler") renderNumuneler();
   if(t==="ayarlar") rndAcilisSecili();
   if(t==="hesaplama") hesapInit();
+  if(t==="kontrol") kontrolRender();
 }
 
 // ── COLORS ──
@@ -5613,6 +5645,84 @@ function mbEditorGuncelle(){
   const img = $("mb-editor-img");
   if(img.src !== b.url) img.src = b.url;
   mbPinlerCiz();
+}
+
+// ── KONTROL (üst menü, salt-okunur mağaza bölümleri görüntüleme) ──
+// Ayarlar > Mağaza Bölümleri ile aynı S.magazaBolumleri verisini kullanır, sadece
+// ekleme/silme/sürükleme yapılamaz. Etiketlerde miktar gösterilmez, sadece ölçü+ad.
+// Etiketler normalde küçük/kısaltılmış (seramiğin kendi alanına sığacak boyutta),
+// üzerine gelince (hover) büyüyüp tam metni gösterir.
+let kontrolAcikBolumId = null;
+
+function kontrolRender(){
+  const wrap = $("kontrol-liste");
+  if(!wrap) return;
+  const bolumler = S.magazaBolumleri || [];
+  if(bolumler.length===0){
+    wrap.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--text3)">Henüz bölüm eklenmedi. Ayarlar → Mağaza Bölümleri sekmesinden ekleyebilirsiniz.</div>';
+  } else {
+    wrap.innerHTML = bolumler.map(b=>`
+      <div onclick="kontrolBolumAc('${b.id}')" style="cursor:pointer;border:2px solid ${kontrolAcikBolumId===b.id?"var(--blue)":"var(--border)"};border-radius:var(--r);overflow:hidden;background:var(--bg3)">
+        <div style="aspect-ratio:4/3;background:#222 url('${b.url}') center/cover"></div>
+        <div style="padding:6px 8px;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.ad}</div>
+        <div style="padding:0 8px 6px;font-size:10px;color:var(--text3)">${(b.pinler||[]).length} ürün</div>
+      </div>`).join("");
+  }
+  if(kontrolAcikBolumId) kontrolFotoGuncelle();
+}
+
+function kontrolBolumAc(id){
+  kontrolAcikBolumId = id;
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===id);
+  if(!b) return;
+  $("kontrol-editor").style.display = "block";
+  $("kontrol-editor-ad").textContent = b.ad;
+  $("kontrol-img").src = b.url;
+  kontrolRender();
+  setTimeout(kontrolPinlerCiz, 60);
+}
+
+function kontrolEditorKapat(){
+  kontrolAcikBolumId = null;
+  $("kontrol-editor").style.display = "none";
+  kontrolRender();
+}
+
+function kontrolFotoGuncelle(){
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===kontrolAcikBolumId);
+  if(!b) return;
+  $("kontrol-editor-ad").textContent = b.ad;
+  const img = $("kontrol-img");
+  if(img.src !== b.url) img.src = b.url;
+  kontrolPinlerCiz();
+}
+
+function kontrolPinlerCiz(){
+  const wrap = $("kontrol-foto-wrap");
+  if(!wrap || !kontrolAcikBolumId) return;
+  wrap.querySelectorAll(".kontrol-pin").forEach(el=>el.remove());
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===kontrolAcikBolumId);
+  if(!b) return;
+  (b.pinler||[]).forEach(p=>{
+    const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
+    const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
+    const renk = miktar===null ? "#94a3b8" : miktar<=0 ? "#dc2626" : miktar<50 ? "#d97706" : "#16a34a";
+    const etiket = s ? mbEtiketMetni(s.STOK_ADI, s.STOK_KODU) : "(bilinmeyen ürün)";
+    const dikey = p.yon === "dikey";
+
+    const disSarma = document.createElement("div");
+    disSarma.className = "kontrol-pin";
+    disSarma.style.cssText = `position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);z-index:10`;
+
+    const icEtiket = document.createElement("div");
+    icEtiket.className = "kontrol-pin-label";
+    icEtiket.style.background = renk;
+    if(dikey) icEtiket.style.transform = "rotate(-90deg)";
+    icEtiket.title = etiket;
+    icEtiket.textContent = etiket;
+    disSarma.appendChild(icEtiket);
+    wrap.appendChild(disSarma);
+  });
 }
 
 document.addEventListener("click", (e)=>{
