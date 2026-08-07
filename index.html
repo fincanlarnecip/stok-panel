@@ -3205,13 +3205,16 @@ function applyF(skipH){
       }
       return false;
     });
-    // Tam eşleşenleri üste al
+    // Tam eşleşenleri üste al, aynı grup içinde Merkez Depo miktarına göre çoktan aza sırala
     rows.sort((a,b)=>{
       const ha=trNorm(a.STOK_KODU)+" "+trNorm(a.STOK_ADI);
       const hb=trNorm(b.STOK_KODU)+" "+trNorm(b.STOK_ADI);
       const exactA=ws.every(w=>ha.includes(w))?0:1;
       const exactB=ws.every(w=>hb.includes(w))?0:1;
-      return exactA-exactB;
+      if(exactA!==exactB) return exactA-exactB;
+      const depA=parseFloat(a.MERKEZ_DEPO)||0;
+      const depB=parseFloat(b.MERKEZ_DEPO)||0;
+      return depB-depA;
     });
     S._searchWords=ws;
     S._searchQ=q;
