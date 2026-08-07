@@ -53,6 +53,7 @@ body{font-family:var(--font);font-size:var(--panel-font);color:var(--text);backg
 #ms::placeholder{color:var(--text3)}
 .sh{font-size:11px;color:var(--text3);white-space:nowrap}
 .pills{display:flex;gap:5px;margin-left:auto}
+.mob-only-row{display:none}
 .pill{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
 .p-tot{background:var(--bg3);color:var(--text2)}
 .p-neg{background:var(--red-l);color:var(--red)}
@@ -221,6 +222,13 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   .sh { display:none; }
   .pills { margin-left:0; margin-top:2px; width:100%; }
   .pills .date-badge { margin-left:auto; font-size:10px; padding:3px 8px; }
+  .mob-only-row {
+    display:block; width:100%; order:1;
+    font-size:11px; font-weight:600; color:var(--text2);
+    background:var(--bg3); border:1px solid var(--border); border-radius:var(--r);
+    padding:5px 10px; margin-top:4px;
+  }
+  .mob-only-row strong { color:var(--blue); }
 
   /* Sidebar: varsayılan gizli, overlay olarak aç */
   .sidebar {
@@ -373,6 +381,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
   <input type="checkbox" id="s-show-eski" checked onchange="applyF()"> 0 ve eski stokları göster
 </label>
 <span class="sh">Alt+T: temizle · Alt+←: geri</span>
+  <div id="mob-depo-toplam-row" class="mob-only-row">📦 Listedeki Depo Toplamı: <strong id="s-depo-toplam">0</strong> m²</div>
   <div class="pills">
     <div class="pill p-tot">Toplam <strong id="s-tot">1.008</strong></div>
     <div class="pill p-neg">Negatif <strong id="s-neg">15</strong></div>
@@ -3282,37 +3291,26 @@ function applyF(skipH){
       return String(va).localeCompare(String(vb),"tr")*S.sortDir;
     });
   } else {
-    // Etiket filtresi seçiliyse (sol menüden bir etikete tıklandıysa): öncelik sıralamasını
-    // (açılış önceliği) atla, doğrudan Merkez Depo miktarına göre çoktan aza sırala.
-    const _etiketAktif = S.aktE && S.aktE.length>0;
-    if(_etiketAktif){
-      rows=[...rows].sort((a,b)=>{
-        const depA=parseFloat(a.MERKEZ_DEPO)||0;
-        const depB=parseFloat(b.MERKEZ_DEPO)||0;
-        return depB-depA;
-      });
-    } else {
-      // Tek bir marka filtrelenmişse ve o markaya özel sıralama tanımlıysa, açılış önceliğinden
-      // sonra ikinci kural olarak o markanın kendi içindeki özel sırası uygulanır.
-      // Bunların hiçbiri yoksa (veya eşitse) son kural: Merkez Depo miktarına göre çoktan aza.
-      const _tekMarka = (S.aktM && S.aktM.length===1) ? S.aktM[0] : null;
-      const _markaSira = _tekMarka && S.markaSiralama ? S.markaSiralama[_tekMarka] : null;
-      rows=[...rows].sort((a,b)=>{
-        const iaA=S.acilisKodlari?S.acilisKodlari.indexOf(String(a.STOK_KODU)):-1;
-        const iaB=S.acilisKodlari?S.acilisKodlari.indexOf(String(b.STOK_KODU)):-1;
-        const paA=iaA===-1?Infinity:iaA, paB=iaB===-1?Infinity:iaB;
-        if(paA!==paB) return paA-paB;
-        if(_markaSira){
-          const imA=_markaSira.indexOf(String(a.STOK_KODU));
-          const imB=_markaSira.indexOf(String(b.STOK_KODU));
-          const pmA=imA===-1?Infinity:imA, pmB=imB===-1?Infinity:imB;
-          if(pmA!==pmB) return pmA-pmB;
-        }
-        const depA=parseFloat(a.MERKEZ_DEPO)||0;
-        const depB=parseFloat(b.MERKEZ_DEPO)||0;
-        return depB-depA;
-      });
-    }
+    // Tek bir marka filtrelenmişse ve o markaya özel sıralama tanımlıysa, açılış önceliğinden
+    // sonra ikinci kural olarak o markanın kendi içindeki özel sırası uygulanır.
+    // Bunların hiçbiri yoksa (veya eşitse) son kural: Merkez Depo miktarına göre çoktan aza.
+    const _tekMarka = (S.aktM && S.aktM.length===1) ? S.aktM[0] : null;
+    const _markaSira = _tekMarka && S.markaSiralama ? S.markaSiralama[_tekMarka] : null;
+    rows=[...rows].sort((a,b)=>{
+      const iaA=S.acilisKodlari?S.acilisKodlari.indexOf(String(a.STOK_KODU)):-1;
+      const iaB=S.acilisKodlari?S.acilisKodlari.indexOf(String(b.STOK_KODU)):-1;
+      const paA=iaA===-1?Infinity:iaA, paB=iaB===-1?Infinity:iaB;
+      if(paA!==paB) return paA-paB;
+      if(_markaSira){
+        const imA=_markaSira.indexOf(String(a.STOK_KODU));
+        const imB=_markaSira.indexOf(String(b.STOK_KODU));
+        const pmA=imA===-1?Infinity:imA, pmB=imB===-1?Infinity:imB;
+        if(pmA!==pmB) return pmA-pmB;
+      }
+      const depA=parseFloat(a.MERKEZ_DEPO)||0;
+      const depB=parseFloat(b.MERKEZ_DEPO)||0;
+      return depB-depA;
+    });
   }
   S.filtered=rows;S.page=0;
   renderTbl();updStats();updClrBtns();
@@ -3323,6 +3321,9 @@ function updStats(){
   $("s-tot").textContent=r.length.toLocaleString("tr-TR");
   $("s-neg").textContent=r.filter(x=>parseFloat(x.SATILABILIR)<0).length.toLocaleString("tr-TR");
   $("s-new").textContent=r.filter(x=>isNew(x.STOK_KODU)).length.toLocaleString("tr-TR");
+  const depoToplam = r.reduce((sum,x)=>sum+(parseFloat(x.MERKEZ_DEPO)||0),0);
+  const depoEl = $("s-depo-toplam");
+  if(depoEl) depoEl.textContent = depoToplam.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2});
   const yeniSeramik = yeniSeramikUrunleriGetir();
   const pill = $("p-yeniseramik");
   if (pill) {
