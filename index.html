@@ -3284,23 +3284,24 @@ function applyF(skipH){
   } else {
     // Tek bir marka filtrelenmişse ve o markaya özel sıralama tanımlıysa, açılış önceliğinden
     // sonra ikinci kural olarak o markanın kendi içindeki özel sırası uygulanır.
+    // Bunların hiçbiri yoksa (veya eşitse) son kural: Merkez Depo miktarına göre çoktan aza.
     const _tekMarka = (S.aktM && S.aktM.length===1) ? S.aktM[0] : null;
     const _markaSira = _tekMarka && S.markaSiralama ? S.markaSiralama[_tekMarka] : null;
-    if((S.acilisKodlari && S.acilisKodlari.length>0) || (_markaSira && _markaSira.length>0)){
-      rows=[...rows].sort((a,b)=>{
-        const iaA=S.acilisKodlari?S.acilisKodlari.indexOf(String(a.STOK_KODU)):-1;
-        const iaB=S.acilisKodlari?S.acilisKodlari.indexOf(String(b.STOK_KODU)):-1;
-        const paA=iaA===-1?Infinity:iaA, paB=iaB===-1?Infinity:iaB;
-        if(paA!==paB) return paA-paB;
-        if(_markaSira){
-          const imA=_markaSira.indexOf(String(a.STOK_KODU));
-          const imB=_markaSira.indexOf(String(b.STOK_KODU));
-          const pmA=imA===-1?Infinity:imA, pmB=imB===-1?Infinity:imB;
-          if(pmA!==pmB) return pmA-pmB;
-        }
-        return 0;
-      });
-    }
+    rows=[...rows].sort((a,b)=>{
+      const iaA=S.acilisKodlari?S.acilisKodlari.indexOf(String(a.STOK_KODU)):-1;
+      const iaB=S.acilisKodlari?S.acilisKodlari.indexOf(String(b.STOK_KODU)):-1;
+      const paA=iaA===-1?Infinity:iaA, paB=iaB===-1?Infinity:iaB;
+      if(paA!==paB) return paA-paB;
+      if(_markaSira){
+        const imA=_markaSira.indexOf(String(a.STOK_KODU));
+        const imB=_markaSira.indexOf(String(b.STOK_KODU));
+        const pmA=imA===-1?Infinity:imA, pmB=imB===-1?Infinity:imB;
+        if(pmA!==pmB) return pmA-pmB;
+      }
+      const depA=parseFloat(a.MERKEZ_DEPO)||0;
+      const depB=parseFloat(b.MERKEZ_DEPO)||0;
+      return depB-depA;
+    });
   }
   S.filtered=rows;S.page=0;
   renderTbl();updStats();updClrBtns();
