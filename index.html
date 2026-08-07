@@ -3282,26 +3282,37 @@ function applyF(skipH){
       return String(va).localeCompare(String(vb),"tr")*S.sortDir;
     });
   } else {
-    // Tek bir marka filtrelenmişse ve o markaya özel sıralama tanımlıysa, açılış önceliğinden
-    // sonra ikinci kural olarak o markanın kendi içindeki özel sırası uygulanır.
-    // Bunların hiçbiri yoksa (veya eşitse) son kural: Merkez Depo miktarına göre çoktan aza.
-    const _tekMarka = (S.aktM && S.aktM.length===1) ? S.aktM[0] : null;
-    const _markaSira = _tekMarka && S.markaSiralama ? S.markaSiralama[_tekMarka] : null;
-    rows=[...rows].sort((a,b)=>{
-      const iaA=S.acilisKodlari?S.acilisKodlari.indexOf(String(a.STOK_KODU)):-1;
-      const iaB=S.acilisKodlari?S.acilisKodlari.indexOf(String(b.STOK_KODU)):-1;
-      const paA=iaA===-1?Infinity:iaA, paB=iaB===-1?Infinity:iaB;
-      if(paA!==paB) return paA-paB;
-      if(_markaSira){
-        const imA=_markaSira.indexOf(String(a.STOK_KODU));
-        const imB=_markaSira.indexOf(String(b.STOK_KODU));
-        const pmA=imA===-1?Infinity:imA, pmB=imB===-1?Infinity:imB;
-        if(pmA!==pmB) return pmA-pmB;
-      }
-      const depA=parseFloat(a.MERKEZ_DEPO)||0;
-      const depB=parseFloat(b.MERKEZ_DEPO)||0;
-      return depB-depA;
-    });
+    // Etiket filtresi seçiliyse (sol menüden bir etikete tıklandıysa): öncelik sıralamasını
+    // (açılış önceliği) atla, doğrudan Merkez Depo miktarına göre çoktan aza sırala.
+    const _etiketAktif = S.aktE && S.aktE.length>0;
+    if(_etiketAktif){
+      rows=[...rows].sort((a,b)=>{
+        const depA=parseFloat(a.MERKEZ_DEPO)||0;
+        const depB=parseFloat(b.MERKEZ_DEPO)||0;
+        return depB-depA;
+      });
+    } else {
+      // Tek bir marka filtrelenmişse ve o markaya özel sıralama tanımlıysa, açılış önceliğinden
+      // sonra ikinci kural olarak o markanın kendi içindeki özel sırası uygulanır.
+      // Bunların hiçbiri yoksa (veya eşitse) son kural: Merkez Depo miktarına göre çoktan aza.
+      const _tekMarka = (S.aktM && S.aktM.length===1) ? S.aktM[0] : null;
+      const _markaSira = _tekMarka && S.markaSiralama ? S.markaSiralama[_tekMarka] : null;
+      rows=[...rows].sort((a,b)=>{
+        const iaA=S.acilisKodlari?S.acilisKodlari.indexOf(String(a.STOK_KODU)):-1;
+        const iaB=S.acilisKodlari?S.acilisKodlari.indexOf(String(b.STOK_KODU)):-1;
+        const paA=iaA===-1?Infinity:iaA, paB=iaB===-1?Infinity:iaB;
+        if(paA!==paB) return paA-paB;
+        if(_markaSira){
+          const imA=_markaSira.indexOf(String(a.STOK_KODU));
+          const imB=_markaSira.indexOf(String(b.STOK_KODU));
+          const pmA=imA===-1?Infinity:imA, pmB=imB===-1?Infinity:imB;
+          if(pmA!==pmB) return pmA-pmB;
+        }
+        const depA=parseFloat(a.MERKEZ_DEPO)||0;
+        const depB=parseFloat(b.MERKEZ_DEPO)||0;
+        return depB-depA;
+      });
+    }
   }
   S.filtered=rows;S.page=0;
   renderTbl();updStats();updClrBtns();
