@@ -5423,6 +5423,7 @@ function yardimGit(tabId){
 
 // ── MAĞAZA BÖLÜMLERİ (fotoğraf üzerine ürün pinleme) — AYARLAR SEKMESİ ──
 let mbAcikBolumId = null;
+let mbGenisletilenPinId = null; // mobilde tıklanıp "büyütülen" pin (nokta → kart)
 let mbPinAraSonuclar = [];
 let mbPinAraIdx = -1;
 let mbBekleyenXY = null; // {x,y} — fotoğrafa tıklanan ama henüz ürün seçilmemiş nokta
@@ -5475,6 +5476,7 @@ async function mbYeniBolumFotoSecildi(inputEl){
 
 function mbBolumAc(id){
   mbAcikBolumId = id;
+  mbGenisletilenPinId = null;
   const b = (S.magazaBolumleri||[]).find(x=>x.id===id);
   if(!b) return;
   $("mb-editor").style.display = "block";
@@ -5486,6 +5488,7 @@ function mbBolumAc(id){
 
 function mbEditorKapat(){
   mbAcikBolumId = null;
+  mbGenisletilenPinId = null;
   $("mb-editor").style.display = "none";
   mbRender();
 }
@@ -5500,6 +5503,13 @@ async function mbBolumSil(){
 }
 
 function mbFotoTiklandi(e){
+  // Mobilde bir pin "genişletilmiş" haldeyse, boş alana ilk dokunuş sadece onu kapatır
+  // (yanlışlıkla yeni ürün ekleme popup'ı açılmasın diye).
+  if(window.innerWidth<=640 && mbGenisletilenPinId){
+    mbGenisletilenPinId = null;
+    mbPinlerCiz();
+    return;
+  }
   const img = $("mb-editor-img");
   const rect = img.getBoundingClientRect();
   const x = ((e.clientX-rect.left)/rect.width)*100;
@@ -5586,6 +5596,8 @@ function mbPinlerCiz(){
   wrap.querySelectorAll(".mb-pin").forEach(el=>el.remove());
   const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
   if(!b) return;
+  const mobil = window.innerWidth <= 640;
+
   (b.pinler||[]).forEach(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
     const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
@@ -5597,20 +5609,55 @@ function mbPinlerCiz(){
     // Dış sarmalayıcı: konumu (x/y) belirler, döndürmeden etkilenmez.
     const disSarma = document.createElement("div");
     disSarma.className = "mb-pin";
-    disSarma.style.cssText = `position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);z-index:10`;
+    disSarma.style.cssText = `position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);z-index:${mobil && mbGenisletilenPinId===p.id ? 30 : 10}`;
 
-    // İç etiket: hizalı iki satır (isim+ölçü üstte, miktar altta sağa yaslı) — yön burada döner.
     const icEtiket = document.createElement("div");
     icEtiket.title = etiket + (miktar!==null ? " — "+miktarStr+" adet" : "");
-    icEtiket.style.cssText = `background:${renk};color:#fff;padding:3px 8px;border-radius:6px;
-      cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.35);white-space:nowrap;user-select:none;
-      display:flex;flex-direction:column;align-items:stretch;line-height:1.35;
-      ${dikey?"transform:rotate(-90deg);":""}`;
-    icEtiket.innerHTML = `<span style="font-size:9.5px;font-weight:700;text-align:left">${etiket}</span>
-      <span style="font-size:10.5px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums">${miktarStr}</span>`;
-
     icEtiket.onpointerdown = (e)=>mbPinSurukleBaslat(e, p.id);
-    icEtiket.onclick = (e)=>{ e.stopPropagation(); if(!mbSurukleyen) mbPinMenuAc(e, p.id); };
+
+    if(mobil && mbGenisletilenPinId!==p.id){
+      // NOKTA hâli: sadece küçük renkli daire, metin yok — karışıklığı önler.
+      icEtiket.style.cssText = `width:16px;height:16px;border-radius:50%;background:${renk};
+        border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);cursor:pointer;`;
+      icEtiket.onclick = (e)=>{
+        e.stopPropagation();
+        if(mbSurukleyen) return;
+        mbGenisletilenPinId = p.id;
+        mbPinlerCiz();
+      };
+    } else if(mobil && mbGenisletilenPinId===p.id){
+      // GENİŞLETİLMİŞ KART hâli: isim + miktar (farklı renkte) + düzenle (⋮) butonu.
+      icEtiket.style.cssText = `background:${renk};color:#fff;padding:5px 10px;border-radius:8px;
+        cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.5);white-space:nowrap;user-select:none;
+        display:flex;align-items:center;gap:8px;line-height:1.3;
+        ${dikey?"transform:rotate(-90deg);":""}`;
+      icEtiket.innerHTML = `
+        <span style="display:flex;flex-direction:column;align-items:flex-start">
+          <span style="font-size:11px;font-weight:700">${etiket}</span>
+          <span style="font-size:12px;font-weight:800;color:#fef08a;font-variant-numeric:tabular-nums">${miktarStr} adet</span>
+        </span>
+        <span data-rol="mb-pin-duzenle" style="font-size:15px;padding:2px 4px;opacity:.85">⋮</span>`;
+      icEtiket.onclick = (e)=>{
+        e.stopPropagation();
+        if(mbSurukleyen) return;
+        if(e.target.closest('[data-rol="mb-pin-duzenle"]')){
+          mbPinMenuAc(e, p.id); // Yön Değiştir / Kaldır menüsü
+          return;
+        }
+        mbGenisletilenPinId = null; // tekrar tıklayınca kapan
+        mbPinlerCiz();
+      };
+    } else {
+      // Masaüstü: her zamanki iki satırlı etiket (isim üstte, miktar altta).
+      icEtiket.style.cssText = `background:${renk};color:#fff;padding:3px 8px;border-radius:6px;
+        cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.35);white-space:nowrap;user-select:none;
+        display:flex;flex-direction:column;align-items:stretch;line-height:1.35;
+        ${dikey?"transform:rotate(-90deg);":""}`;
+      icEtiket.innerHTML = `<span style="font-size:9.5px;font-weight:700;text-align:left">${etiket}</span>
+        <span style="font-size:10.5px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums">${miktarStr}</span>`;
+      icEtiket.onclick = (e)=>{ e.stopPropagation(); if(!mbSurukleyen) mbPinMenuAc(e, p.id); };
+    }
+
     disSarma.appendChild(icEtiket);
     wrap.appendChild(disSarma);
   });
