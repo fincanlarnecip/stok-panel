@@ -2579,7 +2579,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
           </div>
           <p style="font-size:10px;color:var(--text3);margin:0 0 8px">Fareyi bir ürün etiketinin üzerine getirerek büyütebilirsiniz.</p>
           <div id="kontrol-foto-wrap" style="position:relative;display:inline-block;max-width:100%;user-select:none">
-            <img id="kontrol-img" style="max-width:100%;display:block;border-radius:8px">
+            <img id="kontrol-img" style="max-width:100%;display:block;border-radius:8px" onclick="if(kontrolGenisletilenPinId){kontrolGenisletilenPinId=null;kontrolPinlerCiz();}">
           </div>
         </div>
       </div>
@@ -5758,6 +5758,7 @@ function mbEditorGuncelle(){
 // Etiketler normalde küçük/kısaltılmış (seramiğin kendi alanına sığacak boyutta),
 // üzerine gelince (hover) büyüyüp tam metni gösterir.
 let kontrolAcikBolumId = null;
+let kontrolGenisletilenPinId = null; // mobilde tıklanıp "büyütülen" pin (nokta → kart)
 
 function kontrolRender(){
   const wrap = $("kontrol-liste");
@@ -5778,6 +5779,7 @@ function kontrolRender(){
 
 function kontrolBolumAc(id){
   kontrolAcikBolumId = id;
+  kontrolGenisletilenPinId = null;
   const b = (S.magazaBolumleri||[]).find(x=>x.id===id);
   if(!b) return;
   $("kontrol-editor").style.display = "block";
@@ -5789,6 +5791,7 @@ function kontrolBolumAc(id){
 
 function kontrolEditorKapat(){
   kontrolAcikBolumId = null;
+  kontrolGenisletilenPinId = null;
   $("kontrol-editor").style.display = "none";
   kontrolRender();
 }
@@ -5808,23 +5811,53 @@ function kontrolPinlerCiz(){
   wrap.querySelectorAll(".kontrol-pin").forEach(el=>el.remove());
   const b = (S.magazaBolumleri||[]).find(x=>x.id===kontrolAcikBolumId);
   if(!b) return;
+  const mobil = window.innerWidth <= 640;
+
   (b.pinler||[]).forEach(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
     const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
     const renk = miktar===null ? "#94a3b8" : miktar<=0 ? "#dc2626" : miktar<50 ? "#d97706" : "#16a34a";
     const etiket = s ? mbEtiketMetni(s.STOK_ADI, s.STOK_KODU) : "(bilinmeyen ürün)";
+    const miktarStr = miktar!==null ? miktar.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2}) : "?";
     const dikey = p.yon === "dikey";
 
     const disSarma = document.createElement("div");
     disSarma.className = "kontrol-pin";
-    disSarma.style.cssText = `position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);z-index:10`;
+    disSarma.style.cssText = `position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);z-index:${mobil && kontrolGenisletilenPinId===p.id ? 30 : 10}`;
 
     const icEtiket = document.createElement("div");
-    icEtiket.className = "kontrol-pin-label";
-    icEtiket.style.background = renk;
-    if(dikey) icEtiket.style.transform = "rotate(-90deg)";
     icEtiket.title = etiket;
-    icEtiket.textContent = etiket;
+
+    if(mobil && kontrolGenisletilenPinId!==p.id){
+      // NOKTA hâli: sadece küçük renkli daire, metin yok.
+      icEtiket.style.cssText = `width:16px;height:16px;border-radius:50%;background:${renk};
+        border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);cursor:pointer;`;
+      icEtiket.onclick = (e)=>{
+        e.stopPropagation();
+        kontrolGenisletilenPinId = p.id;
+        kontrolPinlerCiz();
+      };
+    } else if(mobil && kontrolGenisletilenPinId===p.id){
+      // GENİŞLETİLMİŞ KART hâli: ölçü+ad üstte, miktar altta farklı (sarı) renkte.
+      icEtiket.style.cssText = `background:${renk};color:#fff;padding:5px 10px;border-radius:8px;
+        cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.5);white-space:nowrap;user-select:none;
+        display:flex;flex-direction:column;align-items:flex-start;gap:2px;line-height:1.3;
+        ${dikey?"transform:rotate(-90deg);":""}`;
+      icEtiket.innerHTML = `<span style="font-size:11px;font-weight:700">${etiket}</span>
+        <span style="font-size:12px;font-weight:800;color:#fef08a;font-variant-numeric:tabular-nums">${miktarStr} adet</span>`;
+      icEtiket.onclick = (e)=>{
+        e.stopPropagation();
+        kontrolGenisletilenPinId = null; // tekrar tıklayınca kapan
+        kontrolPinlerCiz();
+      };
+    } else {
+      // Masaüstü: mevcut küçük/kısaltılmış etiket, hover'da büyür (CSS ile).
+      icEtiket.className = "kontrol-pin-label";
+      icEtiket.style.background = renk;
+      if(dikey) icEtiket.style.transform = "rotate(-90deg)";
+      icEtiket.textContent = etiket;
+    }
+
     disSarma.appendChild(icEtiket);
     wrap.appendChild(disSarma);
   });
