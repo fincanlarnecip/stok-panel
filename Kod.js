@@ -1719,3 +1719,4 @@ function guncelleGorselEtiket(body) {
   // test: github otomasyonu 05.08.2026
 }
 // clean deploy: claspignore ile tekrar dagitildi
+// deploy tetikleme: index.html UX guncellemesini yayina almak icin (09.08.2026)
