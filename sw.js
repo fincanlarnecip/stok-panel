@@ -1,8 +1,8 @@
 // Servis çalışanı: HTML sayfası için "önce ağ" (network-first) stratejisi kullanır,
 // böylece uygulama her açılışta en güncel içeriği gösterir. Sadece internet
 // bağlantısı yokken önbellekteki son bilinen sürüme düşer (offline yedek).
-const CACHE_ADI = "stok-panel-v2";
-const ONBELLEK_DOSYALARI = ["./manifest.json", "./icon-192.png", "./icon-512.png"];
+const CACHE_ADI = "stok-panel-v3";
+const ONBELLEK_DOSYALARI = ["./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-192-maskable.png", "./icon-512-maskable.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
