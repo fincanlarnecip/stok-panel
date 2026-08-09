@@ -7,6 +7,10 @@ on:
       - 'Kod.js'
       - 'appsscript.json'
       - '.clasp.json'
+      - 'index.html'
+      - 'sw.js'
+      - 'manifest.json'
+  workflow_dispatch: {}
 
 jobs:
   deploy:
