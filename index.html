@@ -3481,7 +3481,10 @@ function renderTbl(){
         case"ETIKET":return`<td data-cid="ETIKET" style="overflow:hidden"><span class="adet" onclick="openTE('${r.STOK_KODU}')">+</span>${tags.map(t=>{const _eo=S.etiketler.find(e=>(e.t||e)===t);const _ec=_eo?.c||"#d97706";return`<span class="etb" style="background:${_ec}22;border-color:${_ec};color:${_ec}" onclick="filterByTag('${t}')">${t}</span>`;}).join("")}</td>`;
         case"MERKEZ_DEPO":return`<td class="num" data-cid="MERKEZ_DEPO">${fmt(r.MERKEZ_DEPO)}</td>`;
         case"AYRILMIS":return`<td class="num" data-cid="AYRILMIS">${fmt(r.AYRILMIS)}</td>`;
-        case"SATILABILIR":return`<td class="num ${sat<0?"neg":""}" data-cid="SATILABILIR">${fmt(r.SATILABILIR)}</td>`;
+        case"SATILABILIR":{
+          // Mağaza bölümleri rozetleriyle aynı eşikler: ≤0 kırmızı (yok), <50 sarı (az), ≥50 yeşil (yeterli)
+          const _sRenk = sat<=0 ? "background:#fee2e2;color:#dc2626;font-weight:700" : sat<50 ? "background:#fef3c7;color:#b45309;font-weight:600" : "background:#dcfce7;color:#15803d";
+          return`<td class="num" data-cid="SATILABILIR" style="${_sRenk}">${fmt(r.SATILABILIR)}</td>`;}
         case"FIYAT":{
           if(S.fiyatGizli) return`<td class="num" data-cid="FIYAT" style="color:var(--text3);letter-spacing:2px">••••••</td>`;
           const _f=S.fiyatlar&&S.fiyatlar[r.STOK_KODU];if(!_f||!_f.birimFiyat)return`<td class="num" data-cid="FIYAT" style="color:var(--text3)">—</td>`;const _hasNav=_f.nakliyePayi>0;
