@@ -6143,6 +6143,9 @@ window.addEventListener("beforeunload", () => {
 let _yenidenDenemeSayaci = 0;
 async function loadFromSheets() {
   showSyncStatus("⏳ Veriler yükleniyor...", "loading");
+  // Önbellek yoksa (rozet hâlâ ilk "Bağlanıyor..." durumundaysa) aşamalı mesajları başlat.
+  // Önbellek varsa rozet zaten sistemDurumOnbellek() ile anlamlı bir ara durumda, dokunma.
+  if (!localStorage.getItem("stok_full_cache")) sistemDurumAsamaBaslat();
   const data = await apiCall("getAll", {});
   if (data.error) {
     console.error("loadFromSheets hatası:", data.error);
@@ -6419,6 +6422,7 @@ function showSyncStatus(msg, type) {
 // Sağ altta hep görünen kalıcı "sistem aktif / bağlantı sorunu" göstergesi.
 // showSyncStatus'un aksine bu 3 saniyede kaybolmaz, son senkronizasyon durumunu sürekli gösterir.
 function sistemDurumGuncelle(basarili, saat) {
+  sistemDurumAsamaDurdur();
   const nokta = $("sistem-durum-nokta"), metin = $("sistem-durum-metin"), kutu = $("sistem-durum");
   if (!nokta || !metin || !kutu) return;
   if (basarili) {
@@ -6432,6 +6436,39 @@ function sistemDurumGuncelle(basarili, saat) {
     kutu.style.background = "#fee2e2";
     kutu.style.color = "#b91c1c";
   }
+}
+
+// Önbellekten anında veri gösterildiğinde rozet bunu yansıtsın — kullanıcı ekranın
+// dolu olduğunu görürken rozetin hâlâ genel "Bağlanıyor..." demesi kafa karıştırıyordu.
+function sistemDurumOnbellek() {
+  const nokta = $("sistem-durum-nokta"), metin = $("sistem-durum-metin"), kutu = $("sistem-durum");
+  if (!nokta || !metin || !kutu) return;
+  nokta.style.background = "#f59e0b";
+  metin.textContent = "Kayıtlı veriler gösteriliyor, güncelleniyor…";
+  kutu.style.background = "#fef3c7";
+  kutu.style.color = "#b45309";
+}
+
+// Önbellek yokken (ilk kurulum / temizlenmiş tarayıcı) uzun sessiz bekleme yerine
+// zamanla anlamlı, ilerleme hissi veren mesajlara geçer. Gerçek veri gelince
+// (sistemDurumGuncelle çağrılınca) otomatik durur.
+let _durumAsamaTimerlar = [];
+function sistemDurumAsamaBaslat() {
+  sistemDurumAsamaDurdur();
+  const metin = $("sistem-durum-metin");
+  if (!metin) return;
+  const asamalar = [
+    {t: 2500,  msg: "Veriler getiriliyor…"},
+    {t: 6000,  msg: "Ürünler ve fiyatlar hazırlanıyor…"},
+    {t: 12000, msg: "Bağlantı biraz yavaş, birazdan tamam…"},
+  ];
+  asamalar.forEach(a => {
+    _durumAsamaTimerlar.push(setTimeout(() => { metin.textContent = a.msg; }, a.t));
+  });
+}
+function sistemDurumAsamaDurdur() {
+  _durumAsamaTimerlar.forEach(clearTimeout);
+  _durumAsamaTimerlar = [];
 }
 
 
@@ -9043,6 +9080,7 @@ function renderGecmis(kod) {
       applyF(true);
       updBadge();
       showSyncStatus("📦 Önbellekten yüklendi, güncelleniyor...", "warn");
+      sistemDurumOnbellek();
     }
   } catch(e) {}
 })();
