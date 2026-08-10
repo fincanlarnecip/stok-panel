@@ -1459,6 +1459,7 @@ function getMagazaBolumleri(ss) {
       ad: String(row[1] || ""),
       fileId: String(row[2] || ""),
       url: String(row[3] || ""),
+      tur: String(row[5] || "panorama"), // "panorama" (foto+pin) veya "izgara" (fotoğrafsız ürün listesi)
       pinler: [],
     });
   });
@@ -1479,13 +1480,20 @@ function getMagazaBolumleri(ss) {
   return bolumler;
 }
 
-// body: { bolumId, ad, base64, mimeType } — base64 varsa yeni/değişen fotoğraf, yoksa sadece ad güncellenir.
+// body: { bolumId, ad, base64, mimeType, tur } — base64 varsa yeni/değişen fotoğraf, yoksa sadece ad güncellenir.
+// tur: "panorama" (varsayılan, foto+pin) veya "izgara" (fotoğrafsız — sadece ürün listesi, foto zorunlu değil).
 function saveMagazaBolum(body) {
   const ad = String(body.ad || "").trim();
   if (!ad) return { ok: false, hata: "Bölüm adı gerekli" };
+  const tur = String(body.tur || "panorama").trim();
+  if (tur !== "izgara" && !body.base64 && !String(body.bolumId||"").trim()) {
+    return { ok: false, hata: "Panorama bölümü için fotoğraf gerekli" };
+  }
 
   const ss = SpreadsheetApp.openById(SHEET_ID);
-  const sheet = getOrCreateSheet(ss, SHEETS.magazaBolumleri, ["ID","AD","FILE_ID","URL","TARIH"]);
+  const sheet = getOrCreateSheet(ss, SHEETS.magazaBolumleri, ["ID","AD","FILE_ID","URL","TARIH","TUR"]);
+  // Mevcut (eski) sayfalarda TUR başlığı olmayabilir — varsa dokunma, yoksa ekle.
+  if (sheet.getLastColumn() < 6) sheet.getRange(1, 6).setValue("TUR").setFontWeight("bold").setBackground("#e8edf5");
   const data = sheet.getDataRange().getValues();
 
   let bolumId = String(body.bolumId || "").trim();
@@ -1513,11 +1521,11 @@ function saveMagazaBolum(body) {
     url = "https://drive.google.com/thumbnail?id=" + fileId + "&sz=w1600";
   }
 
-  const satir = [bolumId, ad, fileId, url, Utilities.formatDate(new Date(), "Europe/Istanbul", "dd/MM/yyyy HH:mm")];
+  const satir = [bolumId, ad, fileId, url, Utilities.formatDate(new Date(), "Europe/Istanbul", "dd/MM/yyyy HH:mm"), tur];
   if (satirIdx > 0) sheet.getRange(satirIdx, 1, 1, satir.length).setValues([satir]);
   else sheet.appendRow(satir);
 
-  return { ok: true, bolumId: bolumId, ad: ad, fileId: fileId, url: url };
+  return { ok: true, bolumId: bolumId, ad: ad, fileId: fileId, url: url, tur: tur };
 }
 
 // body: { bolumId }
