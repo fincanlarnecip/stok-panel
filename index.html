@@ -2568,7 +2568,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
               <input id="mb-izgara-ara" placeholder="Ürün ara ve ekle..." oninput="mbIzgaraAra()" onkeydown="mbIzgaraAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
               <div id="mb-izgara-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
             </div>
-            <div id="mb-izgara-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));grid-auto-rows:minmax(70px,auto);gap:8px"></div>
+            <div id="mb-izgara-grid" ondragover="event.preventDefault()" ondrop="mbIzgaraContainerDrop(event)" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));grid-auto-rows:minmax(70px,auto);gap:8px;min-height:70px"></div>
           </div>
         </div>
 
@@ -5954,6 +5954,25 @@ async function mbIzgaraDrop(e, hedefPinId){
   if(kaynakIdx<0 || hedefIdx<0) return;
   const [tasinan] = sirali.splice(kaynakIdx,1);
   sirali.splice(hedefIdx,0,tasinan);
+  sirali.forEach((p,i)=>p.x=i);
+  b.pinler = sirali;
+  mbIzgaraGridCiz();
+  await apiPost("izgaraSiraKaydet", { bolumId: mbAcikBolumId, pinIdSirasi: sirali.map(p=>p.id) });
+}
+// Bir kartın tam üzerine değil de, satırlarda kalan boş grid alanına (ör. son satırın
+// doldurulmamış kısmı) bırakılırsa buraya düşer — ürünü listenin en sonuna taşır.
+async function mbIzgaraContainerDrop(e){
+  e.preventDefault();
+  if(!mbIzgaraSurukleyen) return;
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
+  const surukleId = mbIzgaraSurukleyen;
+  mbIzgaraSurukleyen = null;
+  if(!b) return;
+  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
+  const kaynakIdx = sirali.findIndex(p=>p.id===surukleId);
+  if(kaynakIdx<0 || kaynakIdx===sirali.length-1) return; // zaten en sondaysa bir şey yapma
+  const [tasinan] = sirali.splice(kaynakIdx,1);
+  sirali.push(tasinan);
   sirali.forEach((p,i)=>p.x=i);
   b.pinler = sirali;
   mbIzgaraGridCiz();
