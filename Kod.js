@@ -703,6 +703,7 @@ function handleRequest(e) {
       case "silMagazaBolum":   result = silMagazaBolum(body);    break;
       case "magazaPinKaydet":  result = magazaPinKaydet(body);   break;
       case "magazaPinSil":     result = magazaPinSil(body);      break;
+      case "izgaraSiraKaydet": result = izgaraSiraKaydet(body);  break;
       case "saveNumuneler":  result = saveNumuneler(body);     break;
       case "saveNumuneGruplari": result = saveNumuneGruplari(body); break;
       case "numuneEkleTek":      result = numuneEkleTek(body);      break;
@@ -1597,6 +1598,33 @@ function magazaPinSil(body) {
   }
   if (silindi === 0) return { ok: false, hata: "Eşleşen pin bulunamadı (pinId: " + pinId + ")" };
   return { ok: true, silinen: silindi };
+}
+
+// body: { bolumId, pinIdSirasi: [pinId, ...] } — Fotoğraf Izgarası (tur:"izgara") bölümlerinde
+// sürükle-bırak ile değişen sırayı tek seferde kaydeder. Panorama tipi bölümlerde X alanı
+// fotoğraf üzerindeki gerçek konum için kullanıldığından bu fonksiyon sadece izgara tipi
+// bölümlerin pinlerinde X'i "sıra numarası" olarak yeniden yazar.
+function izgaraSiraKaydet(body) {
+  const bolumId = String(body.bolumId || "").trim();
+  const sira = Array.isArray(body.pinIdSirasi) ? body.pinIdSirasi : [];
+  if (!bolumId || sira.length === 0) return { ok: false, hata: "Eksik parametre (bolumId/pinIdSirasi)" };
+
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const sheet = ss.getSheetByName(SHEETS.magazaPinler);
+  if (!sheet) return { ok: false, hata: "MagazaPinler sayfası bulunamadı" };
+  const data = sheet.getDataRange().getValues();
+  const siraMap = {};
+  sira.forEach((pinId, idx) => { siraMap[String(pinId)] = idx; });
+
+  let guncellenen = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) !== bolumId) continue;
+    const pinId = String(data[i][1]);
+    if (!(pinId in siraMap)) continue;
+    sheet.getRange(i + 1, 4).setValue(siraMap[pinId]); // X sütunu (4. sütun)
+    guncellenen++;
+  }
+  return { ok: true, guncellenen: guncellenen };
 }
 
 function getUrunGorselMap(ss) {
