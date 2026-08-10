@@ -2615,7 +2615,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
           </div>
           <div id="kontrol-izgara-view" style="display:none">
             <p style="font-size:10px;color:var(--text3);margin:0 0 8px">Bir ürün kartına tıklayarak büyük fotoğrafını ve bilgilerini görün.</p>
-            <div id="kontrol-izgara-canvas-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:var(--r);max-height:60vh;background:#fafafa">
+            <div id="kontrol-izgara-canvas-wrap" style="overflow-x:hidden;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r);max-height:60vh;background:#fafafa">
               <div id="kontrol-izgara-canvas" style="position:relative"></div>
             </div>
           </div>
@@ -5946,7 +5946,24 @@ async function mbIzgaraKaldir(pinId){
 // ── SERBEST YERLEŞİM SABİTLERİ ──
 const IZGARA_PX_PER_CM = 3;   // görsel ölçek: 1cm = 3px
 const IZGARA_SNAP_CM = 5;     // hizalama ızgarası aralığı (cm)
-const IZGARA_ALAN_CM = { w: 600, h: 280 }; // tuval boyutu (cm) — kaydırılabilir
+const IZGARA_ALAN_CM = { w: 600, h: 280 }; // ürün yokken/varsayılan üst sınır (cm)
+
+// Tuval boyutunu sabit tutmak yerine, o bölümdeki ürünlerin kapladığı alanın sınırlarına göre
+// hesaplıyoruz — az ürün varken boşuna kocaman/kaydırmalı bir alan gösterilmesin diye.
+function izgaraTuvalBoyutHesapla(bolum){
+  let maxX=0, maxY=0;
+  (bolum.pinler||[]).forEach(p=>{
+    const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
+    let {w,h} = s ? ebatOlcuCikar(s.STOK_ADI) : {w:30,h:30};
+    if(p.yon==="dikey"){ const t=w; w=h; h=t; }
+    maxX = Math.max(maxX, (Number(p.x)||0)+w);
+    maxY = Math.max(maxY, (Number(p.y)||0)+h);
+  });
+  return {
+    w: Math.min(IZGARA_ALAN_CM.w, Math.max(60, maxX+15)),
+    h: Math.min(IZGARA_ALAN_CM.h, Math.max(60, maxY+15))
+  };
+}
 
 function ebatOlcuCikar(stokAdi){
   const m = String(stokAdi||"").match(/(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)/);
@@ -6042,7 +6059,8 @@ function mbIzgaraGridCiz(){
   if(!wrap || !mbAcikBolumId) return;
   const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
   if(!b) return;
-  wrap.style.cssText = `position:relative;width:${IZGARA_ALAN_CM.w*IZGARA_PX_PER_CM}px;height:${IZGARA_ALAN_CM.h*IZGARA_PX_PER_CM}px;${izgaraKareliArkaplanCSS()}`;
+  const boyut = izgaraTuvalBoyutHesapla(b);
+  wrap.style.cssText = `position:relative;width:${boyut.w*IZGARA_PX_PER_CM}px;height:${boyut.h*IZGARA_PX_PER_CM}px;${izgaraKareliArkaplanCSS()}`;
   if((b.pinler||[]).length===0){
     wrap.innerHTML = '<div style="position:absolute;top:8px;left:8px;font-size:11px;color:var(--text3)">Yukarıdan ürün arayıp ekleyin, sonra sürükleyerek yerleştirin.</div>';
     return;
@@ -6127,19 +6145,30 @@ function kontrolFotoGuncelle(){
 
 // ── IZGARA (fotoğrafsız) BÖLÜM — Kontrol (salt-okunur) görünümü ──
 function kontrolIzgaraGridCiz(){
-  const wrap = $("kontrol-izgara-canvas");
-  if(!wrap || !kontrolAcikBolumId) return;
+  const canvas = $("kontrol-izgara-canvas");
+  const disWrap = $("kontrol-izgara-canvas-wrap");
+  if(!canvas || !disWrap || !kontrolAcikBolumId) return;
   const b = (S.magazaBolumleri||[]).find(x=>x.id===kontrolAcikBolumId);
   if(!b) return;
-  wrap.style.cssText = `position:relative;width:${IZGARA_ALAN_CM.w*IZGARA_PX_PER_CM}px;height:${IZGARA_ALAN_CM.h*IZGARA_PX_PER_CM}px;${izgaraKareliArkaplanCSS()}`;
+  const boyut = izgaraTuvalBoyutHesapla(b);
+  const tamW = boyut.w*IZGARA_PX_PER_CM, tamH = boyut.h*IZGARA_PX_PER_CM;
+  canvas.style.cssText = `position:relative;width:${tamW}px;height:${tamH}px;transform-origin:top left;${izgaraKareliArkaplanCSS()}`;
   if((b.pinler||[]).length===0){
-    wrap.innerHTML = '<div style="position:absolute;top:8px;left:8px;font-size:11px;color:var(--text3)">Bu bölümde henüz ürün yok.</div>';
-    return;
+    canvas.innerHTML = '<div style="position:absolute;top:8px;left:8px;font-size:11px;color:var(--text3)">Bu bölümde henüz ürün yok.</div>';
+  } else {
+    canvas.innerHTML = b.pinler.map(p=>{
+      const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
+      return izgaraKartHTML(p, s, false);
+    }).join("");
   }
-  wrap.innerHTML = b.pinler.map(p=>{
-    const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
-    return izgaraKartHTML(p, s, false);
-  }).join("");
+  // Ekrana sığdır: kaydırma gerektirmeden tüm düzeni tek bakışta görebilmek için,
+  // konteyner genişliğine göre küçültüyoruz (büyütme yapmıyoruz — 1'i geçmez).
+  requestAnimationFrame(()=>{
+    const mevcutGenislik = disWrap.clientWidth - 4;
+    const olcek = Math.min(1, mevcutGenislik / tamW);
+    canvas.style.transform = `scale(${olcek})`;
+    disWrap.style.height = Math.round(tamH*olcek + 4) + "px";
+  });
 }
 
 function ebatCikar(stokAdi){
