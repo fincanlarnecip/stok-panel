@@ -2568,7 +2568,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
               <input id="mb-izgara-ara" placeholder="Ürün ara ve ekle..." oninput="mbIzgaraAra()" onkeydown="mbIzgaraAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
               <div id="mb-izgara-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
             </div>
-            <div id="mb-izgara-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px"></div>
+            <div id="mb-izgara-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));grid-auto-rows:90px;grid-auto-flow:dense;gap:8px"></div>
           </div>
         </div>
 
@@ -2612,7 +2612,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
           </div>
           <div id="kontrol-izgara-view" style="display:none">
             <p style="font-size:10px;color:var(--text3);margin:0 0 8px">Bir ürün kartına tıklayarak büyük fotoğrafını ve bilgilerini görün.</p>
-            <div id="kontrol-izgara-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px"></div>
+            <div id="kontrol-izgara-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));grid-auto-rows:90px;grid-auto-flow:dense;gap:8px"></div>
           </div>
         </div>
       </div>
@@ -5910,12 +5910,13 @@ async function mbIzgaraSec(stokKodu){
     $("mb-izgara-ara").value=""; $("mb-izgara-ara-sonuc").style.display="none"; mbIzgaraAraSonuclar=[];
     return; // zaten ekli
   }
-  const res = await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, stokKodu, x: 0, y: 0 });
+  const yeniSira = b ? (b.pinler||[]).length : 0; // X alanı izgara tipinde "sıra numarası" olarak kullanılıyor
+  const res = await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, stokKodu, x: yeniSira, y: 0 });
   $("mb-izgara-ara").value = "";
   $("mb-izgara-ara-sonuc").style.display = "none";
   mbIzgaraAraSonuclar = [];
   if(res && res.ok && b){
-    b.pinler.push({ id: res.pinId, stokKodu, x:0, y:0 });
+    b.pinler.push({ id: res.pinId, stokKodu, x:yeniSira, y:0 });
     mbIzgaraGridCiz();
     mbRender();
   }
@@ -5929,6 +5930,24 @@ async function mbIzgaraKaldir(pinId){
     mbRender();
   }
 }
+let mbIzgaraSurukleyen = null;
+function mbIzgaraDragStart(pinId){ mbIzgaraSurukleyen = pinId; }
+async function mbIzgaraDrop(hedefPinId){
+  if(!mbIzgaraSurukleyen || mbIzgaraSurukleyen===hedefPinId){ mbIzgaraSurukleyen=null; return; }
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
+  if(!b) return;
+  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
+  const kaynakIdx = sirali.findIndex(p=>p.id===mbIzgaraSurukleyen);
+  const hedefIdx = sirali.findIndex(p=>p.id===hedefPinId);
+  mbIzgaraSurukleyen = null;
+  if(kaynakIdx<0 || hedefIdx<0) return;
+  const [tasinan] = sirali.splice(kaynakIdx,1);
+  sirali.splice(hedefIdx,0,tasinan);
+  sirali.forEach((p,i)=>p.x=i);
+  b.pinler = sirali;
+  mbIzgaraGridCiz();
+  await apiPost("izgaraSiraKaydet", { bolumId: mbAcikBolumId, pinIdSirasi: sirali.map(p=>p.id) });
+}
 function mbIzgaraGridCiz(){
   const wrap = $("mb-izgara-grid");
   if(!wrap || !mbAcikBolumId) return;
@@ -5938,15 +5957,18 @@ function mbIzgaraGridCiz(){
     wrap.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--text3)">Henüz ürün eklenmedi. Yukarıdan arayıp ekleyin.</div>';
     return;
   }
-  wrap.innerHTML = b.pinler.map(p=>{
+  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
+  wrap.innerHTML = sirali.map(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
     const g = S.urunGorseller && S.urunGorseller[p.stokKodu];
     const foto = g && g[0] ? g[0].url : null;
     const ad = s ? s.STOK_ADI : "(bilinmeyen ürün — "+p.stokKodu+")";
-    return `<div style="position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3)">
-      <div style="aspect-ratio:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
-      <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${ad}">${ad}</div>
-      <button onclick="mbIzgaraKaldir('${p.id}')" title="Kaldır"
+    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
+    return `<div draggable="true" ondragstart="mbIzgaraDragStart('${p.id}')" ondragover="event.preventDefault()" ondrop="mbIzgaraDrop('${p.id}')"
+      style="grid-column:span ${col};grid-row:span ${row};position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);cursor:grab;display:flex;flex-direction:column">
+      <div style="flex:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
+      <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.04)" title="${ad}">${ad}</div>
+      <button onclick="event.stopPropagation();mbIzgaraKaldir('${p.id}')" title="Kaldır"
         style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;
         border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;line-height:1">✕</button>
     </div>`;
@@ -6035,17 +6057,19 @@ function kontrolIzgaraGridCiz(){
     wrap.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--text3)">Bu bölümde henüz ürün yok.</div>';
     return;
   }
-  wrap.innerHTML = b.pinler.map(p=>{
+  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
+  wrap.innerHTML = sirali.map(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
     const g = S.urunGorseller && S.urunGorseller[p.stokKodu];
     const foto = g && g[0] ? g[0].url : null;
     const ad = s ? s.STOK_ADI : "(bilinmeyen ürün)";
     const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
     const renk = miktar===null ? "#94a3b8" : miktar<=0 ? "#dc2626" : miktar<50 ? "#d97706" : "#16a34a";
-    return `<div onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')" style="cursor:pointer;position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3)">
-      <div style="aspect-ratio:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
+    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
+    return `<div onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')" style="grid-column:span ${col};grid-row:span ${row};cursor:pointer;position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);display:flex;flex-direction:column">
+      <div style="flex:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
       <div style="width:8px;height:8px;border-radius:50%;background:${renk};position:absolute;top:6px;right:6px;box-shadow:0 0 0 2px rgba(0,0,0,.4)"></div>
-      <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${ad}">${ad}</div>
+      <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.04)" title="${ad}">${ad}</div>
     </div>`;
   }).join("");
 }
@@ -6053,6 +6077,24 @@ function kontrolIzgaraGridCiz(){
 function ebatCikar(stokAdi){
   const m = String(stokAdi||"").match(/\d+(?:[.,]\d+)?\s*[xX]\s*\d+(?:[.,]\d+)?/);
   return m ? m[0].replace(/\s+/g,"").toUpperCase() : "—";
+}
+
+// Ürün adındaki ölçüye (ör. "60X120") göre ızgarada kaplayacağı hücre sayısını (col/row span)
+// hesaplar — büyük ebatlı ürünler daha çok yer kaplar, mozaik/gerçek stant hissi verir.
+function ebatSpan(stokAdi){
+  const m = String(stokAdi||"").match(/(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)/);
+  if(!m) return {col:1,row:1};
+  const w = parseFloat(m[1].replace(",",".")), h = parseFloat(m[2].replace(",","."));
+  if(!w || !h) return {col:1,row:1};
+  const buyuk = Math.max(w,h), kucuk = Math.min(w,h);
+  let col=1, row=1;
+  if(buyuk>=90){
+    col = w>=h ? 2 : 1; row = h>w ? 2 : 1;
+    if(buyuk>=150 || (buyuk>=90 && kucuk>=90)){ col=2; row=2; }
+  } else if(buyuk>=50){
+    if(w>=h) col=2; else row=2;
+  }
+  return {col,row};
 }
 
 function openIzgaraDetay(stokKodu){
