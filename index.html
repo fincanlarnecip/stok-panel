@@ -2568,7 +2568,10 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
               <input id="mb-izgara-ara" placeholder="Ürün ara ve ekle..." oninput="mbIzgaraAra()" onkeydown="mbIzgaraAraKey(event)" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);box-sizing:border-box">
               <div id="mb-izgara-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
             </div>
-            <div id="mb-izgara-grid" ondragover="event.preventDefault()" ondrop="mbIzgaraContainerDrop(event)" style="display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:minmax(70px,auto);gap:8px;min-height:70px;max-width:520px"></div>
+            <p style="font-size:10px;color:var(--text3);margin:-4px 0 8px">Yerleştirdikten sonra sürükleyerek konumunu, 🔄 ile yönünü (yatay/dikey) değiştirebilirsiniz — 5cm'lik ızgaraya otomatik yapışır.</p>
+            <div id="mb-izgara-canvas-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:var(--r);max-height:60vh;background:#fafafa">
+              <div id="mb-izgara-canvas" style="position:relative"></div>
+            </div>
           </div>
         </div>
 
@@ -2612,7 +2615,9 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
           </div>
           <div id="kontrol-izgara-view" style="display:none">
             <p style="font-size:10px;color:var(--text3);margin:0 0 8px">Bir ürün kartına tıklayarak büyük fotoğrafını ve bilgilerini görün.</p>
-            <div id="kontrol-izgara-grid" style="display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:minmax(70px,auto);gap:8px;max-width:520px"></div>
+            <div id="kontrol-izgara-canvas-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:var(--r);max-height:60vh;background:#fafafa">
+              <div id="kontrol-izgara-canvas" style="position:relative"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -5915,13 +5920,16 @@ async function mbIzgaraSec(stokKodu){
     $("mb-izgara-ara").value=""; $("mb-izgara-ara-sonuc").style.display="none"; mbIzgaraAraSonuclar=[];
     return; // zaten ekli
   }
-  const yeniSira = b ? (b.pinler||[]).length : 0; // X alanı izgara tipinde "sıra numarası" olarak kullanılıyor
-  const res = await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, stokKodu, x: yeniSira, y: 0 });
+  // Yeni ürün tuvale eklenirken üst üste binmesin diye kademeli bir başlangıç konumu veriyoruz;
+  // kullanıcı sonra sürükleyerek gerçek yerine taşır.
+  const mevcutSayi = b ? (b.pinler||[]).length : 0;
+  const baslangicX = (mevcutSayi % 8) * 40, baslangicY = Math.floor(mevcutSayi/8) * 40;
+  const res = await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, stokKodu, x: baslangicX, y: baslangicY, yon: "yatay" });
   $("mb-izgara-ara").value = "";
   $("mb-izgara-ara-sonuc").style.display = "none";
   mbIzgaraAraSonuclar = [];
   if(res && res.ok && b){
-    b.pinler.push({ id: res.pinId, stokKodu, x:yeniSira, y:0 });
+    b.pinler.push({ id: res.pinId, stokKodu, x:baslangicX, y:baslangicY, yon:"yatay" });
     mbIzgaraGridCiz();
     mbRender();
   }
@@ -5935,82 +5943,113 @@ async function mbIzgaraKaldir(pinId){
     mbRender();
   }
 }
-let mbIzgaraSurukleyen = null;
-function mbIzgaraDragStart(e, pinId){
-  mbIzgaraSurukleyen = pinId;
-  e.dataTransfer.setData("text/plain", pinId); // Firefox dahil bazı tarayıcılarda drop'un tetiklenmesi için zorunlu
-  e.dataTransfer.effectAllowed = "move";
+// ── SERBEST YERLEŞİM SABİTLERİ ──
+const IZGARA_PX_PER_CM = 3;   // görsel ölçek: 1cm = 3px
+const IZGARA_SNAP_CM = 5;     // hizalama ızgarası aralığı (cm)
+const IZGARA_ALAN_CM = { w: 600, h: 280 }; // tuval boyutu (cm) — kaydırılabilir
+
+function ebatOlcuCikar(stokAdi){
+  const m = String(stokAdi||"").match(/(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)/);
+  if(!m) return {w:30,h:30};
+  const w = parseFloat(m[1].replace(",",".")), h = parseFloat(m[2].replace(",","."));
+  return (w&&h) ? {w,h} : {w:30,h:30};
 }
-async function mbIzgaraDrop(e, hedefPinId){
-  e.preventDefault();
-  e.stopPropagation();
-  if(!mbIzgaraSurukleyen || mbIzgaraSurukleyen===hedefPinId){ mbIzgaraSurukleyen=null; return; }
-  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
-  if(!b) return;
-  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
-  const kaynakIdx = sirali.findIndex(p=>p.id===mbIzgaraSurukleyen);
-  const hedefIdx = sirali.findIndex(p=>p.id===hedefPinId);
-  mbIzgaraSurukleyen = null;
-  if(kaynakIdx<0 || hedefIdx<0) return;
-  const [tasinan] = sirali.splice(kaynakIdx,1);
-  sirali.splice(hedefIdx,0,tasinan);
-  sirali.forEach((p,i)=>p.x=i);
-  b.pinler = sirali;
-  mbIzgaraGridCiz();
-  await apiPost("izgaraSiraKaydet", { bolumId: mbAcikBolumId, pinIdSirasi: sirali.map(p=>p.id) });
+function izgaraKareliArkaplanCSS(){
+  const b = IZGARA_SNAP_CM * IZGARA_PX_PER_CM;
+  return `background-image:linear-gradient(to right, rgba(0,0,0,.12) 1px, transparent 1px),linear-gradient(to bottom, rgba(0,0,0,.12) 1px, transparent 1px);background-size:${b}px ${b}px;`;
 }
-// Bir kartın tam üzerine değil de, satırlarda kalan boş grid alanına (ör. son satırın
-// doldurulmamış kısmı) bırakılırsa buraya düşer — ürünü listenin en sonuna taşır.
-async function mbIzgaraContainerDrop(e){
-  e.preventDefault();
-  if(!mbIzgaraSurukleyen) return;
+function izgaraKartHTML(p, s, editable){
+  const g = S.urunGorseller && S.urunGorseller[p.stokKodu];
+  const foto = g && g[0] ? g[0].url : null;
+  const ad = s ? s.STOK_ADI : "(bilinmeyen ürün — "+p.stokKodu+")";
+  let {w,h} = s ? ebatOlcuCikar(s.STOK_ADI) : {w:30,h:30};
+  if(p.yon === "dikey"){ const t=w; w=h; h=t; }
+  const left = (Number(p.x)||0) * IZGARA_PX_PER_CM;
+  const top  = (Number(p.y)||0) * IZGARA_PX_PER_CM;
+  const pxW = Math.max(20, w*IZGARA_PX_PER_CM), pxH = Math.max(20, h*IZGARA_PX_PER_CM);
+  const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
+  const renk = miktar===null ? "#94a3b8" : miktar<=0 ? "#dc2626" : miktar<50 ? "#d97706" : "#16a34a";
+  const surukleAttr = editable ? `onpointerdown="mbIzgaraPointerDown(event,'${p.id}')"` : "";
+  const tiklaAttr = `onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')"`;
+  const dugmeler = editable ? `
+      <button onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();mbIzgaraDondur('${p.id}')" title="Döndür"
+        style="position:absolute;top:2px;left:2px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1;z-index:2">🔄</button>
+      <button onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();mbIzgaraKaldir('${p.id}')" title="Kaldır"
+        style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1;z-index:2">✕</button>` : "";
+  return `<div data-pinid="${p.id}" ${surukleAttr} ${tiklaAttr}
+    style="position:absolute;left:${left}px;top:${top}px;width:${pxW}px;height:${pxH}px;
+    border:1px solid rgba(0,0,0,.35);border-radius:4px;overflow:hidden;cursor:${editable?"grab":"pointer"};
+    background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};touch-action:none;user-select:none">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text3)">${foto?"":"🖼️"}</div>
+    <div style="width:7px;height:7px;border-radius:50%;background:${renk};position:absolute;bottom:3px;right:3px;box-shadow:0 0 0 2px rgba(0,0,0,.4)"></div>
+    <div style="position:absolute;left:0;right:0;top:0;padding:2px 4px;font-size:9px;font-weight:700;color:#fff;background:rgba(0,0,0,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${ad}">${ebatCikar(ad)}</div>
+    ${dugmeler}
+  </div>`;
+}
+
+// ── Ayarlar (düzenlenebilir): sürükle / döndür / sil ──
+let mbIzgaraSuruklenen = null;
+function mbIzgaraPointerDown(e, pinId){
+  const el = e.currentTarget;
+  const canvas = $("mb-izgara-canvas");
+  const canvasRect = canvas.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
+  mbIzgaraSuruklenen = { pinId, el, offsetX: e.clientX - elRect.left, offsetY: e.clientY - elRect.top, canvasRect };
+  el.style.cursor = "grabbing";
+  el.style.zIndex = 50;
+  try{ el.setPointerCapture(e.pointerId); }catch(err){}
+  el.addEventListener("pointermove", mbIzgaraPointerMove);
+  el.addEventListener("pointerup", mbIzgaraPointerUp);
+}
+function mbIzgaraPointerMove(e){
+  if(!mbIzgaraSuruklenen) return;
+  const { el, offsetX, offsetY, canvasRect } = mbIzgaraSuruklenen;
+  let left = Math.max(0, e.clientX - canvasRect.left - offsetX);
+  let top  = Math.max(0, e.clientY - canvasRect.top  - offsetY);
+  el.style.left = left + "px";
+  el.style.top  = top  + "px";
+}
+async function mbIzgaraPointerUp(e){
+  if(!mbIzgaraSuruklenen) return;
+  const { pinId, el } = mbIzgaraSuruklenen;
+  el.removeEventListener("pointermove", mbIzgaraPointerMove);
+  el.removeEventListener("pointerup", mbIzgaraPointerUp);
+  el.style.cursor = "grab";
+  el.style.zIndex = "";
+  mbIzgaraSuruklenen = null;
+
+  const solPx = parseFloat(el.style.left)||0, ustPx = parseFloat(el.style.top)||0;
+  const xCm = Math.round((solPx / IZGARA_PX_PER_CM) / IZGARA_SNAP_CM) * IZGARA_SNAP_CM;
+  const yCm = Math.round((ustPx / IZGARA_PX_PER_CM) / IZGARA_SNAP_CM) * IZGARA_SNAP_CM;
+
   const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
-  const surukleId = mbIzgaraSurukleyen;
-  mbIzgaraSurukleyen = null;
-  if(!b) return;
-  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
-  const kaynakIdx = sirali.findIndex(p=>p.id===surukleId);
-  if(kaynakIdx<0 || kaynakIdx===sirali.length-1) return; // zaten en sondaysa bir şey yapma
-  const [tasinan] = sirali.splice(kaynakIdx,1);
-  sirali.push(tasinan);
-  sirali.forEach((p,i)=>p.x=i);
-  b.pinler = sirali;
+  const p = b && b.pinler.find(x=>x.id===pinId);
+  if(!p) return;
+  p.x = xCm; p.y = yCm;
   mbIzgaraGridCiz();
-  await apiPost("izgaraSiraKaydet", { bolumId: mbAcikBolumId, pinIdSirasi: sirali.map(p=>p.id) });
+  await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, pinId, stokKodu: p.stokKodu, x:xCm, y:yCm, yon:p.yon||"yatay" });
+}
+async function mbIzgaraDondur(pinId){
+  const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
+  const p = b && b.pinler.find(x=>x.id===pinId);
+  if(!p) return;
+  p.yon = p.yon==="dikey" ? "yatay" : "dikey";
+  mbIzgaraGridCiz();
+  await apiPost("magazaPinKaydet", { bolumId: mbAcikBolumId, pinId, stokKodu: p.stokKodu, x:p.x||0, y:p.y||0, yon:p.yon });
 }
 function mbIzgaraGridCiz(){
-  const wrap = $("mb-izgara-grid");
+  const wrap = $("mb-izgara-canvas");
   if(!wrap || !mbAcikBolumId) return;
   const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
   if(!b) return;
+  wrap.style.cssText = `position:relative;width:${IZGARA_ALAN_CM.w*IZGARA_PX_PER_CM}px;height:${IZGARA_ALAN_CM.h*IZGARA_PX_PER_CM}px;${izgaraKareliArkaplanCSS()}`;
   if((b.pinler||[]).length===0){
-    wrap.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--text3)">Henüz ürün eklenmedi. Yukarıdan arayıp ekleyin.</div>';
+    wrap.innerHTML = '<div style="position:absolute;top:8px;left:8px;font-size:11px;color:var(--text3)">Yukarıdan ürün arayıp ekleyin, sonra sürükleyerek yerleştirin.</div>';
     return;
   }
-  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
-  const oge = sirali.map(p=>{
+  wrap.innerHTML = b.pinler.map(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
-    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
-    return { p, s, col, row };
-  });
-  const yerlesik = izgaraYerlesimHesapla(oge);
-  wrap.innerHTML = yerlesik.map(({p,s,col,row,gridRow,gridCol})=>{
-    const g = S.urunGorseller && S.urunGorseller[p.stokKodu];
-    const foto = g && g[0] ? g[0].url : null;
-    const ad = s ? s.STOK_ADI : "(bilinmeyen ürün — "+p.stokKodu+")";
-    return `<div draggable="true"
-      ondragstart="mbIzgaraDragStart(event,'${p.id}')"
-      ondragover="event.preventDefault();event.dataTransfer.dropEffect='move'"
-      ondrop="mbIzgaraDrop(event,'${p.id}')"
-      ondragend="mbIzgaraSurukleyen=null"
-      onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')"
-      style="grid-column:${gridCol} / span ${col};grid-row:${gridRow} / span ${row};position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);cursor:grab;display:flex;flex-direction:column">
-      <div style="flex:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
-      <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.04)" title="${ad}">${ad}</div>
-      <button onclick="event.stopPropagation();mbIzgaraKaldir('${p.id}')" title="Kaldır"
-        style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;
-        border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;line-height:1">✕</button>
-    </div>`;
+    return izgaraKartHTML(p, s, true);
   }).join("");
 }
 
@@ -6088,32 +6127,18 @@ function kontrolFotoGuncelle(){
 
 // ── IZGARA (fotoğrafsız) BÖLÜM — Kontrol (salt-okunur) görünümü ──
 function kontrolIzgaraGridCiz(){
-  const wrap = $("kontrol-izgara-grid");
+  const wrap = $("kontrol-izgara-canvas");
   if(!wrap || !kontrolAcikBolumId) return;
   const b = (S.magazaBolumleri||[]).find(x=>x.id===kontrolAcikBolumId);
   if(!b) return;
+  wrap.style.cssText = `position:relative;width:${IZGARA_ALAN_CM.w*IZGARA_PX_PER_CM}px;height:${IZGARA_ALAN_CM.h*IZGARA_PX_PER_CM}px;${izgaraKareliArkaplanCSS()}`;
   if((b.pinler||[]).length===0){
-    wrap.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--text3)">Bu bölümde henüz ürün yok.</div>';
+    wrap.innerHTML = '<div style="position:absolute;top:8px;left:8px;font-size:11px;color:var(--text3)">Bu bölümde henüz ürün yok.</div>';
     return;
   }
-  const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
-  const oge = sirali.map(p=>{
+  wrap.innerHTML = b.pinler.map(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
-    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
-    return { p, s, col, row };
-  });
-  const yerlesik = izgaraYerlesimHesapla(oge);
-  wrap.innerHTML = yerlesik.map(({p,s,col,row,gridRow,gridCol})=>{
-    const g = S.urunGorseller && S.urunGorseller[p.stokKodu];
-    const foto = g && g[0] ? g[0].url : null;
-    const ad = s ? s.STOK_ADI : "(bilinmeyen ürün)";
-    const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
-    const renk = miktar===null ? "#94a3b8" : miktar<=0 ? "#dc2626" : miktar<50 ? "#d97706" : "#16a34a";
-    return `<div onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')" style="grid-column:${gridCol} / span ${col};grid-row:${gridRow} / span ${row};cursor:pointer;position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);display:flex;flex-direction:column">
-      <div style="flex:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
-      <div style="width:8px;height:8px;border-radius:50%;background:${renk};position:absolute;top:6px;right:6px;box-shadow:0 0 0 2px rgba(0,0,0,.4)"></div>
-      <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.04)" title="${ad}">${ad}</div>
-    </div>`;
+    return izgaraKartHTML(p, s, false);
   }).join("");
 }
 
