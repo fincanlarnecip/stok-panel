@@ -5988,19 +5988,23 @@ function mbIzgaraGridCiz(){
     return;
   }
   const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
-  wrap.innerHTML = sirali.map(p=>{
+  const oge = sirali.map(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
+    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
+    return { p, s, col, row };
+  });
+  const yerlesik = izgaraYerlesimHesapla(oge);
+  wrap.innerHTML = yerlesik.map(({p,s,col,row,gridRow,gridCol})=>{
     const g = S.urunGorseller && S.urunGorseller[p.stokKodu];
     const foto = g && g[0] ? g[0].url : null;
     const ad = s ? s.STOK_ADI : "(bilinmeyen ürün — "+p.stokKodu+")";
-    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
     return `<div draggable="true"
       ondragstart="mbIzgaraDragStart(event,'${p.id}')"
       ondragover="event.preventDefault();event.dataTransfer.dropEffect='move'"
       ondrop="mbIzgaraDrop(event,'${p.id}')"
       ondragend="mbIzgaraSurukleyen=null"
       onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')"
-      style="grid-column:span ${col};grid-row:span ${row};position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);cursor:grab;display:flex;flex-direction:column">
+      style="grid-column:${gridCol} / span ${col};grid-row:${gridRow} / span ${row};position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);cursor:grab;display:flex;flex-direction:column">
       <div style="flex:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
       <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.04)" title="${ad}">${ad}</div>
       <button onclick="event.stopPropagation();mbIzgaraKaldir('${p.id}')" title="Kaldır"
@@ -6093,15 +6097,19 @@ function kontrolIzgaraGridCiz(){
     return;
   }
   const sirali = [...b.pinler].sort((a,c)=>(Number(a.x)||0)-(Number(c.x)||0));
-  wrap.innerHTML = sirali.map(p=>{
+  const oge = sirali.map(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
+    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
+    return { p, s, col, row };
+  });
+  const yerlesik = izgaraYerlesimHesapla(oge);
+  wrap.innerHTML = yerlesik.map(({p,s,col,row,gridRow,gridCol})=>{
     const g = S.urunGorseller && S.urunGorseller[p.stokKodu];
     const foto = g && g[0] ? g[0].url : null;
     const ad = s ? s.STOK_ADI : "(bilinmeyen ürün)";
     const miktar = s ? (parseFloat(s.SATILABILIR)||0) : null;
     const renk = miktar===null ? "#94a3b8" : miktar<=0 ? "#dc2626" : miktar<50 ? "#d97706" : "#16a34a";
-    const {col,row} = s ? ebatSpan(s.STOK_ADI) : {col:1,row:1};
-    return `<div onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')" style="grid-column:span ${col};grid-row:span ${row};cursor:pointer;position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);display:flex;flex-direction:column">
+    return `<div onclick="openIzgaraDetay('${String(p.stokKodu).replace(/'/g,"\\'")}')" style="grid-column:${gridCol} / span ${col};grid-row:${gridRow} / span ${row};cursor:pointer;position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg3);display:flex;flex-direction:column">
       <div style="flex:1;background:${foto?`#111 url('${foto}') center/cover`:"var(--bg3)"};display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)">${foto?"":"🖼️"}</div>
       <div style="width:8px;height:8px;border-radius:50%;background:${renk};position:absolute;top:6px;right:6px;box-shadow:0 0 0 2px rgba(0,0,0,.4)"></div>
       <div style="padding:4px 6px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.04)" title="${ad}">${ad}</div>
@@ -6130,6 +6138,35 @@ function ebatSpan(stokAdi){
     if(w>=h) col=2; else row=2;
   }
   return {col,row};
+}
+
+// Farklı boyutlardaki (mozaik) kutuların hangi satır/sütuna geleceğini biz hesaplıyoruz —
+// CSS Grid'in kendi otomatik yerleştirmesine (grid-column:span) bırakmıyoruz, çünkü değişken
+// boyutlu kutularla otomatik yerleştirme sıklıkla kullanıcının sürükleyerek belirlediği sırayı
+// görmezden gelip kendi boşluk doldurma mantığına göre farklı bir yere koyuyordu. Bu yüzden
+// "sıra ne ise görünüm de o" garantisi için kesin satır/sütun (grid-row/grid-column) atıyoruz.
+const IZGARA_SUTUN_SAYISI = 5;
+function izgaraYerlesimHesapla(oge){
+  const dolu = [];
+  function bosMu(r,c,cs,rs){
+    if(c+cs > IZGARA_SUTUN_SAYISI) return false;
+    for(let i=0;i<rs;i++) for(let j=0;j<cs;j++){ if(dolu[r+i] && dolu[r+i][c+j]) return false; }
+    return true;
+  }
+  function isaretle(r,c,cs,rs){
+    for(let i=0;i<rs;i++){ if(!dolu[r+i]) dolu[r+i]=[]; for(let j=0;j<cs;j++) dolu[r+i][c+j]=true; }
+  }
+  return oge.map(item=>{
+    const cs = Math.min(item.col, IZGARA_SUTUN_SAYISI), rs = item.row;
+    let yer=null;
+    for(let r=0; r<2000 && !yer; r++){
+      for(let c=0; c<=IZGARA_SUTUN_SAYISI-cs; c++){
+        if(bosMu(r,c,cs,rs)){ yer={r,c}; break; }
+      }
+    }
+    isaretle(yer.r, yer.c, cs, rs);
+    return {...item, gridRow:yer.r+1, gridCol:yer.c+1};
+  });
 }
 
 function openIzgaraDetay(stokKodu){
