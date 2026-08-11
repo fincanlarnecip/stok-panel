@@ -9656,5 +9656,18 @@ if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./sw.js").catch(e=>console.warn("SW kayıt hatası:",e));
   });
 }
+
+// Ekranı dikeye kilitle — SADECE kurulu (standalone) uygulamada, tarayıcı sekmesinde değil.
+// manifest.json'daki "orientation" ayarı zaten kurulu uygulamalarda hemen etkili olmuyor
+// (Android kurulum anındaki değeri önbelleğe alıyor); bu yüzden her sayfa açılışında
+// JS ile de kilitliyoruz — anında etkili olur, native kamera açılırken karışmaz.
+(function(){
+  try{
+    const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    if(standalone && screen.orientation && screen.orientation.lock){
+      screen.orientation.lock("portrait").catch(()=>{});
+    }
+  }catch(e){}
+})();
 </script>
 </body></html>
