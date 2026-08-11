@@ -2360,7 +2360,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
       <div class="panel" data-grp="gorseller" style="display:none">
         <h2>🖼️ Ürün Görselleri (Toplu Yükleme)</h2>
         <p style="font-size:11px;color:var(--text2);margin-bottom:8px">Dosya adı stok koduyla başlamalı: <code>401259228701_1.jpg</code>, <code>401259228701_2.jpg</code> gibi (aynı üründen birden fazla görsel için sıra numarası ekleyin). Numara yoksa dosya tek görsel olarak eklenir. Birden fazla dosya birden seçebilirsiniz.</p>
-        <input type="file" id="gorsel-toplu-input" accept="image/*" multiple="" onchange="gorselTopluYukle(this.files)" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text)">
+        <input type="file" id="gorsel-toplu-input" accept="image/*" multiple="" onclick="panelOryantasyonKilidiKaldir()" onchange="gorselTopluYukle(this.files)" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text)">
         <div id="gorsel-toplu-durum" style="font-size:12px;margin-top:8px;color:var(--text2)"></div>
       </div>
       <div class="panel" data-grp="gorunum">
@@ -2685,7 +2685,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div id="gorsel-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
     <input type="file" id="gorsel-tekli-input" accept="image/*" multiple="" style="display:none" onchange="gorselTekliEkle(this.files)">
     <input type="file" id="gorsel-kamera-input" accept="image/*" capture="environment" style="display:none" onchange="gorselTekliEkle(this.files); this.value=&#39;&#39;">
-    <button class="mbtn" onclick="$(&#39;gorsel-tekli-input&#39;).click()" style="margin-bottom:10px">+ Görsel Ekle</button>
+    <button class="mbtn" onclick="panelOryantasyonKilidiKaldir();$(&#39;gorsel-tekli-input&#39;).click()" style="margin-bottom:10px">+ Görsel Ekle</button>
     <div id="gorsel-yukleme-durum" style="font-size:11px;color:var(--text3);margin-bottom:10px"></div>
     <div class="mbtns"><button class="mbtn" onclick="closeGorselGaleri()">Kapat</button></div>
   </div>
@@ -7574,6 +7574,7 @@ function closeGorselGaleri() { $("gorselov").classList.add("hide"); _gorselAktif
 // Ürün listesindeki 📷 ikonuna dokununca modal açmadan doğrudan telefon kamerasını başlatır —
 // depoda ürünleri tek tek fotoğraflarken hızlı olsun diye. Ayarlar'dan kapatılabilir.
 function hizliKameraAc(kod) {
+  panelOryantasyonKilidiKaldir(); // kamera açılmadan önce kilidi kaldır — yatay çekim yapılabilsin
   _gorselAktifKod = kod;
   $("gorsel-kamera-input").click();
 }
@@ -9660,14 +9661,21 @@ if("serviceWorker" in navigator){
 // Ekranı dikeye kilitle — SADECE kurulu (standalone) uygulamada, tarayıcı sekmesinde değil.
 // manifest.json'daki "orientation" ayarı zaten kurulu uygulamalarda hemen etkili olmuyor
 // (Android kurulum anındaki değeri önbelleğe alıyor); bu yüzden her sayfa açılışında
-// JS ile de kilitliyoruz — anında etkili olur, native kamera açılırken karışmaz.
-(function(){
+// JS ile de kilitliyoruz. Kamera açılmadan önce KALDIRILIYOR (yatay çekim yapılabilsin diye)
+// ve panele dönünce (focus/visibilitychange) otomatik tekrar uygulanıyor.
+function panelOryantasyonKilidiUygula(){
   try{
     const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
     if(standalone && screen.orientation && screen.orientation.lock){
       screen.orientation.lock("portrait").catch(()=>{});
     }
   }catch(e){}
-})();
+}
+function panelOryantasyonKilidiKaldir(){
+  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+}
+panelOryantasyonKilidiUygula();
+window.addEventListener("focus", panelOryantasyonKilidiUygula);
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) panelOryantasyonKilidiUygula(); });
 </script>
 </body></html>
