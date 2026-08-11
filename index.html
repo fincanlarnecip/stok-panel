@@ -2271,6 +2271,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <div class="setrow"><span class="setlbl">Yeni ürün vurgu süresi (gün)</span><span class="setval"><input type="number" id="s-newdays" min="1" max="30" value="3" onchange="C.newDays=+this.value;renderTbl()"></span></div>
         <div class="setrow"><span class="setlbl">Durum filtresi ızgarasını göster</span><span class="setval"><input type="checkbox" id="s-showdur" checked="" onchange="toggleDurGrid()"></span></div>
         <div class="setrow"><span class="setlbl">Ölçüyü ürün adının başına al (60X120, 50X50 vb. — PVC-PPRC/Kalde grubu hariç)</span><span class="setval"><input type="checkbox" id="s-olcu-basa-al" onchange="olcuBasaAlToggle()"></span></div>
+        <div class="setrow"><span class="setlbl">Ürün listesinde hızlı fotoğraf (📷) ve görsel (🖼️) ikonlarını göster</span><span class="setval"><input type="checkbox" id="s-hizli-kamera" checked onchange="hizliKameraToggle()"></span></div>
       </div>
       <div class="panel" data-grp="oncelik" style="display:none">
         <h2>⭐ Öncelikli Stoklar</h2>
@@ -2683,6 +2684,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
     <div id="gorsel-stok" style="font-size:11px;color:var(--text3);margin-bottom:12px"></div>
     <div id="gorsel-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
     <input type="file" id="gorsel-tekli-input" accept="image/*" multiple="" style="display:none" onchange="gorselTekliEkle(this.files)">
+    <input type="file" id="gorsel-kamera-input" accept="image/*" capture="environment" style="display:none" onchange="gorselTekliEkle(this.files); this.value=&#39;&#39;">
     <button class="mbtn" onclick="$(&#39;gorsel-tekli-input&#39;).click()" style="margin-bottom:10px">+ Görsel Ekle</button>
     <div id="gorsel-yukleme-durum" style="font-size:11px;color:var(--text3);margin-bottom:10px"></div>
     <div class="mbtns"><button class="mbtn" onclick="closeGorselGaleri()">Kapat</button></div>
@@ -3507,14 +3509,19 @@ function renderTbl(){
             : _adKaynak;
           const _esdOlcu = S._equivMatchMap && S._equivMatchMap.get(String(r.STOK_KODU));
           if(_esdOlcu) dispAd = highlightEquivOlcu(dispAd, _esdOlcu);
+          // Ürün adının sonuna görsel ikonları — mobilde ayrı GORSEL sütunu kart görünümünde
+          // gizlendiği için, hızlı erişim burada da (her zaman görünür yerde) sağlanıyor.
+          const _gListAd = S.urunGorseller && S.urunGorseller[r.STOK_KODU];
+          const _gVarAd = _gListAd && _gListAd.length>0;
+          const _gorselIkonlar = S.hizliKameraAktif===false ? "" : `<span onclick="event.stopPropagation();hizliKameraAc('${String(r.STOK_KODU).replace(/'/g,"\\'")}')" title="Fotoğraf çek" style="margin-left:6px;font-size:12px;cursor:pointer">📷</span><span onclick="event.stopPropagation();openGorselGaleri('${String(r.STOK_KODU).replace(/'/g,"\\'")}')" title="Görselleri görüntüle" style="margin-left:3px;font-size:11px;cursor:pointer;color:${_gVarAd?"var(--blue)":"var(--text3)"}">🖼️</span>`;
           const _takma = S.takmaAdKullan && S.takmaAdlar ? S.takmaAdlar[String(r.STOK_KODU)] : null;
           if(_takma){
             const dispTakma = (S._searchWords&&S._searchWords.length>0)
               ? highlightText(_takma, S._searchQ?S._searchQ.split(/\s+/):[])
               : _takma;
-            return`<td data-cid="STOK_ADI" title="${r.STOK_ADI}"><div>${dispTakma}</div><div style="font-size:10px;color:var(--text3);font-weight:400">${dispAd}</div></td>`;
+            return`<td data-cid="STOK_ADI" title="${r.STOK_ADI}"><div>${dispTakma}${_gorselIkonlar}</div><div style="font-size:10px;color:var(--text3);font-weight:400">${dispAd}</div></td>`;
           }
-          return`<td data-cid="STOK_ADI" title="${r.STOK_ADI}">${dispAd}</td>`;}
+          return`<td data-cid="STOK_ADI" title="${r.STOK_ADI}">${dispAd}${_gorselIkonlar}</td>`;}
         case"GORSEL":{
           const _gList = S.urunGorseller && S.urunGorseller[r.STOK_KODU];
           const _gSayi = _gList ? _gList.length : 0;
@@ -4933,6 +4940,12 @@ function olcuBasaAlToggle(){
   const vt=$("s-vt-olcubasaal"); if(vt) vt.checked = S.olcuBasaAl;
   syncAyarlar();
   applyF();
+}
+
+function hizliKameraToggle(){
+  S.hizliKameraAktif = $("s-hizli-kamera").checked;
+  syncAyarlar();
+  renderTbl();
 }
 
 // ── VARSAYILAN TİKLER — AYARLAR SEKMESİ (dağınık tüm aç/kapa tiklerin toplu görünümü) ──
@@ -6526,6 +6539,7 @@ function toplaAyarlar() {
     markaSiralamaJson: JSON.stringify(S.markaSiralama||{}),
     takmaAdlarJson: JSON.stringify(S.takmaAdlar||{}),
     takmaAdKullan: S.takmaAdKullan===false ? "0" : "1",
+    hizliKameraAktif: S.hizliKameraAktif===false ? "0" : "1",
     olcuBasaAl: S.olcuBasaAl===true ? "1" : "0",
     varsayilanTamEslesme: S.varsayilanTamEslesme===true ? "1" : "0",
     varsayilanEskiGoster: S.varsayilanEskiGoster===false ? "0" : "1",
@@ -6798,6 +6812,10 @@ function uygulaSheetsVerisi(data) {
     if (a.takmaAdKullan!=null) {
       S.takmaAdKullan = a.takmaAdKullan!=="0";
       const el=$("s-takma-kullan"); if(el) el.checked = S.takmaAdKullan;
+    }
+    if (a.hizliKameraAktif!=null) {
+      S.hizliKameraAktif = a.hizliKameraAktif!=="0";
+      const el=$("s-hizli-kamera"); if(el) el.checked = S.hizliKameraAktif;
     }
     if (a.olcuBasaAl!=null) {
       S.olcuBasaAl = a.olcuBasaAl==="1";
@@ -7553,6 +7571,13 @@ function openGorselGaleri(kod) {
 }
 function closeGorselGaleri() { $("gorselov").classList.add("hide"); _gorselAktifKod = null; }
 
+// Ürün listesindeki 📷 ikonuna dokununca modal açmadan doğrudan telefon kamerasını başlatır —
+// depoda ürünleri tek tek fotoğraflarken hızlı olsun diye. Ayarlar'dan kapatılabilir.
+function hizliKameraAc(kod) {
+  _gorselAktifKod = kod;
+  $("gorsel-kamera-input").click();
+}
+
 function rndGorselGrid() {
   const kod = _gorselAktifKod;
   const liste = (S.urunGorseller && S.urunGorseller[kod]) || [];
@@ -7632,6 +7657,10 @@ async function gorselTekliEkle(files) {
     $("gorsel-yukleme-durum").textContent = `Yükleniyor: ${tamam}/${files.length}`;
   }
   $("gorsel-yukleme-durum").textContent = "✅ Tamamlandı";
+  if($("gorselov").classList.contains("hide")){
+    // Galeri modalı kapalıysa (hızlı kamera ile eklendiyse) kullanıcı görsün diye kısa bir bildirim
+    showSyncStatus(tamam===files.length ? `✅ ${tamam} fotoğraf eklendi` : `⚠️ ${tamam}/${files.length} fotoğraf eklendi`, tamam===files.length?"ok":"warn");
+  }
   rndGorselGrid();
   renderTbl();
   izgaraCanliGuncelle();
