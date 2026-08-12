@@ -6368,6 +6368,16 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){closeNote();closeTE();closeDateEdit();closeFaturaDetay();closeIzgaraDetay();}
 });
 
+// Uygulama arka plana atılıp (kapatılmadan) geri getirildiğinde, eğer 2 dakikadan uzun süre
+// arka planda kaldıysa veriyi sessizce tazeler — böylece başka bir cihazda yapılan bir değişiklik
+// (ör. yeni mağaza bölümü eklenmesi), uygulamayı tamamen kapatıp yeniden açmaya gerek kalmadan görünür.
+let _sonAktifZaman = Date.now();
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { _sonAktifZaman = Date.now(); return; }
+  if (Date.now() - _sonAktifZaman > 2*60*1000) loadFromSheets();
+  _sonAktifZaman = Date.now();
+});
+
 // ── API ──
 const API = "https://script.google.com/macros/s/AKfycbxHEjTuSVDVCL1EcoaPWdxHGxjPTOfUrf0mrIRZfjkoiMl7VC-Bcr6gIMqbTzH0vmr4Yw/exec";
 
