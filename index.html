@@ -217,7 +217,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
 /* ── MOBİL RESPONSIVE ── */
 .topbar-tabs-toggle{display:none}
-@media (max-width: 640px), (max-width: 930px) and (orientation: landscape) {
+@media (max-width: 640px), (orientation: landscape) and (max-height: 640px) {
   /* Topbar: başlık + tek "☰ Sekme ▾" butonu görünsün, sekme listesi açılır menüye taşınır */
   .topbar { position:relative; gap:4px; padding:5px 8px; overflow-x:visible; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; }
   .topbar::-webkit-scrollbar { display:none; }
@@ -2812,6 +2812,12 @@ function toggleFiyatGizli(){
   renderTbl();
 }
 const $=id=>document.getElementById(id);
+// Mobil/kart görünümü mü? CSS'teki "@media (max-width:640px), (orientation:landscape) and
+// (max-height:640px)" kuralıyla BİREBİR aynı mantık — JS tarafındaki hiçbir kontrol CSS'ten
+// farklı karar vermesin diye (yatay telefonda ikisi çelişirse karışık/bozuk görünüme yol açıyordu).
+function mobilGorunum(){
+  return window.innerWidth<=640 || (window.innerWidth>window.innerHeight && window.innerHeight<=640);
+}
 
 let S={
   stoklar:[],filtered:[],page:0,
@@ -3100,7 +3106,7 @@ function mobilTarihRozetiKonumla(){
   const pills=document.querySelector(".pills");
   const topbar=document.querySelector(".topbar");
   if(!badge||!pills||!topbar) return;
-  if(window.innerWidth<=640){
+  if(mobilGorunum()){
     if(badge.parentElement!==pills) pills.appendChild(badge);
   } else {
     if(badge.parentElement!==topbar) topbar.appendChild(badge);
@@ -5646,7 +5652,7 @@ async function mbBolumSil(){
 function mbFotoTiklandi(e){
   // Mobilde bir pin "genişletilmiş" haldeyse, boş alana ilk dokunuş sadece onu kapatır
   // (yanlışlıkla yeni ürün ekleme popup'ı açılmasın diye).
-  if(window.innerWidth<=640 && mbGenisletilenPinId){
+  if(mobilGorunum() && mbGenisletilenPinId){
     mbGenisletilenPinId = null;
     mbPinlerCiz();
     return;
@@ -5737,7 +5743,7 @@ function mbPinlerCiz(){
   wrap.querySelectorAll(".mb-pin").forEach(el=>el.remove());
   const b = (S.magazaBolumleri||[]).find(x=>x.id===mbAcikBolumId);
   if(!b) return;
-  const mobil = window.innerWidth <= 640;
+  const mobil = mobilGorunum();
 
   (b.pinler||[]).forEach(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
@@ -6286,7 +6292,7 @@ function kontrolPinlerCiz(){
   wrap.querySelectorAll(".kontrol-pin").forEach(el=>el.remove());
   const b = (S.magazaBolumleri||[]).find(x=>x.id===kontrolAcikBolumId);
   if(!b) return;
-  const mobil = window.innerWidth <= 640;
+  const mobil = mobilGorunum();
 
   (b.pinler||[]).forEach(p=>{
     const s = S.stoklar.find(x=>String(x.STOK_KODU)===String(p.stokKodu));
@@ -7562,7 +7568,7 @@ const MOB_LBLS = {
   STOK_KODU:   "Kod",
 };
 function mobLbl(id, lbl) {
-  if (window.innerWidth > 640) return lbl;
+  if (!mobilGorunum()) return lbl;
   return MOB_LBLS[id] || lbl;
 }
 
