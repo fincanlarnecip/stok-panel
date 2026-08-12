@@ -22,19 +22,6 @@
   window.pdfjsLib = pdfjsLib;
 </script>
 <style>
-/* Kurulu (standalone) uygulamada yatay dönüşü CSS ile engelle — Screen Orientation API'ye hiç
-   dokunmuyor (kamerayla çakışma riski olmasın diye), sadece tüm sayfayı görsel olarak
-   döndürüp dikey gösteriyor. JS tarafında pwa-force-portrait / pwa-rot-90 / pwa-rot-neg90
-   sınıfları eklenip kaldırılıyor. */
-html.pwa-force-portrait body{
-  position:fixed; top:0; left:0; margin:0;
-  width:100vh; height:100vw;
-  transform-origin:top left;
-  overflow-y:auto; overflow-x:hidden;
-}
-html.pwa-force-portrait.pwa-rot-90 body{ transform:rotate(90deg) translateY(-100%); }
-html.pwa-force-portrait.pwa-rot-neg90 body{ transform:rotate(-90deg) translateX(-100%); }
-
 :root{
   --bg:#f7f8fa;--bg2:#fff;--bg3:#f0f2f5;--bg4:#e8edf5;
   --border:#e0e3e8;--border2:#c8cdd6;
@@ -230,7 +217,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
 /* ── MOBİL RESPONSIVE ── */
 .topbar-tabs-toggle{display:none}
-@media (max-width: 640px) {
+@media (max-width: 640px), (max-width: 930px) and (orientation: landscape) {
   /* Topbar: başlık + tek "☰ Sekme ▾" butonu görünsün, sekme listesi açılır menüye taşınır */
   .topbar { position:relative; gap:4px; padding:5px 8px; overflow-x:visible; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; }
   .topbar::-webkit-scrollbar { display:none; }
@@ -9679,39 +9666,5 @@ if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./sw.js").catch(e=>console.warn("SW kayıt hatası:",e));
   });
 }
-
-// Kurulu (standalone) uygulamada yatay dönüşü CSS ile engelle. Screen Orientation API'ye
-// (screen.orientation.lock/unlock) BİLEREK dokunmuyoruz — bu yöntem kamerayla defalarca
-// çakışmıştı. Bunun yerine sadece görsel olarak sayfayı döndürüp dikey gösteriyoruz.
-(function(){
-  try{
-    const standalone = window.matchMedia("(display-mode: standalone)").matches
-      || window.matchMedia("(display-mode: fullscreen)").matches
-      || window.matchMedia("(display-mode: minimal-ui)").matches
-      || window.matchMedia("(display-mode: window-controls-overlay)").matches
-      || window.navigator.standalone === true;
-    if(!standalone) return;
-    const html = document.documentElement;
-    const mq = window.matchMedia("(orientation: landscape)");
-    function uygula(){
-      const landscape = mq.matches || window.innerWidth > window.innerHeight;
-      let ters = false;
-      try{
-        if(screen.orientation && screen.orientation.type) ters = screen.orientation.type.indexOf("secondary") > -1;
-        else if(typeof window.orientation === "number") ters = window.orientation === -90;
-      }catch(e){}
-      html.classList.toggle("pwa-force-portrait", landscape);
-      html.classList.toggle("pwa-rot-90", landscape && !ters);
-      html.classList.toggle("pwa-rot-neg90", landscape && ters);
-    }
-    uygula();
-    if(mq.addEventListener) mq.addEventListener("change", uygula);
-    else if(mq.addListener) mq.addListener(uygula);
-    window.addEventListener("resize", uygula);
-    window.addEventListener("orientationchange", uygula);
-    try{ if(screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", uygula); }catch(e){}
-    setInterval(uygula, 800); // son çare: bazı Android WebView'larda hiçbir olay güvenilir tetiklenmiyor
-  }catch(e){}
-})();
 </script>
 </body></html>
