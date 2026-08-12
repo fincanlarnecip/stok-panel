@@ -9685,22 +9685,32 @@ if("serviceWorker" in navigator){
 // çakışmıştı. Bunun yerine sadece görsel olarak sayfayı döndürüp dikey gösteriyoruz.
 (function(){
   try{
-    const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    const standalone = window.matchMedia("(display-mode: standalone)").matches
+      || window.matchMedia("(display-mode: fullscreen)").matches
+      || window.matchMedia("(display-mode: minimal-ui)").matches
+      || window.matchMedia("(display-mode: window-controls-overlay)").matches
+      || window.navigator.standalone === true;
     if(!standalone) return;
     const html = document.documentElement;
+    const mq = window.matchMedia("(orientation: landscape)");
     function uygula(){
-      const landscape = window.matchMedia("(orientation: landscape)").matches;
+      const landscape = mq.matches || window.innerWidth > window.innerHeight;
       let ters = false;
       try{
         if(screen.orientation && screen.orientation.type) ters = screen.orientation.type.indexOf("secondary") > -1;
+        else if(typeof window.orientation === "number") ters = window.orientation === -90;
       }catch(e){}
       html.classList.toggle("pwa-force-portrait", landscape);
       html.classList.toggle("pwa-rot-90", landscape && !ters);
       html.classList.toggle("pwa-rot-neg90", landscape && ters);
     }
     uygula();
+    if(mq.addEventListener) mq.addEventListener("change", uygula);
+    else if(mq.addListener) mq.addListener(uygula);
     window.addEventListener("resize", uygula);
     window.addEventListener("orientationchange", uygula);
+    try{ if(screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", uygula); }catch(e){}
+    setInterval(uygula, 800); // son çare: bazı Android WebView'larda hiçbir olay güvenilir tetiklenmiyor
   }catch(e){}
 })();
 </script>
