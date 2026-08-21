@@ -582,34 +582,36 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
 
   <div class="content">
     <div id="page-home" style="display:block" class="pb">
-      <div id="home-main">
-        <h2 style="margin:0 0 14px">🏠 Ana Ekran</h2>
-        <div class="home-grid">
-          <div class="home-card" onclick="homeOpen('60x120')"><div class="home-card-ico">🔲</div><div class="home-card-txt">60x120</div></div>
-          <div class="home-card" onclick="homeOpen('takimlar')"><div class="home-card-ico">🧩</div><div class="home-card-txt">Takımlar</div></div>
-          <div class="home-card" onclick="homeOpen('faturalar')"><div class="home-card-ico">🧾</div><div class="home-card-txt">Faturalar</div></div>
-          <div class="home-card" onclick="homeOpen('teklif')"><div class="home-card-ico">📋</div><div class="home-card-txt">Teklif</div></div>
-          <div class="home-card" onclick="homeOpenNumune()"><div class="home-card-ico">🪴</div><div class="home-card-txt">Numuneler</div></div>
-          <div class="home-card" onclick="homeOpen('canlimekan')"><div class="home-card-ico">🏬</div><div class="home-card-txt">Canlı Mekan</div></div>
-        </div>
-      </div>
-      <div id="home-numune-sub" style="display:none">
-        <button onclick="homeBack()" style="margin-bottom:14px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);cursor:pointer">← Geri</button>
-        <h2 style="margin:0 0 14px">🪴 Numuneler</h2>
-        <div class="home-grid">
-          <div class="home-card" onclick="ST('numuneler')"><div class="home-card-ico">🪴</div><div class="home-card-txt">Dikey Stant</div></div>
-          <div class="home-card" onclick="ST('numuneler')"><div class="home-card-ico">🪴</div><div class="home-card-txt">Metal Stant</div><div class="home-card-sub" onclick="event.stopPropagation();homeMetalKontrol()">🗺️ Kontrol</div></div>
-          <div class="home-card" onclick="ST('numuneler')"><div class="home-card-ico">🪴</div><div class="home-card-txt">Yaprak Pano</div></div>
-        </div>
-      </div>
+      <h2 style="margin:0 0 14px">🏠 Ana Ekran</h2>
+      <p style="font-size:11px;color:var(--text2);margin:-8px 0 14px">Kartları sürükleyip bırakarak sırasını değiştirebilirsiniz.</p>
+      <div class="home-grid" id="home-grid"></div>
     </div>
     <div id="page-takimlar" style="display:none" class="pb">
+      <button onclick="ST('home')" style="margin-bottom:14px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);cursor:pointer">← Geri</button>
       <h2 style="margin:0 0 14px">🧩 Takımlar</h2>
       <p style="font-size:12px;color:var(--text2)">Bu bölüm henüz boş — tanımlamalar sonradan eklenecek.</p>
     </div>
+    <div id="page-dikeystant" style="display:none" class="pb">
+      <button onclick="ST('home')" style="margin-bottom:14px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);cursor:pointer">← Geri</button>
+      <h2 style="margin:0 0 14px">🪴 Dikey Stant</h2>
+      <p style="font-size:12px;color:var(--text2)">Bu bölüm henüz boş — tanımlamalar sonradan eklenecek.</p>
+    </div>
+    <div id="page-metalstant" style="display:none" class="pb">
+      <button onclick="ST('home')" style="margin-bottom:14px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);cursor:pointer">← Geri</button>
+      <h2 style="margin:0 0 14px">🪴 Metal Stant</h2>
+      <p style="font-size:12px;color:var(--text2)">Bu bölüm henüz boş — tanımlamalar sonradan eklenecek.</p>
+    </div>
+    <div id="page-yaprakpano" style="display:none" class="pb">
+      <button onclick="ST('home')" style="margin-bottom:14px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);cursor:pointer">← Geri</button>
+      <h2 style="margin:0 0 14px">🍃 Yaprak Pano</h2>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Ürünler Ayarlar → 🍃 Yaprak Pano &amp; Canlı Mekan bölümünden eklenir.</p>
+      <div id="yp-page-liste"></div>
+    </div>
     <div id="page-canlimekan" style="display:none" class="pb">
+      <button onclick="ST('home')" style="margin-bottom:14px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--text2);cursor:pointer">← Geri</button>
       <h2 style="margin:0 0 14px">🏬 Canlı Mekan</h2>
-      <p style="font-size:12px;color:var(--text2)">Bu bölüm henüz boş — tamamlanınca ürünler eklenecek.</p>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Ürünler Ayarlar → 🍃 Yaprak Pano &amp; Canlı Mekan bölümünden eklenir.</p>
+      <div id="cm-page-liste"></div>
     </div>
     <div id="page-stok" style="display: flex; flex-direction: column; flex: 1 1 0%; overflow: hidden; min-height: 0px;">
       <div class="tbl-wrap" id="twrap">
@@ -2293,6 +2295,7 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <button class="tab-btn" data-at="varsayilantik" onclick="ATab('varsayilantik')">🔘 Varsayılan Tikler</button>
         <button class="tab-btn" data-at="magazabolum" onclick="ATab('magazabolum')">🗺️ Mağaza Bölümleri</button>
         <button class="tab-btn" data-at="kisayollar" onclick="ATab('kisayollar')">⌨️ Kısayollar</button>
+        <button class="tab-btn" data-at="yaprakcanli" onclick="ATab('yaprakcanli')">🍃 Yaprak Pano &amp; Canlı Mekan</button>
       </div>
       <div class="panel" data-grp="gorunum">
         <h2>🎨 Görünüm Ayarları</h2>
@@ -2310,6 +2313,20 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <div class="setrow"><span class="setlbl">Durum filtresi ızgarasını göster</span><span class="setval"><input type="checkbox" id="s-showdur" checked="" onchange="toggleDurGrid()"></span></div>
         <div class="setrow"><span class="setlbl">Ölçüyü ürün adının başına al (60X120, 50X50 vb. — PVC-PPRC/Kalde grubu hariç)</span><span class="setval"><input type="checkbox" id="s-olcu-basa-al" onchange="olcuBasaAlToggle()"></span></div>
         <div class="setrow"><span class="setlbl">Ürün listesinde hızlı fotoğraf (📷) ve görsel (🖼️) ikonlarını göster</span><span class="setval"><input type="checkbox" id="s-hizli-kamera" checked onchange="hizliKameraToggle()"></span></div>
+        <div class="setrow"><span class="setlbl">Açılışta gelecek sayfa</span><span class="setval">
+          <select id="s-acilis-sayfa" onchange="localStorage.setItem('stok_acilis_sayfa', this.value)">
+            <option value="home">🏠 Ana Ekran</option>
+            <option value="stok">Liste</option>
+            <option value="faturalar">🧾 Faturalar</option>
+            <option value="teklif">📋 Teklif</option>
+            <option value="numuneler">🪴 Numuneler</option>
+            <option value="takimlar">🧩 Takımlar</option>
+            <option value="dikeystant">🪴 Dikey Stant</option>
+            <option value="metalstant">🪴 Metal Stant</option>
+            <option value="yaprakpano">🍃 Yaprak Pano</option>
+            <option value="canlimekan">🏬 Canlı Mekan</option>
+          </select>
+        </span></div>
       </div>
       <div class="panel" data-grp="oncelik" style="display:none">
         <h2>⭐ Öncelikli Stoklar</h2>
@@ -2640,8 +2657,30 @@ kbd{display:inline-block;padding:2px 6px;border:1px solid var(--border2);border-
         <div class="scrow"><kbd>Esc</kbd><span class="scdesc">Açık modalı kapat</span></div>
         <div class="scrow"><kbd>Çift tık</kbd><span class="scdesc">Satıra not ekle / düzenle</span></div>
       </div>
-    </div>
+          <div class="panel" data-grp="yaprakcanli" style="display:none">
+        <h2>🍃 Yaprak Pano &amp; Canlı Mekan Ürünleri</h2>
+        <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Buradan eklediğiniz ürünler, Ana Ekran'daki 🍃 Yaprak Pano ve 🏬 Canlı Mekan sayfalarında listelenir.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <h3 style="font-size:13px;margin:0 0 8px">🍃 Yaprak Pano</h3>
+            <div style="position:relative;margin-bottom:10px">
+              <input id="yp-urun-ara" placeholder="Ürün ara ve ekle..." oninput="modUrunAra('yp')" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text)">
+              <div id="yp-urun-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+            </div>
+            <div id="yp-urun-liste"></div>
+          </div>
+          <div>
+            <h3 style="font-size:13px;margin:0 0 8px">🏬 Canlı Mekan</h3>
+            <div style="position:relative;margin-bottom:10px">
+              <input id="cm-urun-ara" placeholder="Ürün ara ve ekle..." oninput="modUrunAra('cm')" autocomplete="off" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text)">
+              <div id="cm-urun-ara-sonuc" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+            </div>
+            <div id="cm-urun-liste"></div>
+          </div>
+        </div>
+      </div>
 
+    </div>
     <div id="page-kontrol" style="display:none" class="pb">
       <div class="panel">
         <h2>🗺️ Kontrol — Mağaza Bölümleri</h2>
@@ -2880,6 +2919,8 @@ let S={
   varsayilanDurumIzgara:true,
   esleskodGruplari:[],
   magazaBolumleri:[],
+  yaprakPanoUrunler:[],
+  canliMekanUrunler:[],
   disMarkalar:[],
   disUrunler:[],
   fiyatGizli:false,
@@ -3072,12 +3113,14 @@ function visCols(){return S.colOrder.map(id=>S.cols.find(c=>c.id===id)).filter(c
 
 // ── TABS ──
 function ST(t){
-  ["home","stok","markalar","etiketler","kolonlar","numuneler","faturalar","yukle","kurulum","ayarlar","teklif","hesaplama","kontrol","takimlar","canlimekan"].forEach(p=>{
+  ["home","stok","markalar","etiketler","kolonlar","numuneler","faturalar","yukle","kurulum","ayarlar","teklif","hesaplama","kontrol","takimlar","canlimekan","dikeystant","metalstant","yaprakpano"].forEach(p=>{
     const pg=$("page-"+p),tb=$("tab-"+p);
     if(pg) pg.style.display=p===t?(p==="stok"?"flex":"block"):"none";
     if(tb) tb.classList.toggle("active",p===t);
   });
-  if(t==="home"){ const hm=$("home-main"),hn=$("home-numune-sub"); if(hm)hm.style.display="block"; if(hn)hn.style.display="none"; }
+  if(t==="home") renderHomeGrid();
+  if(t==="yaprakpano") modUrunListRender("yp");
+  if(t==="canlimekan") modUrunListRender("cm");
   $("sbwrap").style.display=t==="stok"?"flex":"none";
   $("sidebar").style.display=t==="stok"?"flex":"none";
   if(t==="markalar") rndBPanel();
@@ -3098,21 +3141,90 @@ function ST(t){
   if(_ttLbl && _ttMap[t]) _ttLbl.textContent=_ttMap[t];
 }
 
-// ── ANA EKRAN (modül kartları) ──
-function homeOpen(t){
-  if(t==="60x120"){ ST("stok"); filterByTag("60X120"); return; }
-  ST(t);
+// ── ANA EKRAN (modül kartları, sıra değiştirilebilir) ──
+const HOME_MODULE_DEFS = {
+  "60x120":{icon:"🔲",label:"60x120",action:function(){ST("stok");filterByTag("60X120");}},
+  "takimlar":{icon:"🧩",label:"Takımlar",action:function(){ST("takimlar");}},
+  "faturalar":{icon:"🧾",label:"Faturalar",action:function(){ST("faturalar");}},
+  "teklif":{icon:"📋",label:"Teklif",action:function(){ST("teklif");}},
+  "numuneler":{icon:"🪴",label:"Numuneler",action:function(){ST("numuneler");}},
+  "dikeystant":{icon:"🪴",label:"Dikey Stant",action:function(){ST("dikeystant");}},
+  "metalstant":{icon:"🪴",label:"Metal Stant",action:function(){ST("metalstant");}},
+  "yaprakpano":{icon:"🍃",label:"Yaprak Pano",action:function(){ST("yaprakpano");}},
+  "canlimekan":{icon:"🏬",label:"Canlı Mekan",action:function(){ST("canlimekan");}}
+};
+const HOME_MODULE_DEFAULT_ORDER = ["60x120","takimlar","faturalar","teklif","numuneler","dikeystant","metalstant","yaprakpano","canlimekan"];
+function getHomeOrder(){
+  try{
+    const raw=localStorage.getItem("stok_home_order");
+    if(raw){
+      const arr=JSON.parse(raw).filter(k=>HOME_MODULE_DEFS[k]);
+      HOME_MODULE_DEFAULT_ORDER.forEach(k=>{ if(!arr.includes(k)) arr.push(k); });
+      if(arr.length) return arr;
+    }
+  }catch(e){}
+  return HOME_MODULE_DEFAULT_ORDER.slice();
 }
-function homeOpenNumune(){
-  $("home-main").style.display="none";
-  $("home-numune-sub").style.display="block";
+function saveHomeOrder(order){ try{ localStorage.setItem("stok_home_order", JSON.stringify(order)); }catch(e){} }
+let _homeDragKey=null, _homeJustDragged=false;
+function renderHomeGrid(){
+  const grid=$("home-grid"); if(!grid) return;
+  const order=getHomeOrder();
+  grid.innerHTML = order.map(k=>{
+    const m=HOME_MODULE_DEFS[k]; if(!m) return "";
+    return '<div class="home-card" draggable="true" data-key="'+k+'" ondragstart="homeDragStart(event)" ondragover="homeDragOver(event)" ondrop="homeDrop(event)" ondragend="homeDragEnd(event)" onclick="homeCardClick(\''+k+'\')"><div class="home-card-ico">'+m.icon+'</div><div class="home-card-txt">'+m.label+'</div></div>';
+  }).join("");
 }
-function homeBack(){
-  $("home-numune-sub").style.display="none";
-  $("home-main").style.display="block";
+function homeCardClick(k){
+  if(_homeJustDragged){ _homeJustDragged=false; return; }
+  const m=HOME_MODULE_DEFS[k]; if(m) m.action();
 }
-function homeMetalKontrol(){
-  alert("Metal Stant için Kontrol görünümü henüz hazırlanmadı — yakında eklenecek.");
+function homeDragStart(e){ _homeDragKey=e.currentTarget.dataset.key; e.currentTarget.style.opacity="0.4"; }
+function homeDragOver(e){ e.preventDefault(); }
+function homeDrop(e){
+  e.preventDefault();
+  const targetKey=e.currentTarget.dataset.key;
+  if(!_homeDragKey || _homeDragKey===targetKey) return;
+  const order=getHomeOrder();
+  const from=order.indexOf(_homeDragKey), to=order.indexOf(targetKey);
+  if(from<0||to<0) return;
+  order.splice(from,1); order.splice(to,0,_homeDragKey);
+  saveHomeOrder(order);
+  _homeJustDragged=true;
+  renderHomeGrid();
+}
+function homeDragEnd(e){ e.currentTarget.style.opacity="1"; }
+
+// ── Yaprak Pano & Canlı Mekan ürün yönetimi (Ayarlar'dan eklenir) ──
+function modUrunAra(prefix){
+  const inp=$(prefix+"-urun-ara"), box=$(prefix+"-urun-ara-sonuc");
+  if(!inp||!box) return;
+  const q=inp.value.trim().toLowerCase();
+  if(!q){ box.style.display="none"; box.innerHTML=""; return; }
+  const arr=(S.stoklar||[]).filter(r=>r.STOK_ADI.toLowerCase().includes(q)||r.STOK_KODU.includes(q)).slice(0,20);
+  box.innerHTML = arr.length ? arr.map(r=>'<div style="padding:6px 8px;cursor:pointer;font-size:12px" onmousedown="modUrunEkle(\''+prefix+'\',\''+r.STOK_KODU+'\')">'+r.STOK_ADI+' <span style="color:var(--text3);font-size:10px">('+r.STOK_KODU+')</span></div>').join("") : '<div style="padding:6px 8px;font-size:11px;color:var(--text3)">Sonuç yok</div>';
+  box.style.display="block";
+}
+function modUrunEkle(prefix, kod){
+  const key = prefix==="yp"?"yaprakPanoUrunler":"canliMekanUrunler";
+  if(!S[key]) S[key]=[];
+  if(!S[key].includes(kod)) S[key].push(kod);
+  try{ localStorage.setItem("stok_"+key, JSON.stringify(S[key])); }catch(e){}
+  const inp=$(prefix+"-urun-ara"), box=$(prefix+"-urun-ara-sonuc");
+  if(inp) inp.value=""; if(box){ box.style.display="none"; box.innerHTML=""; }
+  modUrunListRender(prefix);
+}
+function modUrunSil(prefix, kod){
+  const key = prefix==="yp"?"yaprakPanoUrunler":"canliMekanUrunler";
+  S[key]=(S[key]||[]).filter(k=>k!==kod);
+  try{ localStorage.setItem("stok_"+key, JSON.stringify(S[key])); }catch(e){}
+  modUrunListRender(prefix);
+}
+function modUrunListRender(prefix){
+  const key = prefix==="yp"?"yaprakPanoUrunler":"canliMekanUrunler";
+  const arr=(S[key]||[]).map(kod=>(S.stoklar||[]).find(r=>r.STOK_KODU===kod)).filter(Boolean);
+  const html = arr.length ? arr.map(r=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:6px;margin-bottom:4px"><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.STOK_ADI+'</div><div style="font-size:10px;color:var(--text3)">'+r.STOK_KODU+'</div></div><button onclick="modUrunSil(\''+prefix+'\',\''+r.STOK_KODU+'\')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">✕</button></div>').join("") : '<div style="font-size:11px;color:var(--text3)">Henüz ürün eklenmedi.</div>';
+  ["-urun-liste","-page-liste"].forEach(suf=>{ const el=$(prefix+suf); if(el) el.innerHTML=html; });
 }
 
 // Mobilde topbar sekme listesini açar/kapatır
@@ -9659,7 +9771,13 @@ function renderGecmis(kod) {
     }
   } catch(e) {}
 })();
-ST("home");
+try{
+  const ypRaw=localStorage.getItem("stok_yaprakPanoUrunler"); if(ypRaw) S.yaprakPanoUrunler=JSON.parse(ypRaw);
+  const cmRaw=localStorage.getItem("stok_canliMekanUrunler"); if(cmRaw) S.canliMekanUrunler=JSON.parse(cmRaw);
+  const selEl=$("s-acilis-sayfa"), savedStart=localStorage.getItem("stok_acilis_sayfa");
+  if(selEl && savedStart) selEl.value=savedStart;
+}catch(e){}
+ST(localStorage.getItem("stok_acilis_sayfa")||"home");
 
 // Sonra Sheets'ten güncel veri çek (arka planda), başarılıysa ekranı ve önbelleği tazele
 let _sonBilinenGuncelleme = null;
